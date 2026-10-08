@@ -61,6 +61,51 @@ describe("server API boundary", () => {
   )
 
   it.each([
+    { serviceIds: [] },
+    { serviceIds: ["00000000-0000-4000-8000-000000000001"] },
+  ])(
+    "sends a complete technician skill replacement via PUT: %j",
+    async ({ serviceIds }) => {
+      const technicianId = "00000000-0000-4000-8000-000000000002"
+      const skills = { technicianId, serviceIds }
+      const skillsSchema = z.object({
+        technicianId: z.uuid(),
+        serviceIds: z.array(z.uuid()),
+      })
+      fetchMock.mockResolvedValue(
+        Response.json({
+          success: true,
+          message: "Skills replaced",
+          data: skills,
+        })
+      )
+
+      const result = await apiRequest(
+        `/technicians/${technicianId}/skills`,
+        skillsSchema,
+        { method: "PUT", body: { serviceIds }, accessToken: "admin-token" }
+      )
+
+      expect(result.data).toEqual(skills)
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+      const [url, init] = fetchMock.mock.calls[0] ?? []
+      expect(url).toEqual(
+        new URL(
+          `https://api.example.com/api/v1/technicians/${technicianId}/skills`
+        )
+      )
+      expect(init?.method).toBe("PUT")
+      expect(init?.body).toBe(JSON.stringify({ serviceIds }))
+      expect(new Headers(init?.headers).get("Content-Type")).toBe(
+        "application/json"
+      )
+      expect(new Headers(init?.headers).get("Authorization")).toBe(
+        "Bearer admin-token"
+      )
+    }
+  )
+
+  it.each([
     "//evil.example/records",
     "/../auth",
     "/%2e%2e/auth",
@@ -99,7 +144,7 @@ describe("server API boundary", () => {
   it("does not retry uncertain checkout and preserves its idempotency key", async () => {
     fetchMock.mockRejectedValue(new Error("private network internals"))
     await expect(
-      apiRequest("/invoices/123/checkout", dataSchema, {
+      apiRequest("/invoices/123/payment-session", dataSchema, {
         method: "POST",
         body: { billing: { city: "Dhaka" } },
         idempotencyKey: "stable-key-123456789",

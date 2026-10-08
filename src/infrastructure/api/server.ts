@@ -11,7 +11,7 @@ type ApiRequestOptions = {
   signal?: AbortSignal
 } & (
   | { method?: "GET"; body?: never }
-  | { method: "POST" | "PATCH"; body?: unknown }
+  | { method: "POST" | "PUT" | "PATCH"; body?: unknown }
   | { method: "DELETE"; body?: never }
 )
 
