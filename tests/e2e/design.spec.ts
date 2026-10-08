@@ -12,6 +12,11 @@ test("public content remains readable without JavaScript", async ({
     await expect(
       page.getByRole("heading", { name: "Less chasing. More handled." })
     ).toBeVisible()
+    // Frost is CSS-only and must remain available before any client scripts run.
+    await expect(page.locator("header .frosted-nav")).toHaveCSS(
+      "backdrop-filter",
+      "blur(20px) saturate(1.4)"
+    )
     await expect(
       page.getByRole("link", { name: "Explore services", exact: true })
     ).toBeVisible()

@@ -81,7 +81,7 @@ test("headline preserves unclipped word geometry throughout entry and route retu
   await expect(words).toHaveCount(4)
 })
 
-test("reduced motion restores split text and all scroll transforms", async ({
+test("reduced motion restores hero words and all scroll transforms", async ({
   page,
 }) => {
   await page.goto("/")
@@ -108,74 +108,41 @@ test("reduced motion restores split text and all scroll transforms", async ({
   ).toBeVisible()
 })
 
-test("navigation lens bends pixels beyond the identical blur-only reference", async ({
+test("navigation uses themed CSS frost without an optical runtime", async ({
   page,
 }) => {
   await page.goto("/faq")
-  const lens = page.locator("header [data-optics]")
-  await expect(lens).toHaveAttribute("data-optics", "refraction")
-  // Controlled stripes expose spatial displacement; blur and tint stay unchanged.
-  await page.evaluate(() => {
-    const backdrop = document.createElement("div")
-    backdrop.style.cssText =
-      "position:fixed;inset:0;z-index:30;background:repeating-linear-gradient(90deg,#111 0 4px,#fafafa 4px 8px)"
-    document.body.append(backdrop)
-  })
-  const refracted = await lens.screenshot()
-  await lens
-    .locator("feDisplacementMap")
-    .evaluate((node) => node.setAttribute("scale", "0"))
-  const blurred = await lens.screenshot()
-  const difference = await page.evaluate(
-    async ({ a, b }) => {
-      async function decode(source: string) {
-        const image = new Image()
-        image.src = `data:image/png;base64,${source}`
-        await image.decode()
-        const canvas = document.createElement("canvas")
-        canvas.width = image.width
-        canvas.height = image.height
-        const context = canvas.getContext("2d")
-        if (!context) throw new Error("Pixel inspection is unavailable")
-        context.drawImage(image, 0, 0)
-        return {
-          width: image.width,
-          height: image.height,
-          data: context.getImageData(0, 0, image.width, image.height).data,
-        }
-      }
-      const first = await decode(a),
-        second = await decode(b)
-      let changed = 0
-      for (let index = 0; index < first.data.length; index += 4) {
-        const delta = Math.abs(
-          (first.data[index] ?? 0) - (second.data[index] ?? 0)
-        )
-        if (delta > 8) changed++
-      }
-      return { changed, pixels: first.width * first.height }
-    },
-    { a: refracted.toString("base64"), b: blurred.toString("base64") }
-  )
-  expect(difference.changed).toBeGreaterThan(difference.pixels * 0.02)
+  const surface = page.locator("header .frosted-nav")
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate(
+      (theme) =>
+        document.documentElement.classList.toggle("dark", theme === "dark"),
+      theme
+    )
+    await expect(surface).toHaveCSS(
+      "backdrop-filter",
+      "blur(20px) saturate(1.4)"
+    )
+    await expect(surface).toHaveCSS("background-color", /\/\s*0\.76\)/)
+    await expect(surface.locator("filter, canvas")).toHaveCount(0)
+    await expect(
+      page.getByRole("link", { name: "Sign in", exact: true })
+    ).toBeVisible()
+  }
 })
 
-test("increased contrast removes the optical layer and keeps navigation usable", async ({
+test("increased contrast removes frost and keeps navigation usable", async ({
   page,
 }) => {
   await page.emulateMedia({ contrast: "more" })
   await page.goto("/faq")
-  await expect(page.locator("header [data-optics]")).toHaveAttribute(
-    "data-optics",
-    "translucent"
-  )
-  await expect
-    .poll(() =>
-      page
-        .locator("header .liquid-lens-material")
-        .evaluate((node) => getComputedStyle(node).backdropFilter)
-    )
-    .toBe("none")
+  const surface = page.locator("header .frosted-nav")
+  await expect(surface).toHaveCSS("backdrop-filter", "none")
+  expect(
+    await surface.evaluate((node) => getComputedStyle(node).backgroundColor)
+  ).not.toContain("/ 0.76")
+  await page.emulateMedia({ contrast: "no-preference" })
+  await expect(surface).toHaveCSS("backdrop-filter", "blur(20px) saturate(1.4)")
   await page
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "Services", exact: true })

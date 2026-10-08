@@ -114,29 +114,29 @@ Preset-matched shadcn Select, Card, Collapsible, NavigationMenu, Empty and Pagin
 compositions replace browser-native dropdowns and custom panel controls. Native
 link semantics remain intact with shadcn button styles.
 
-GSAP 3.15.0 owns marketing SplitText and scroll-linked image/card depth. Shared entry
+GSAP 3.15.0 owns marketing word entry and scroll-linked image/card depth. Shared entry
 effects use native Web Animations; Motion is removed. Reduced motion reverts text and
-transforms. A bounded Chromium SVG backdrop lens genuinely displaces background
-pixels; other engines receive an explicitly translucent fallback. Public FAQ uses
-original editorial image cards with accessible in-card disclosures. See
-[optical design](optical-design.md), [asset provenance](editorial-assets.md) and
+transforms. Stable server word markup avoids clipping and completion spacing shifts.
+The navbar uses one CSS frosted shadcn Card with an opaque accessibility fallback.
+Public FAQ uses original editorial image cards with accessible in-card disclosures. See
+[hero and navbar design](optical-design.md), [asset provenance](editorial-assets.md) and
 [design verification](design-refinement.md) for decisions and precise limits.
 
 ## Verification and remaining limits
 
 - `npm run check`: formatting, typed lint, generated route types, TypeScript and
-  81 ordinary tests. Four real-Redis tests require SESSION_TEST_REDIS_URL.
-- With the dedicated Redis URL all 85 tests pass: session concurrency/integrity,
+  73 ordinary tests. Four real-Redis tests require SESSION_TEST_REDIS_URL.
+- With the dedicated Redis URL all 77 tests pass: session concurrency/integrity,
   role return paths, scheduling bounds, strict write schemas, legal transitions,
   timezone conversion, cancellation and mutation recovery classification.
 - `npm run build -- --webpack`: production build passes. Default Turbopack was
   previously blocked by this execution environment's port restriction; its default
   command is preserved. Hosted CI has not run because no push occurred.
 - The Chromium suite has nine real-API workflows, six design scenarios and six
-  optical/component scenarios. Coverage includes no-JavaScript homepage/process,
+  presentation/component scenarios. Coverage includes no-JavaScript homepage/process,
   reduced motion and cleanup, keyboard FAQ, password visibility, 320–1440px
-  public/auth layouts, theme contrast, actual optical displacement and styled Select
-  keyboard/form behavior. Demo queues verify readable status labels in both themes.
+  public/auth layouts, theme contrast, stable animated word geometry, CSS frost and
+  styled Select keyboard/form behavior. Demo queues verify readable status labels in both themes.
 - Operational coverage against the hosted API and production frontend includes:
   catalog/mobile/auth/customer flows, plus stale review, qualified dispatch,
   competing-slot rejection, price-preserving reschedule, progress, stale technician
@@ -152,7 +152,7 @@ original editorial image cards with accessible in-card disclosures. See
 - Real Google OAuth still needs configured authorized origins/client ID and a human
   account. Refresh HTTP behavior is stubbed in focused Redis tests; browsers do not
   wait 15 minutes to exercise actual backend refresh replay or distributed failover.
-- Firefox public fallback, keyboard/control and responsive smoke checks pass.
+- Firefox public presentation, keyboard/control and responsive smoke checks pass.
   WebKit cannot launch because host system libraries are missing. Production HTTPS
   cookies, actual Safari/mobile hardware and a complete accessibility audit remain
   deployment/review verification. No claim of these checks is made.

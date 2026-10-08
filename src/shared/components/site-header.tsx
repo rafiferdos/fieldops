@@ -17,7 +17,7 @@ import {
 } from "@/shared/ui/sheet"
 import { Brand } from "./brand"
 import { ThemeToggle } from "./theme-toggle"
-import { LiquidLens } from "./liquid-lens"
+import { Card } from "@/shared/ui/card"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -36,7 +36,8 @@ export function SiteHeader() {
   const pathname = usePathname()
   return (
     <header className="pointer-events-none sticky top-3 z-40 mx-auto mt-3 w-[calc(100%-2rem)] max-w-7xl sm:top-5 sm:mt-5 sm:w-[calc(100%-4rem)]">
-      <LiquidLens className="pointer-events-auto mx-auto max-w-[900px]">
+      {/* One CSS backdrop surface provides frost without filtering foreground controls. */}
+      <Card className="frosted-nav pointer-events-auto mx-auto max-w-[900px] gap-0 overflow-visible rounded-full bg-(--navigation-surface) p-0 ring-0">
         <div className="nav-island flex min-h-16 items-center justify-between gap-2 px-2 sm:px-4">
           <Brand />
           <NavigationMenu
@@ -120,7 +121,7 @@ export function SiteHeader() {
             </Sheet>
           </div>
         </div>
-      </LiquidLens>
+      </Card>
     </header>
   )
 }

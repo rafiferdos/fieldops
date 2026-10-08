@@ -5,26 +5,27 @@
 Preserve preset `b2w3Yl9Ygc`, its emerald/zinc tokens and self-hosted Outfit/Geist
 variable fonts. Oversized public typography, original material photography and
 restrained workspace density share the same controls, reading surfaces and focus
-language. The [optical design](optical-design.md) records primary research and
+language. The [hero and navbar design](optical-design.md) records primary research and
 implementation decisions; [editorial assets](editorial-assets.md) records the
 built-in imagegen mode, local output paths and exact prompts.
 
 The hero pairs word and tool arrival with a scroll-linked image zoom and shallow
 3D card rotation on wide screens. GSAP 3.15.0 and @gsap/react 2.1.2 own only this
-marketing choreography. SplitText preserves the heading's accessible name, gives
-descenders mask clearance and removes temporary wrappers after entry. Scoped
+marketing choreography. The four headline words are fixed server-rendered spans
+with real spaces. GSAP changes only transforms/opacity, without clipping masks or
+completion-time DOM replacement. Trailing glyphs remain visible; word layout stays
+identical throughout entry. The tool has its own flex item. Scoped
 useGSAP/matchMedia cleanup restores text, styles and ScrollTriggers when preferences
 change or routes unmount. No scroll interception, pinning or perpetual loops exist.
 Shared entry effects use one-shot native Web Animations, cancel on reduced motion
 and leave server-rendered content visible before scripts run. Motion is removed.
 
 The floating navbar uses shadcn NavigationMenu, Button styles and mobile Sheet.
-One translucent themed material replaces stacked solid backgrounds. A bounded
-independent Snell-law displacement map bends the actual backdrop in Chromium;
-foreground controls stay unfiltered. The map updates only on resize, with no
-continuous optical animation loop. Other engines get a translucent blur fallback,
-which is not described as Liquid Glass or Apple's exact native rendering. Increased
-contrast, reduced transparency and forced colors disable the optical filter.
+One CSS frosted shadcn Card provides a 76% theme tint, 20px backdrop blur, 1.4
+saturation and a subtle border. There is no separate solid inner panel or optical
+runtime. The SVG renderer, browser detection, canvas maps and resize observer are
+removed. Unsupported backdrop filters retain an opaque surface. Increased contrast,
+reduced transparency and forced colors restore that solid surface entirely in CSS.
 
 FAQ uses shadcn Card and Collapsible with original editorial images, a rotating
 plus control and an answer inside each card. All five backend-contract answers
@@ -54,56 +55,47 @@ loading and interactive-account requirements remain explicit.
 
 ## Verification — October 9, 2026
 
-Formatting, typed lint, generated route types, strict TypeScript, all 85 tests
-(81 ordinary plus four real-Redis integration tests) and the supported Webpack
-production build pass. The new lens tests validate geometry bounds, memory size,
-neutral centers and symmetric refraction. CI has not run remotely because nothing
-was pushed.
+Formatting, typed lint, generated route types, strict TypeScript, all 77 tests
+(73 ordinary plus four real-Redis integration tests) and the supported Webpack
+production build pass. The eight tests for the removed optical math are deleted
+with that unused implementation; domain/session checks remain intact. CI has not
+run remotely because nothing was pushed.
 
-The Chromium suite adds six optical/component scenarios: accessible hero and route
-cleanup; live reduced-motion transform restoration; actual spatial displacement
-against an identical blur-only reference; increased-contrast fallback; all five FAQ
-answers and close controls fitting at 320px; and styled Select keyboard dismissal,
-selection and GET submission. Existing checks cover no-JavaScript content, keyboard
-FAQ, password visibility, both-theme contrast and public/auth layouts from 320px to
-1440px. All 21 scenarios pass with automatic retries disabled, including the real-API
-workflow suite after interaction changes. Only approved disposable records were
-created; pre-existing work was not progressed.
+Six presentation/component scenarios cover hero geometry during actual controlled
+animation frames and route return; live reduced-motion restoration; CSS frost in
+both themes; increased-contrast recovery; narrow FAQ/control geometry; and styled
+Select keyboard/form behavior. Existing checks cover no-JavaScript content and CSS
+frost, keyboard FAQ, password visibility, theme contrast and 320–1440px layouts.
+The earlier domain workflow checkpoint passed 21 scenarios together with retries
+disabled. This presentation-only change reruns the 15 affected read-only scenarios
+without repeating external writes.
 
-A separate Firefox smoke run verified the translucent fallback, both themes, FAQ
-keyboard operation, shadcn Select, catalog fit at 320/390/768/1440px, the accessible
-headline and reduced motion, without page errors. WebKit could not launch because
-this host lacks its ICU/XML/Flite and related system libraries; no system packages
-were changed. Actual Safari, physical mobile performance, assistive-technology
-review and deployment HTTPS behavior remain unverified.
+A fresh Firefox smoke run verified headline fit at 320/768/1440px, frost in both
+themes and reduced motion. Increased contrast restores the opaque surface on load.
+Live Playwright contrast emulation changes matchMedia but leaves CSS media styles
+stale until reload in this bundled Firefox; an isolated one-element page reproduces
+the behavior. Live operating-system contrast changes therefore remain a manual
+Firefox check. Earlier Firefox checks covered FAQ keyboard operation and shadcn
+Select. WebKit could not launch because this host lacks its ICU/XML/Flite and related
+system libraries; no system packages were changed. Actual Safari, physical mobile
+performance, assistive-technology review and deployment HTTPS behavior remain
+unverified.
 
 Public desktop/mobile screenshots are local review artifacts, not committed golden
 fixtures. The four original PNGs are optimized responsively through Next Image with
 reserved geometry. They are illustrative, not evidence of actual staff or jobs.
 
-## Production performance observation
+## Performance and verification scope
 
-The final local production Chromium run used a 1440 × 1000 viewport, a warm cache
-and 4× CPU slowdown. Across 120 frames while scrolling the homepage, the median
-frame interval was 16.7ms, p95 17.4ms and maximum 17.8ms. Observed cumulative layout
-shift was 0.014. One 63ms startup long task occurred; none occurred during sampled
-scrolling, and no page errors were reported. This is one desktop simulation, not
-a universal frame-rate guarantee, a Core Web Vitals field assessment or an actual
-slow-phone measurement.
-
-All 21 Chromium scenarios passed together with retries disabled. After the last
-class-merging and 44px-target polish, all 15 affected public/design/optical scenarios
-passed again without repeating external writes. Firefox's final 320px light/dark
-fallback and composed-control geometry smoke checks also passed. Runtime dependency
-audit reported zero findings; the README retains the separate development-tool
-advisory limitations. Tracked files were checked against local private values
-without displaying them. Backend source remained clean; no push/deploy occurred.
+A warm local production Chromium run at 1440×1000px with 4× CPU slowdown sampled
+120 animation frames while scrolling the homepage. Frame intervals were median
+16.7ms and p95 16.8ms; recorded layout shift was 0. The load-through-scroll recording
+contained one 63ms long task and no page errors. This is one desktop measurement,
+not a universal frame-rate or physical-device claim.
 
 ## References
 
-- [Apple: Meet Liquid Glass](https://developer.apple.com/videos/play/wwdc2025/219/)
-- [Original SVG refraction study](https://kube.io/blog/liquid-glass-css-svg/)
-- [Community implementation and browser limits](https://github.com/Meapri/liquid-glass-web)
+- [CSS backdrop filters](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/backdrop-filter)
 - [GSAP React cleanup](https://gsap.com/resources/React/)
 - [shadcn Base UI Select](https://ui.shadcn.com/docs/components/base/select)
 - [Animation performance](https://web.dev/articles/animations-guide)
