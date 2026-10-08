@@ -25,7 +25,7 @@ export function RequestEditForm({ request }: { request: ServiceRequest }) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isReady },
   } = useForm<z.infer<typeof visitFormSchema>>({
     resolver: zodResolver(visitFormSchema),
     defaultValues: {
@@ -72,16 +72,25 @@ export function RequestEditForm({ request }: { request: ServiceRequest }) {
         className="space-y-5"
         noValidate
       >
-        <fieldset disabled={isSubmitting || blocked} className="space-y-5">
+        <fieldset
+          disabled={!isReady || isSubmitting || blocked}
+          className="space-y-5"
+        >
           <div className="space-y-2">
             <Label htmlFor="edit-description">Description</Label>
             <Textarea
               id="edit-description"
               maxLength={2000}
               aria-invalid={!!errors.description}
+              aria-describedby={
+                errors.description ? "edit-description-error" : undefined
+              }
               {...register("description")}
             />
-            <FormMessage message={errors.description?.message} />
+            <FormMessage
+              id="edit-description-error"
+              message={errors.description?.message}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="edit-address">Address</Label>
@@ -89,9 +98,15 @@ export function RequestEditForm({ request }: { request: ServiceRequest }) {
               id="edit-address"
               maxLength={500}
               aria-invalid={!!errors.address}
+              aria-describedby={
+                errors.address ? "edit-address-error" : undefined
+              }
               {...register("address")}
             />
-            <FormMessage message={errors.address?.message} />
+            <FormMessage
+              id="edit-address-error"
+              message={errors.address?.message}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="edit-time">
@@ -102,9 +117,15 @@ export function RequestEditForm({ request }: { request: ServiceRequest }) {
               type="datetime-local"
               step={60}
               aria-invalid={!!errors.preferredLocal}
+              aria-describedby={
+                errors.preferredLocal ? "edit-time-error" : undefined
+              }
               {...register("preferredLocal")}
             />
-            <FormMessage message={errors.preferredLocal?.message} />
+            <FormMessage
+              id="edit-time-error"
+              message={errors.preferredLocal?.message}
+            />
           </div>
           <Button type="submit">
             {isSubmitting ? "Saving…" : "Save request"}

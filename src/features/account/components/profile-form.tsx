@@ -24,7 +24,7 @@ export function ProfileForm({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isReady },
   } = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: { name, phone: phone ?? "" },
@@ -53,16 +53,17 @@ export function ProfileForm({
       className="max-w-lg space-y-5"
       noValidate
     >
-      <fieldset disabled={isSubmitting} className="space-y-5">
+      <fieldset disabled={!isReady || isSubmitting} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="profile-name">Name</Label>
           <Input
             id="profile-name"
             autoComplete="name"
             aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? "profile-name-error" : undefined}
             {...register("name")}
           />
-          <FormMessage message={errors.name?.message} />
+          <FormMessage id="profile-name-error" message={errors.name?.message} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="phone">Phone (optional)</Label>
@@ -71,12 +72,13 @@ export function ProfileForm({
             type="tel"
             autoComplete="tel"
             aria-invalid={!!errors.phone}
+            aria-describedby={errors.phone ? "phone-error" : undefined}
             {...register("phone")}
           />
           <p className="text-xs text-muted-foreground">
             Use international format. Leave empty to remove your phone number.
           </p>
-          <FormMessage message={errors.phone?.message} />
+          <FormMessage id="phone-error" message={errors.phone?.message} />
         </div>
         <Button type="submit">
           {isSubmitting ? "Saving…" : "Save profile"}

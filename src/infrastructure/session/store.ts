@@ -18,12 +18,13 @@ function encryptionKey() {
 export async function createStoredSession(tokens: SessionTokens) {
   const id = newSessionId(),
     key = sessionKey(id)
-  await (
+  const created = await (
     await sessionRedis()
   ).set(key, sealTokens(tokens, encryptionKey(), key), {
     PX: Math.max(1, tokens.refreshExpiresAt - Date.now()),
     NX: true,
   })
+  if (created !== "OK") throw new Error("Session could not be created.")
   return id
 }
 

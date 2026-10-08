@@ -1,5 +1,6 @@
 "use client"
 import Link from "next/link"
+import { useState } from "react"
 import type { Route } from "next"
 import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
@@ -16,6 +17,7 @@ import {
 import { Button } from "@/shared/ui/button"
 
 export function WorkspaceNav({ role }: { role: Role }) {
+  const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const links: { href: Route; label: string }[] = [
     {
@@ -31,6 +33,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
     <Link
       key={link.href}
       href={link.href}
+      onClick={() => setOpen(false)}
       aria-current={pathname === link.href ? "page" : undefined}
       className="rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground"
     >
@@ -42,7 +45,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
       <nav aria-label="Workspace navigation" className="hidden gap-1 md:flex">
         {navigation}
       </nav>
-      <Sheet>
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger
           render={
             <Button

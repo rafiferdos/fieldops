@@ -5,6 +5,8 @@ import { WorkspaceNav } from "@/features/auth/components/workspace-nav"
 import { SignOutButton } from "@/features/auth/components/sign-out-button"
 import { ThemeToggle } from "@/shared/components/theme-toggle"
 
+export const metadata = { robots: { index: false, follow: false } }
+
 export default async function WorkspaceLayout({
   children,
 }: {

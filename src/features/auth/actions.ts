@@ -2,6 +2,7 @@
 
 import { z } from "zod"
 import { apiRequest } from "@/infrastructure/api/server"
+import { ApiError } from "@/infrastructure/api/error"
 import { getDemoCredentials } from "@/infrastructure/env/auth"
 import { requireSameOrigin } from "@/infrastructure/session/origin"
 import { actionFailure, type ActionResult } from "@/shared/lib/action-result"
@@ -35,6 +36,11 @@ export async function signIn(
       destination: safeReturnPath(returnTo, result.data.user.role),
     }
   } catch (error) {
+    if (error instanceof ApiError && error.status === 401)
+      return {
+        ok: false,
+        message: "The email or password could not be verified.",
+      }
     return actionFailure(error)
   }
 }
@@ -104,8 +110,8 @@ export async function signInGoogle(
 export async function signOut(): Promise<ActionResult> {
   try {
     await requireSameOrigin()
-    const viewer = await getViewer()
     try {
+      const viewer = await getViewer()
       if (viewer)
         await apiRequest("/auth/logout", z.null(), {
           method: "POST",

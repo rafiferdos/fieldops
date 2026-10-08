@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useState } from "react"
 import { usePathname } from "next/navigation"
 import { Menu, Wrench } from "lucide-react"
 import { Button } from "@/shared/ui/button"
@@ -21,11 +22,13 @@ const links = [
 ] as const
 
 export function SiteHeader() {
+  const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const navigation = links.map((link) => (
     <Link
       key={link.href}
       href={link.href}
+      onClick={() => setOpen(false)}
       aria-current={pathname === link.href ? "page" : undefined}
       className="text-sm text-muted-foreground hover:text-foreground aria-[current=page]:text-primary"
     >
@@ -53,7 +56,7 @@ export function SiteHeader() {
           <Link className="text-sm font-medium" href="/login">
             Sign in
           </Link>
-          <Sheet>
+          <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               render={
                 <Button
@@ -78,7 +81,9 @@ export function SiteHeader() {
                 className="flex flex-col gap-6 p-6"
               >
                 {navigation}
-                <Link href="/login">Sign in</Link>
+                <Link href="/login" onClick={() => setOpen(false)}>
+                  Sign in
+                </Link>
               </nav>
             </SheetContent>
           </Sheet>

@@ -29,7 +29,7 @@ export const requestSchema = z.object({
   address: z.string(),
   preferredStart: z.iso.datetime(),
   status: requestStatusSchema,
-  version: z.number().int().positive(),
+  version: z.number().int().min(1).max(2147483647),
   reviewReason: z.string().nullable(),
   reviewedAt: z.iso.datetime().nullable(),
   cancellationReason: z.string().nullable(),
@@ -41,7 +41,7 @@ export const requestSchema = z.object({
     .object({
       id: z.uuid(),
       status: workStatusSchema,
-      version: z.number().int().positive(),
+      version: z.number().int().min(1).max(2147483647),
       scheduledStart: z.iso.datetime(),
       scheduledEnd: z.iso.datetime(),
     })
@@ -87,11 +87,11 @@ export const createRequestSchema = z.strictObject({
   ...visitFields,
 })
 export const updateRequestSchema = z.strictObject({
-  version: z.number().int().positive(),
+  version: z.number().int().min(1).max(2147483646),
   ...visitFields,
 })
 export const cancelRequestSchema = z.strictObject({
-  version: z.number().int().positive(),
+  version: z.number().int().min(1).max(2147483646),
   reason: z.string().trim().min(3).max(500),
 })
 

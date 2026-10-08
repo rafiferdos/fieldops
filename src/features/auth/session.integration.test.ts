@@ -91,4 +91,32 @@ describe.skipIf(!redisUrl)("refresh coordination with real Redis", () => {
     expect(await sessionAccessToken(id)).toBeNull()
     expect(fetchMock).not.toHaveBeenCalled()
   })
+
+  it("cannot resurrect a session deleted while its refresh is in flight", async () => {
+    fetchMock.mockReset()
+    const id = await expiredSession()
+    fetchMock.mockImplementation(async () => {
+      await deleteStoredSession(id)
+      return Response.json({
+        success: true,
+        message: "Rotated",
+        data: {
+          user: {
+            id: "00000000-0000-4000-8000-000000000001",
+            name: "User",
+            email: "user@example.com",
+            role: "CUSTOMER",
+            createdAt: new Date().toISOString(),
+          },
+          accessToken: "new",
+          refreshToken: "rotated",
+          tokenType: "Bearer",
+          expiresIn: 900,
+          refreshExpiresAt: new Date(Date.now() + 600000).toISOString(),
+        },
+      })
+    })
+    expect(await sessionAccessToken(id)).toBeNull()
+    expect(await readStoredSession(id)).toBeNull()
+  })
 })

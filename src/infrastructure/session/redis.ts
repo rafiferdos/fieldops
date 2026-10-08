@@ -8,13 +8,14 @@ async function connect() {
     url: getAuthEnv().SESSION_REDIS_URL,
     socket: { connectTimeout: 5000, reconnectStrategy: false },
     disableOfflineQueue: true,
+    commandsQueueMaxLength: 100,
   })
   // No raw client errors: connection strings can contain credentials.
   client.on("error", () => {
     connection = undefined
   })
   await client.connect()
-  return client
+  return client.withCommandOptions({ timeout: 5000 })
 }
 export async function sessionRedis() {
   connection ??= connect().catch(() => {

@@ -30,14 +30,17 @@ export function RequestWizard({
   const router = useRouter()
   const [step, setStep] = useState(0),
     [message, setMessage] = useState<string>(),
-    [uncertain, setUncertain] = useState(false)
+    [uncertain, setUncertain] = useState(false),
+    [submitted, setSubmitted] = useState(false)
   const heading = useRef<HTMLHeadingElement>(null)
+  const advancing = useRef(false),
+    submitting = useRef(false)
   const {
     register,
     trigger,
     handleSubmit,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isReady },
   } = useForm<z.infer<typeof wizardSchema>>({
     resolver: zodResolver(wizardSchema),
     defaultValues: {
@@ -51,17 +54,28 @@ export function RequestWizard({
   const values = getValues(),
     selected = services.find((item) => item.id === values.serviceId)
   async function next() {
-    const valid =
-      step === 0
-        ? await trigger("serviceId")
-        : await trigger(["description", "address", "preferredLocal"])
-    if (valid) {
-      setStep((current) => Math.min(2, current + 1))
-      setTimeout(() => heading.current?.focus(), 0)
+    if (advancing.current) return
+    advancing.current = true
+    try {
+      const valid =
+        step === 0
+          ? await trigger("serviceId", { shouldFocus: true })
+          : await trigger(["description", "address", "preferredLocal"], {
+              shouldFocus: true,
+            })
+      if (valid) {
+        setStep(Math.min(2, step + 1))
+        setTimeout(() => heading.current?.focus(), 0)
+      }
+    } catch {
+      setMessage("The visit details could not be validated. Please try again.")
+    } finally {
+      advancing.current = false
     }
   }
   async function submit(input: z.infer<typeof wizardSchema>) {
-    if (step !== 2 || uncertain) return
+    if (step !== 2 || uncertain || submitting.current) return
+    submitting.current = true
     setMessage(undefined)
     try {
       const result = await createRequest({
@@ -71,12 +85,12 @@ export function RequestWizard({
         preferredStart: dhakaInstant(input.preferredLocal),
       })
       if (result.ok && result.destination) {
+        setSubmitted(true)
         toast.add({ type: "success", title: result.message })
-        {
-          router.push(result.destination)
-          router.refresh()
-        }
+        router.push(result.destination)
+        router.refresh()
       } else if (!result.ok) {
+        if (!result.uncertain) submitting.current = false
         setMessage(result.message)
         setUncertain(!result.conflict && result.uncertain === true)
       }
@@ -116,12 +130,15 @@ export function RequestWizard({
         >
           {steps[step]}
         </h2>
-        <fieldset disabled={isSubmitting} className="space-y-5">
+        <fieldset disabled={!isReady || isSubmitting} className="space-y-5">
           <div hidden={step !== 0} className="space-y-3">
             <Label htmlFor="serviceId">Service</Label>
             <NativeSelect
               id="serviceId"
               aria-invalid={!!errors.serviceId}
+              aria-describedby={
+                errors.serviceId ? "serviceId-error" : undefined
+              }
               {...register("serviceId")}
             >
               <NativeSelectOption value="">Choose a service</NativeSelectOption>
@@ -131,7 +148,10 @@ export function RequestWizard({
                 </NativeSelectOption>
               ))}
             </NativeSelect>
-            <FormMessage message={errors.serviceId?.message} />
+            <FormMessage
+              id="serviceId-error"
+              message={errors.serviceId?.message}
+            />
             {hasMore && (
               <p className="text-sm text-muted-foreground">
                 Showing the first 100 services.{" "}
@@ -150,9 +170,15 @@ export function RequestWizard({
                 rows={5}
                 maxLength={2000}
                 aria-invalid={!!errors.description}
+                aria-describedby={
+                  errors.description ? "description-error" : undefined
+                }
                 {...register("description")}
               />
-              <FormMessage message={errors.description?.message} />
+              <FormMessage
+                id="description-error"
+                message={errors.description?.message}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="address">Service address</Label>
@@ -161,9 +187,13 @@ export function RequestWizard({
                 autoComplete="street-address"
                 maxLength={500}
                 aria-invalid={!!errors.address}
+                aria-describedby={errors.address ? "address-error" : undefined}
                 {...register("address")}
               />
-              <FormMessage message={errors.address?.message} />
+              <FormMessage
+                id="address-error"
+                message={errors.address?.message}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="preferredLocal">
@@ -174,13 +204,19 @@ export function RequestWizard({
                 type="datetime-local"
                 step={60}
                 aria-invalid={!!errors.preferredLocal}
+                aria-describedby={
+                  errors.preferredLocal ? "preferredLocal-error" : undefined
+                }
                 {...register("preferredLocal")}
               />
               <p className="text-xs text-muted-foreground">
                 An administrator confirms the assigned visit schedule after
                 review.
               </p>
-              <FormMessage message={errors.preferredLocal?.message} />
+              <FormMessage
+                id="preferredLocal-error"
+                message={errors.preferredLocal?.message}
+              />
             </div>
           </div>
           {step === 2 && (
@@ -230,8 +266,10 @@ export function RequestWizard({
                 Back
               </Button>
             )}
+            {/* Keep distinct elements so Continue cannot become a submit mid-click. */}
             {step < 2 ? (
               <Button
+                key="continue"
                 type="button"
                 onClick={() => {
                   void next()
@@ -240,7 +278,11 @@ export function RequestWizard({
                 Continue
               </Button>
             ) : (
-              <Button type="submit" disabled={uncertain}>
+              <Button
+                key="submit"
+                type="submit"
+                disabled={uncertain || submitted}
+              >
                 {isSubmitting ? "Submitting…" : "Submit request"}
               </Button>
             )}

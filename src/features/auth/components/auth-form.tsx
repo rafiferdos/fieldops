@@ -36,14 +36,14 @@ export function AuthForm({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isReady },
   } = useForm<Fields>({
     resolver: zodResolver(schema),
     defaultValues: { name: "", email: "", password: "" },
   })
   const [message, setMessage] = useState<string>()
   const [demoPending, setDemoPending] = useState(false)
-  const busy = isSubmitting || demoPending
+  const busy = !isReady || isSubmitting || demoPending
 
   async function submit(values: Fields) {
     setMessage(undefined)
@@ -126,7 +126,14 @@ export function AuthForm({
               type="password"
               autoComplete={registering ? "new-password" : "current-password"}
               aria-invalid={!!errors.password}
-              aria-describedby="password-help password-error"
+              aria-describedby={
+                [
+                  registering ? "password-help" : null,
+                  errors.password ? "password-error" : null,
+                ]
+                  .filter(Boolean)
+                  .join(" ") || undefined
+              }
               {...register("password")}
             />
             {registering && (

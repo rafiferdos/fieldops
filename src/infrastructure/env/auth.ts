@@ -33,7 +33,15 @@ export function getAuthEnv() {
 }
 
 export function getGoogleClientId() {
-  return process.env.GOOGLE_CLIENT_ID || null
+  const value = process.env.GOOGLE_CLIENT_ID
+  if (!value) return null
+  const parsed = z
+    .string()
+    .max(256)
+    .regex(/^[A-Za-z0-9._-]+\.apps\.googleusercontent\.com$/)
+    .safeParse(value)
+  if (!parsed.success) throw new Error("Invalid Google sign-in configuration.")
+  return parsed.data
 }
 
 export function getDemoCredentials(role: "CUSTOMER" | "TECHNICIAN" | "ADMIN") {

@@ -32,7 +32,8 @@ function tokensFrom(credentials: Credentials): SessionTokens {
   return {
     accessToken: credentials.accessToken,
     refreshToken: credentials.refreshToken,
-    accessExpiresAt: Date.now() + (credentials.expiresIn - 5) * 1000,
+    accessExpiresAt:
+      Date.now() + Math.max(0, credentials.expiresIn - 35) * 1000,
     refreshExpiresAt: Date.parse(credentials.refreshExpiresAt),
     refreshPending: false,
   }
@@ -118,6 +119,6 @@ export async function requireViewer(role?: Role, returnTo?: string) {
 
 export async function clearSession() {
   const id = await sessionId()
-  if (id) await deleteStoredSession(id)
   ;(await cookies()).delete(cookieName())
+  if (id) await deleteStoredSession(id)
 }

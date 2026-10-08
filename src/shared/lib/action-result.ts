@@ -21,7 +21,7 @@ export function actionFailure(error: unknown): ActionResult {
     if (
       error.kind === "network" ||
       error.kind === "invalid-response" ||
-      error.status === 502
+      (error.status !== null && error.status >= 500)
     )
       return {
         ok: false,

@@ -57,6 +57,15 @@ test("mobile navigation, keyboard access, theme and narrow-screen layout", async
   await page
     .getByRole("button", { name: "Toggle light and dark theme" })
     .click()
+  await page
+    .getByRole("button", { name: "Open navigation", exact: true })
+    .click()
+  await page
+    .getByRole("navigation", { name: "Mobile navigation" })
+    .getByRole("link", { name: "Services", exact: true })
+    .click()
+  await expect(page).toHaveURL(/\/services$/)
+  await expect(page.getByRole("dialog")).not.toBeVisible()
   const fits = await page.evaluate(
     () => document.documentElement.scrollWidth <= window.innerWidth
   )
@@ -134,6 +143,19 @@ test("real disposable customer registration, request create/edit/cancel and fore
   await page.getByLabel("Password", { exact: true }).fill(password)
   await page.getByRole("button", { name: "Sign in", exact: true }).click()
   await expect(page).toHaveURL(/\/customer$/)
+  await page.goto("/account")
+  await page
+    .getByLabel("Name", { exact: true })
+    .fill("Frontend Verification Updated")
+  await page.getByRole("button", { name: "Save profile" }).click()
+  await expect(
+    page.getByText("Profile updated.", { exact: true })
+  ).toBeVisible()
+  await page.reload()
+  await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
+    "Frontend Verification Updated"
+  )
+  await page.goto("/customer")
   await page
     .getByRole("link", { name: "New request", exact: true })
     .last()
@@ -153,30 +175,53 @@ test("real disposable customer registration, request create/edit/cancel and fore
   await expect(
     page.getByRole("heading", { name: "Review request" })
   ).toBeVisible()
+  await expect(page).toHaveURL(/\/customer\/requests\/new$/)
+  await expect(
+    page.getByRole("button", { name: "Submit request", exact: true })
+  ).toBeEnabled()
   await page
     .getByRole("button", { name: "Submit request", exact: true })
     .click()
   await expect(page).toHaveURL(/\/customer\/requests\/[a-f0-9-]{36}$/)
   const requestUrl = page.url()
-  await page
-    .getByLabel("Description", { exact: true })
-    .fill(description + " updated")
-  await page.getByRole("button", { name: "Save request" }).click()
-  await expect(
-    page.locator("dd").filter({ hasText: description + " updated" })
-  ).toBeVisible()
-  await page
-    .getByRole("button", { name: "Cancel request", exact: true })
-    .click()
-  await expect(page.getByRole("alertdialog")).toBeVisible()
-  await page
-    .getByLabel("Reason for cancellation")
-    .fill("Disposable frontend verification completed")
-  await page.getByRole("button", { name: "Confirm cancellation" }).click()
-  await expect(page.getByText("CANCELLED", { exact: true })).toBeVisible()
-  await expect(
-    page.getByRole("button", { name: "Cancel request", exact: true })
-  ).not.toBeVisible()
+  const stale = await page.context().newPage()
+  try {
+    await stale.goto(requestUrl)
+    await page
+      .getByLabel("Description", { exact: true })
+      .fill(description + " updated")
+    await page.getByRole("button", { name: "Save request" }).click()
+    await expect(
+      page.locator("dd").filter({ hasText: description + " updated" })
+    ).toBeVisible()
+    await stale
+      .getByLabel("Description", { exact: true })
+      .fill(description + " stale change")
+    await stale.getByRole("button", { name: "Save request" }).click()
+    await expect(
+      stale.getByRole("alert").filter({ hasText: "This record has changed" })
+    ).toBeVisible()
+    await expect(
+      stale.getByRole("button", { name: "Save request" })
+    ).toBeDisabled()
+    await expect(
+      stale.getByRole("button", { name: "Reload latest request" })
+    ).toBeVisible()
+  } finally {
+    await stale.close()
+    await page
+      .getByRole("button", { name: "Cancel request", exact: true })
+      .click()
+    await expect(page.getByRole("alertdialog")).toBeVisible()
+    await page
+      .getByLabel("Reason for cancellation")
+      .fill("Disposable frontend verification completed")
+    await page.getByRole("button", { name: "Confirm cancellation" }).click()
+    await expect(page.getByText("CANCELLED", { exact: true })).toBeVisible()
+    await expect(
+      page.getByRole("button", { name: "Cancel request", exact: true })
+    ).not.toBeVisible()
+  }
 
   const other = await browser.newContext({
       baseURL: new URL(requestUrl).origin,
@@ -193,6 +238,9 @@ test("real disposable customer registration, request create/edit/cancel and fore
       foreign.getByRole("heading", { name: "Page not found" })
     ).toBeVisible()
     await expect(foreign.getByText(description)).not.toBeVisible()
+    await foreign.goto("/account")
+    await foreign.getByRole("button", { name: "Sign out", exact: true }).click()
+    await expect(foreign).toHaveURL(/\/login$/)
   } finally {
     await other.close()
   }

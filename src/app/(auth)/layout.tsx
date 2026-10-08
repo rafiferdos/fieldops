@@ -2,6 +2,8 @@ import Link from "next/link"
 import type { ReactNode } from "react"
 import { ThemeToggle } from "@/shared/components/theme-toggle"
 
+export const metadata = { robots: { index: false, follow: false } }
+
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-svh bg-muted/30">
