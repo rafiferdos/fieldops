@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto"
 import { expect, test } from "@playwright/test"
 import { respectAuthWindow } from "./helpers/auth-window"
+import { expectReadableStatusLabels } from "./helpers/contrast"
 
 test.beforeAll(async () => {
   test.setTimeout(70000)
@@ -126,6 +127,16 @@ test.describe("configured demo accounts", () => {
       await page.keyboard.press("Escape")
       await expect(navigation).toBeFocused()
       await page.setViewportSize({ width: 1440, height: 1000 })
+      await expectReadableStatusLabels(page)
+      await page
+        .getByRole("button", { name: "Toggle light and dark theme" })
+        .click()
+      await expect(page.locator("html")).toHaveClass(/dark/)
+      await expectReadableStatusLabels(page)
+      await page
+        .getByRole("button", { name: "Toggle light and dark theme" })
+        .click()
+      await expect(page.locator("html")).not.toHaveClass(/dark/)
       const cookie = (await context.cookies()).find(
         (value) => value.name === "fieldops-session"
       )

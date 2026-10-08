@@ -224,7 +224,7 @@
   }
 }
 
-@layer components {
+@layer utilities {
   /* Status colors supplement the explicit labels; color never carries state alone. */
   .status-badge {
     @apply gap-1.5 px-2.5 py-1 font-normal;
@@ -244,7 +244,13 @@
     @apply border-primary/15 bg-primary/5 text-foreground;
   }
   .status-badge:is([data-status="REJECTED"], [data-status="CANCELLED"]) {
-    @apply border-destructive/15 bg-destructive/5 text-destructive;
+    @apply border-destructive/15 bg-destructive/5 text-foreground;
+  }
+  .status-badge:is(
+      [data-status="REJECTED"],
+      [data-status="CANCELLED"]
+    )::before {
+    @apply bg-destructive;
   }
 }
 

@@ -12,7 +12,13 @@ import { Button, buttonVariants } from "@/shared/ui/button"
 import { Input } from "@/shared/ui/input"
 import { Label } from "@/shared/ui/label"
 import { Badge } from "@/shared/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/shared/ui/card"
 import { NativeSelect, NativeSelectOption } from "@/shared/ui/native-select"
 
 // Customer and admin queues share presentation; the server read enforces each scope.
@@ -132,7 +138,7 @@ export async function RequestList({
                   {request.service.name}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="flex-1 space-y-4">
                 <p className="line-clamp-2 text-sm text-muted-foreground">
                   {request.description}
                 </p>
@@ -143,18 +149,21 @@ export async function RequestList({
                   />
                   Preferred: {formatDate(request.preferredStart)}
                 </p>
+              </CardContent>
+              {/* Fixed footers keep record actions aligned across a queue row. */}
+              <CardFooter className="border-t">
                 <Link
                   href={
                     role === "ADMIN"
                       ? `/admin/requests/${request.id}`
                       : `/customer/requests/${request.id}`
                   }
-                  className="text-link min-h-11 justify-between border-t pt-4"
+                  className="text-link min-h-11 w-full justify-between"
                 >
                   View request
                   <ArrowUpRight aria-hidden="true" className="size-4" />
                 </Link>
-              </CardContent>
+              </CardFooter>
             </Card>
           ))}
         </Reveal>

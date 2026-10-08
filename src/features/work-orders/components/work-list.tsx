@@ -12,7 +12,13 @@ import { Label } from "@/shared/ui/label"
 import { NativeSelect, NativeSelectOption } from "@/shared/ui/native-select"
 import { Button } from "@/shared/ui/button"
 import { Badge } from "@/shared/ui/badge"
-import { Card, CardHeader, CardTitle, CardContent } from "@/shared/ui/card"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/shared/ui/card"
 import { parseWorkQuery } from "../schemas"
 import { workStatusSchema } from "../status"
 import { listWorkOrders } from "../server"
@@ -131,7 +137,7 @@ export async function WorkList({
                   {work.request.service.name}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="flex-1 space-y-4">
                 <p className="line-clamp-2 text-sm text-muted-foreground">
                   {work.request.description}
                 </p>
@@ -143,14 +149,17 @@ export async function WorkList({
                   {formatDate(work.scheduledStart)}
                 </p>
                 <p className="text-sm">Technician: {work.technician.name}</p>
+              </CardContent>
+              {/* Fixed footers keep record actions aligned across a queue row. */}
+              <CardFooter className="border-t">
                 <Link
                   href={workDetailPath(role, work.id)}
-                  className="text-link min-h-11 justify-between border-t pt-4"
+                  className="text-link min-h-11 w-full justify-between"
                 >
                   View work order
                   <ArrowUpRight aria-hidden="true" className="size-4" />
                 </Link>
-              </CardContent>
+              </CardFooter>
             </Card>
           ))}
         </Reveal>
