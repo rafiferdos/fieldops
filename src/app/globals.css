@@ -167,7 +167,8 @@
       background-color, color, border-color, box-shadow, transform;
     transition-duration: 180ms;
   }
-  [data-slot="button"]:has(svg:only-child) {
+  /* Composed triggers may replace data-slot; the button class and size stay stable. */
+  .group\/button[data-size^="icon"] {
     min-width: 2.75rem;
   }
 }

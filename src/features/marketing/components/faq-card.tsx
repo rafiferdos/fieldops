@@ -46,7 +46,11 @@ export function FaqCard({ item }: { item: FaqItem }) {
           aria-label={item.question}
           className="faq-trigger"
           render={
-            <Button variant="secondary" size="icon" className="faq-plus" />
+            <Button
+              variant="secondary"
+              size="icon"
+              className="faq-plus size-11 rounded-full"
+            />
           }
         >
           <Plus

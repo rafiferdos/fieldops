@@ -132,9 +132,20 @@ test("every card answer fits at narrow widths and keeps its close control availa
   await page.setViewportSize({ width: 320, height: 900 })
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/faq")
+  for (const label of ["Toggle light and dark theme", "Open navigation"]) {
+    const bounds = await page
+      .getByRole("button", { name: label, exact: true })
+      .boundingBox()
+    expect(bounds?.width).toBeGreaterThanOrEqual(44)
+    expect(bounds?.height).toBeGreaterThanOrEqual(44)
+  }
   const controls = page.locator(".faq-trigger")
   await expect(controls).toHaveCount(5)
   for (const control of await controls.all()) {
+    // Composed triggers must retain square, touch-friendly geometry.
+    const bounds = await control.boundingBox()
+    expect(bounds?.width).toBeGreaterThanOrEqual(44)
+    expect(bounds?.height).toBeGreaterThanOrEqual(44)
     await control.click()
     await expect(control).toHaveAttribute("aria-expanded", "true")
     const card = control.locator("..")

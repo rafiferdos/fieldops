@@ -37,7 +37,7 @@ export function SiteHeader() {
   return (
     <header className="pointer-events-none sticky top-3 z-40 mx-auto mt-3 w-[calc(100%-2rem)] max-w-7xl sm:top-5 sm:mt-5 sm:w-[calc(100%-4rem)]">
       <LiquidLens className="pointer-events-auto mx-auto max-w-[900px]">
-        <div className="nav-island flex min-h-16 items-center justify-between gap-2 px-3 sm:px-4">
+        <div className="nav-island flex min-h-16 items-center justify-between gap-2 px-2 sm:px-4">
           <Brand />
           <NavigationMenu
             aria-label="Main navigation"
@@ -62,7 +62,7 @@ export function SiteHeader() {
               ))}
             </NavigationMenuList>
           </NavigationMenu>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <ThemeToggle />
             <ButtonLink
               href="/login"
