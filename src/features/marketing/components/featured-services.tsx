@@ -6,15 +6,26 @@ import { Reveal } from "@/shared/components/reveal"
 import { EmptyState } from "@/shared/components/empty-state"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { cn } from "@/shared/lib/utils"
+import { ApiError } from "@/infrastructure/api/error"
 
 // Catalog latency must not delay the homepage's readable headline and navigation.
 export async function FeaturedServices() {
-  const services = await listServices({
-    q: "",
-    page: 1,
-    limit: 3,
-    sort: "newest",
-  })
+  let services: Awaited<ReturnType<typeof listServices>>
+  try {
+    services = await listServices({ q: "", page: 1, limit: 3, sort: "newest" })
+  } catch (error) {
+    if (!(error instanceof ApiError)) throw error
+    // A catalog outage must not replace the readable public journey with a page error.
+    return (
+      <EmptyState title="The catalog is taking a moment">
+        <p>Services could not be loaded. Open the catalog to try again.</p>
+        <Link href="/services" className="text-link mt-4">
+          Open service catalog
+          <ArrowRight aria-hidden="true" className="size-4" />
+        </Link>
+      </EmptyState>
+    )
+  }
   if (!services.items.length)
     return (
       <EmptyState title="No services available yet">
