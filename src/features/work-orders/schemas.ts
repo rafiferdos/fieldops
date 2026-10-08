@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { feedbackSchema } from "@/features/feedback/schemas"
 import { invoiceSchema } from "@/features/billing/schemas"
 import { requestStatusSchema } from "@/features/requests/schemas"
 import {
@@ -14,13 +15,6 @@ import { workStatusSchema } from "./status"
 export const writableVersionSchema = z.number().int().min(1).max(2147483646)
 const storedVersion = z.number().int().min(1).max(2147483647)
 
-const feedbackSchema = z.object({
-  id: z.uuid(),
-  workOrderId: z.uuid(),
-  rating: z.number().int().min(1).max(5),
-  comment: z.string().nullable(),
-  createdAt: z.iso.datetime(),
-})
 export const workOrderSchema = z.object({
   id: z.uuid(),
   requestId: z.uuid(),
