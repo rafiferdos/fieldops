@@ -1,0 +1,201 @@
+import { randomUUID } from "node:crypto"
+import { expect, test } from "@playwright/test"
+
+test("real catalog search/sort, empty state, URL history and service entry", async ({
+  page,
+}) => {
+  const failures: string[] = []
+  page.on("pageerror", (error) => failures.push(error.message))
+  await page.goto("/services")
+  await expect(
+    page.getByRole("heading", { name: "What needs attention?" })
+  ).toBeVisible()
+  await expect(
+    page.getByRole("link", { name: "View service" }).first()
+  ).toBeVisible()
+  await page.getByLabel("Search services").fill("no-match-" + randomUUID())
+  await page.getByLabel("Sort by").selectOption("price_asc")
+  await page.getByRole("button", { name: "Apply filters" }).click()
+  await expect(page).toHaveURL(/sort=price_asc/)
+  await expect(
+    page.getByRole("heading", { name: "No matching services" })
+  ).toBeVisible()
+  await page.goBack()
+  await expect(
+    page.getByRole("link", { name: "View service" }).first()
+  ).toBeVisible()
+  await page.getByRole("link", { name: "View service" }).first().click()
+  await expect(
+    page.getByRole("heading", { name: "About this service" })
+  ).toBeVisible()
+  await page.getByRole("link", { name: "Request this service" }).click()
+  await expect(page).toHaveURL(/\/login\?returnTo=/)
+  expect(new URL(page.url()).searchParams.get("returnTo")).toContain(
+    "/customer/requests/new?serviceId="
+  )
+  expect(failures).toEqual([])
+})
+
+test("mobile navigation, keyboard access, theme and narrow-screen layout", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto("/")
+  await page.keyboard.press("Tab")
+  await expect(
+    page.getByRole("link", { name: "Skip to main content" })
+  ).toBeFocused()
+  await page
+    .getByRole("button", { name: "Open navigation", exact: true })
+    .click()
+  await expect(page.getByRole("dialog")).toBeVisible()
+  await page.keyboard.press("Escape")
+  await expect(page.getByRole("dialog")).not.toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Open navigation", exact: true })
+  ).toBeFocused()
+  await page
+    .getByRole("button", { name: "Toggle light and dark theme" })
+    .click()
+  const fits = await page.evaluate(
+    () => document.documentElement.scrollWidth <= window.innerWidth
+  )
+  expect(fits).toBe(true)
+})
+
+test("registration validation rejects weak input before network submission", async ({
+  page,
+}) => {
+  await page.goto("/register")
+  await page.getByLabel("Full name").fill("A")
+  await page.getByLabel("Email address").fill("invalid")
+  await page.getByLabel("Password", { exact: true }).fill("short")
+  await page.getByRole("button", { name: "Create customer account" }).click()
+  await expect(page.getByRole("alert").first()).toBeVisible()
+  await expect(page).toHaveURL(/\/register$/)
+})
+
+test.describe("configured demo accounts", () => {
+  test.skip(
+    process.env.E2E_DEMO_ACCOUNTS !== "1",
+    "Requires explicitly configured local demo accounts"
+  )
+  for (const role of ["Customer", "Technician", "Admin"] as const) {
+    test(`${role} login, role protection, cookie and logout`, async ({
+      page,
+      context,
+    }) => {
+      await page.goto("/login")
+      await page
+        .getByRole("button", { name: `${role} demo`, exact: true })
+        .click()
+      await expect(page).toHaveURL(
+        new RegExp(`/${role.toLowerCase()}(?:\\?|$)`)
+      )
+      const cookie = (await context.cookies()).find(
+        (value) => value.name === "fieldops-session"
+      )
+      expect(cookie?.httpOnly).toBe(true)
+      expect(cookie?.sameSite).toBe("Lax")
+      expect(cookie?.value).toMatch(/^[A-Za-z0-9_-]{43}$/)
+      await page.goto(role === "Admin" ? "/customer" : "/admin")
+      await expect(page).toHaveURL(
+        new RegExp(`/${role.toLowerCase()}(?:\\?|$)`)
+      )
+      await page.goto("/account")
+      await expect(
+        page.getByRole("heading", { name: "Your account" })
+      ).toBeVisible()
+      await page.getByRole("button", { name: "Sign out", exact: true }).click()
+      await expect(page).toHaveURL(/\/login$/)
+      await page.goto("/account")
+      await expect(page).toHaveURL(/\/login\?returnTo=/)
+    })
+  }
+})
+
+test("real disposable customer registration, request create/edit/cancel and foreign record privacy", async ({
+  page,
+  browser,
+}) => {
+  test.skip(
+    process.env.E2E_LIVE_WRITES !== "1",
+    "Explicit opt-in: creates a disposable customer and a cancelled request"
+  )
+  const marker = randomUUID(),
+    password = `FieldOps-test-${randomUUID()}`
+  await page.goto("/register")
+  await page.getByLabel("Full name").fill("Frontend Verification")
+  await page.getByLabel("Email address").fill(`frontend-${marker}@example.com`)
+  await page.getByLabel("Password", { exact: true }).fill(password)
+  await page.getByRole("button", { name: "Create customer account" }).click()
+  await expect(page).toHaveURL(/\/login\?registered=1$/)
+  await page.getByLabel("Email address").fill(`frontend-${marker}@example.com`)
+  await page.getByLabel("Password", { exact: true }).fill(password)
+  await page.getByRole("button", { name: "Sign in", exact: true }).click()
+  await expect(page).toHaveURL(/\/customer$/)
+  await page
+    .getByRole("link", { name: "New request", exact: true })
+    .last()
+    .click()
+  await page.getByLabel("Service", { exact: true }).selectOption({ index: 1 })
+  await page.getByRole("button", { name: "Continue", exact: true }).click()
+  const description = `Frontend verification ${marker}`
+  await page.getByLabel("What needs attention?").fill(description)
+  await page
+    .getByLabel("Service address")
+    .fill("Disposable verification address, Dhaka")
+  const local = new Date(Date.now() + 2 * 86400000 + 6 * 3600000)
+    .toISOString()
+    .slice(0, 16)
+  await page.getByLabel("Preferred visit time").fill(local)
+  await page.getByRole("button", { name: "Continue", exact: true }).click()
+  await expect(
+    page.getByRole("heading", { name: "Review request" })
+  ).toBeVisible()
+  await page
+    .getByRole("button", { name: "Submit request", exact: true })
+    .click()
+  await expect(page).toHaveURL(/\/customer\/requests\/[a-f0-9-]{36}$/)
+  const requestUrl = page.url()
+  await page
+    .getByLabel("Description", { exact: true })
+    .fill(description + " updated")
+  await page.getByRole("button", { name: "Save request" }).click()
+  await expect(
+    page.locator("dd").filter({ hasText: description + " updated" })
+  ).toBeVisible()
+  await page
+    .getByRole("button", { name: "Cancel request", exact: true })
+    .click()
+  await expect(page.getByRole("alertdialog")).toBeVisible()
+  await page
+    .getByLabel("Reason for cancellation")
+    .fill("Disposable frontend verification completed")
+  await page.getByRole("button", { name: "Confirm cancellation" }).click()
+  await expect(page.getByText("CANCELLED", { exact: true })).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Cancel request", exact: true })
+  ).not.toBeVisible()
+
+  const other = await browser.newContext({
+      baseURL: new URL(requestUrl).origin,
+    }),
+    foreign = await other.newPage()
+  try {
+    await foreign.goto("/login")
+    await foreign
+      .getByRole("button", { name: "Customer demo", exact: true })
+      .click()
+    await expect(foreign).toHaveURL(/\/customer$/)
+    await foreign.goto(requestUrl)
+    await expect(
+      foreign.getByRole("heading", { name: "Page not found" })
+    ).toBeVisible()
+    await expect(foreign.getByText(description)).not.toBeVisible()
+  } finally {
+    await other.close()
+  }
+  await page.getByRole("button", { name: "Sign out", exact: true }).click()
+  await expect(page).toHaveURL(/\/login$/)
+})

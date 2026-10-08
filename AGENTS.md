@@ -2,8 +2,9 @@
 
 Use Bengali in conversation and English for all repository artifacts. This is the
 Next.js frontend; the separate fieldops-api backend must remain unchanged unless
-explicitly requested. Initialization and the first route/role/API planning checkpoint
-are authorized. Product UI and authentication implementation require a subsequent request.
+explicitly requested. The user has authorized the next three slices: public/workspace
+layouts and service browsing, secure authentication, and customer request workflows.
+Dispatch, technician execution and payment implementation remain outside this checkpoint.
 
 Read the README's official Assignment 7 links and implemented backend contract
 before changing domain behavior. Exactly three roles: CUSTOMER, TECHNICIAN, ADMIN.

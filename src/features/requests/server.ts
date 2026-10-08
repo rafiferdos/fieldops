@@ -1,0 +1,34 @@
+import "server-only"
+import { notFound } from "next/navigation"
+import { z } from "zod"
+import { apiRequest } from "@/infrastructure/api/server"
+import { ApiError } from "@/infrastructure/api/error"
+import { requireViewer } from "@/features/auth/session"
+import { queryString } from "@/shared/lib/list-query"
+import type { parseRequestQuery } from "./schemas"
+import { requestPageSchema, requestSchema } from "./schemas"
+
+export async function listRequests(
+  query: ReturnType<typeof parseRequestQuery>
+) {
+  const { accessToken } = await requireViewer("CUSTOMER", "/customer")
+  return (
+    await apiRequest(`/requests?${queryString(query)}`, requestPageSchema, {
+      accessToken,
+    })
+  ).data
+}
+export async function getRequest(id: string) {
+  if (!z.uuid().safeParse(id).success) notFound()
+  const { accessToken } = await requireViewer(
+    "CUSTOMER",
+    `/customer/requests/${id}`
+  )
+  try {
+    return (await apiRequest(`/requests/${id}`, requestSchema, { accessToken }))
+      .data
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound()
+    throw error
+  }
+}
