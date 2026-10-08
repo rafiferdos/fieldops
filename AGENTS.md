@@ -1,3 +1,28 @@
+# Assignment 7 — FieldOps Frontend
+
+Use Bengali in conversation and English for all repository artifacts. This is the
+Next.js frontend; the separate fieldops-api backend must remain unchanged unless
+explicitly requested. Initialization is the currently authorized scope; product
+features require a subsequent request.
+
+Read the README's official Assignment 7 links and implemented backend contract
+before changing domain behavior. Exactly three roles: CUSTOMER, TECHNICIAN, ADMIN.
+Use Node 24 LTS, strict TypeScript, App Router and the requested shadcn preset.
+Keep the npm lockfile and meaningful, buildable commits. Do not push or deploy
+without a request. Preserve theme tokens and supported toast/dialog patterns.
+
+Routes compose feature modules. Colocate feature schemas, types, hooks and UI;
+shared code and infrastructure must not depend on features or routes. Use Server
+Components by default and small Client Component boundaries for interactivity.
+Validate external values with Zod; do not use any, unsafe assertions, ignored
+errors, browser alert/confirm or unnecessary abstractions. Keep secrets server-only.
+Backend authorization and provider-verified payments remain authoritative. Never
+retry mutations or rotate refresh tokens automatically without a designed policy.
+
+Run npm run check and npm run build at meaningful checkpoints. Add tests for
+security/money boundaries and actual behavior; do not manufacture feature claims
+from mocked boundary tests. Document verification limits and unresolved risks.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
