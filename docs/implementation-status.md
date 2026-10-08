@@ -1,6 +1,6 @@
 # Implementation status
 
-Reviewed October 8, 2026. This checkpoint implements roadmap steps 2–6. The backend
+Reviewed October 9, 2026. This checkpoint implements roadmap steps 2–6. The backend
 repository is unchanged. No push or deployment was performed. Verification creates
 only disposable accounts and requests, cancels eligible unstarted requests, and
 retains rejected/completed records and unpaid invoices because no deletion API exists.
@@ -71,7 +71,7 @@ Edits use the request version and exclude service changes. Cancellation uses the
 request version and only appears before assigned work leaves ASSIGNED. Backend
 transactions remain authoritative. Stale or uncertain outcomes block another
 submission until the latest record is inspected. No mutation is automatically retried.
-Request detail includes its available work summary; full work tracking is a later slice.
+Request detail includes its available work summary and links to role-scoped work tracking.
 
 ## Dispatch and execution rules
 
@@ -110,30 +110,33 @@ The implemented screens share editorial typography, readable card/detail surface
 responsive icon navigation and the original emerald/zinc preset. Public composition
 is server-rendered; the homepage streams only its featured catalog. Authentication,
 queues, wizard steps, timelines and recovery screens use the same visual hierarchy.
-Official Base UI Accordion and Separator join the existing shadcn controls.
+Preset-matched shadcn Select, Card, Collapsible, NavigationMenu, Empty and Pagination
+compositions replace browser-native dropdowns and custom panel controls. Native
+link semantics remain intact with shadcn button styles.
 
-Motion 14.0.0 uses the mini React API for one-time transform/opacity entry effects.
-Reduced motion disables custom effects and generated overlay/skeleton animation.
-Pointer hover effects are restricted to suitable devices; no scroll interception or
-perpetual decorative loops are present. The `brand-ink` alias uses existing preset
-colors to make dark-mode text readable. See [design refinement](design-refinement.md)
-for composition, browser coverage, performance observations and precise limits.
+GSAP 3.15.0 owns marketing SplitText and scroll-linked image/card depth. Shared entry
+effects use native Web Animations; Motion is removed. Reduced motion reverts text and
+transforms. A bounded Chromium SVG backdrop lens genuinely displaces background
+pixels; other engines receive an explicitly translucent fallback. Public FAQ uses
+original editorial image cards with accessible in-card disclosures. See
+[optical design](optical-design.md), [asset provenance](editorial-assets.md) and
+[design verification](design-refinement.md) for decisions and precise limits.
 
 ## Verification and remaining limits
 
 - `npm run check`: formatting, typed lint, generated route types, TypeScript and
-  73 ordinary tests. Four real-Redis tests require SESSION_TEST_REDIS_URL.
-- With the dedicated Redis URL all 77 tests pass: session concurrency/integrity,
+  81 ordinary tests. Four real-Redis tests require SESSION_TEST_REDIS_URL.
+- With the dedicated Redis URL all 85 tests pass: session concurrency/integrity,
   role return paths, scheduling bounds, strict write schemas, legal transitions,
   timezone conversion, cancellation and mutation recovery classification.
 - `npm run build -- --webpack`: production build passes. Default Turbopack was
   previously blocked by this execution environment's port restriction; its default
   command is preserved. Hosted CI has not run because no push occurred.
-- Nine real-API Chromium workflows and six design scenarios are verified. The six
-  design checks passed again in the final 12 public/auth/demo scenarios, including no-JavaScript
-  homepage/process content, reduced motion, keyboard FAQ, explicit password visibility,
-  320–1440px public/auth layouts and light/dark brand-text contrast. Demo queues also
-  verify readable status labels in both themes.
+- The Chromium suite has nine real-API workflows, six design scenarios and six
+  optical/component scenarios. Coverage includes no-JavaScript homepage/process,
+  reduced motion and cleanup, keyboard FAQ, password visibility, 320–1440px
+  public/auth layouts, theme contrast, actual optical displacement and styled Select
+  keyboard/form behavior. Demo queues verify readable status labels in both themes.
 - Operational coverage against the hosted API and production frontend includes:
   catalog/mobile/auth/customer flows, plus stale review, qualified dispatch,
   competing-slot rejection, price-preserving reschedule, progress, stale technician
@@ -149,8 +152,10 @@ for composition, browser coverage, performance observations and precise limits.
 - Real Google OAuth still needs configured authorized origins/client ID and a human
   account. Refresh HTTP behavior is stubbed in focused Redis tests; browsers do not
   wait 15 minutes to exercise actual backend refresh replay or distributed failover.
-- Production HTTPS cookie behavior, Firefox/WebKit and a complete accessibility
-  audit remain deployment/review verification. No claim of these checks is made.
+- Firefox public fallback, keyboard/control and responsive smoke checks pass.
+  WebKit cannot launch because host system libraries are missing. Production HTTPS
+  cookies, actual Safari/mobile hardware and a complete accessibility audit remain
+  deployment/review verification. No claim of these checks is made.
 
 Payment-return and current-skill read gaps remain as described in the route plan.
 No unsupported contact channel, technician earnings or operational report was invented.

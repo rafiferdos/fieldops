@@ -16,6 +16,8 @@ The backend is a separate repository and has not been modified.
 - [Target route, role and API mapping](docs/route-plan.md)
 - [Screen flows and design handoff](docs/screen-flows.md)
 - [Design refinement and motion verification](docs/design-refinement.md)
+- [Optical design, research and component decisions](docs/optical-design.md)
+- [Original editorial imagery and generation prompts](docs/editorial-assets.md)
 - [Dispatch/execution plan and recovery rules](docs/dispatch-execution-plan.md)
 
 Twenty route templates exist. Route count alone does not establish completion of
@@ -77,14 +79,14 @@ npm run start
 ```
 
 `check` runs Prettier, typed ESLint, generated route types, TypeScript and Vitest.
-The ordinary suite has 73 tests. Enable four additional real-Redis concurrency
+The ordinary suite has 81 tests. Enable four additional real-Redis concurrency
 checks using the dedicated local store:
 
 ```bash
 SESSION_TEST_REDIS_URL=redis://127.0.0.1:6397 npm test
 ```
 
-CI installs from the lockfile and provisions a pinned Redis image for all 77 tests,
+CI installs from the lockfile and provisions a pinned Redis image for all 85 tests,
 checks and build. Official GitHub actions use immutable revisions. CI does not
 deploy. A hosted CI run has not occurred because this repository has not been pushed.
 
@@ -111,17 +113,21 @@ record no auth traces/video. Opted-in test files wait for a fresh authentication
 window before running, respecting the backend's ten-logins-per-minute limit. Browser
 output folders and environment files are ignored.
 
-All 77 unit/integration checks pass. Nine real-API workflows and six design/browser
-scenarios are verified. The final 12 public/auth/demo scenarios were rerun
-successfully after rendering, queue-footer and status-contrast corrections. They cover no-JavaScript public content, reduced motion,
-keyboard disclosures, password visibility, 320–1440px layouts and theme contrast.
-Dispatch coverage includes stale review, competing assignment and price-preserving
-reschedule. Execution coverage commits a real completion, deliberately loses its
-browser response, preserves the report and explicitly reads the result without
-automatic replay. A separate identical backend completion replay returns the same invoice.
+All 85 unit/integration checks pass. The Chromium suite contains nine real-API
+workflows, six design scenarios and six optical/component scenarios. It covers
+no-JavaScript public content, reduced motion and cleanup, keyboard disclosures,
+password visibility, 320–1440px layouts, theme contrast, actual backdrop displacement
+and styled Select submission. Dispatch coverage includes stale review, competing
+assignment and price-preserving reschedule. Execution commits a real completion,
+deliberately loses its browser response, preserves the report and explicitly reads
+the result without automatic replay. A separate identical backend completion replay
+returns the same invoice. See [verification results](docs/design-refinement.md).
+
 Real Redis is used for refresh coordination; its backend HTTP rotation response is
-stubbed. Real Google OAuth, backend replay after token expiry, distributed failover,
-Firefox/WebKit and deployment HTTPS behavior are not claimed as verified.
+stubbed. Firefox public fallback/control smoke checks pass. WebKit cannot launch
+on this host because required system libraries are missing. Real Google OAuth,
+backend replay after token expiry, distributed failover, actual Safari/mobile
+hardware and deployment HTTPS behavior are not claimed as verified.
 
 ## Architecture and engineering rules
 
@@ -159,7 +165,8 @@ is parsed; there is no any, unsafe cast, ignored type error or unrestricted API 
 
 Preserve the exact preset: Base UI Rhea, zinc/emerald semantic tokens, Outfit headings,
 Geist body and supported light/dark themes. Use installed shadcn controls, including
-NativeSelect, Accordion, Separator, Sheet, AlertDialog and Toast. Do not use browser alert/confirm. Add a
+Select, Card, Collapsible, NavigationMenu, Empty, Pagination, Separator, Sheet,
+AlertDialog and Toast. Navigation uses shadcn button variants with native link semantics. Do not use browser alert/confirm. Add a
 component with the pinned CLI only when a real screen needs it:
 
 ```bash
@@ -190,8 +197,9 @@ Verified against official documentation and registry metadata on October 8, 2026
   registry ESLint 10.12.0 is outside them. ESLint 9's end of support remains a limitation.
 - Zod 4.6.5, React Hook Form 7.89.0, resolvers 5.9.1 and Redis client 6.3.0.
   Forms support React 19/Zod 4; Node 24 satisfies the client runtime requirement.
-- Motion 14.0.0 is pinned. Entry effects use `motion/react-mini`, native animations,
-  one-time observers and reduced-motion handling; heavier drag/layout features are unused.
+- GSAP 3.15.0 and @gsap/react 2.1.2 were verified on October 9, 2026. Marketing
+  uses scoped SplitText/ScrollTrigger; shared entry effects use native Web Animations.
+  Motion was removed to avoid overlapping animation engines.
 - Vitest 5.0.3 and Playwright 1.64.0. The pinned official Redis test image reports 8.10.2.
 
 The audit still has nine high-severity development/build-tool findings through braces

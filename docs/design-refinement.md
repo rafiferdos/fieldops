@@ -1,109 +1,109 @@
-# Design refinement
+# Design refinement and verification
 
-## Scope
+## Implemented direction
 
-Refine every implemented public, authentication and role-based screen without
-changing API contracts, authentication, permissions or payment behavior. Preserve
-the exact emerald/zinc shadcn preset and the Outfit/Geist type pairing.
+Preserve preset `b2w3Yl9Ygc`, its emerald/zinc tokens and self-hosted Outfit/Geist
+variable fonts. Oversized public typography, original material photography and
+restrained workspace density share the same controls, reading surfaces and focus
+language. The [optical design](optical-design.md) records primary research and
+implementation decisions; [editorial assets](editorial-assets.md) records the
+built-in imagegen mode, local output paths and exact prompts.
 
-## Visual direction
+The hero pairs word and tool arrival with a scroll-linked image zoom and shallow
+3D card rotation on wide screens. GSAP 3.15.0 and @gsap/react 2.1.2 own only this
+marketing choreography. SplitText preserves the heading's accessible name, gives
+descenders mask clearance and removes temporary wrappers after entry. Scoped
+useGSAP/matchMedia cleanup restores text, styles and ScrollTriggers when preferences
+change or routes unmount. No scroll interception, pinning or perpetual loops exist.
+Shared entry effects use one-shot native Web Animations, cancel on reduced motion
+and leave server-rendered content visible before scripts run. Motion is removed.
 
-- Use generous editorial typography on public pages, compact hierarchy in workspaces.
-- Give surfaces a consistent border, radius, rhythm and restrained elevation.
-- Replace decorative placeholder metrics with an explicitly illustrated service journey.
-- Keep service prices and all operational records sourced from the existing API.
-- Use official preset-matched shadcn components for controls, disclosure and overlays.
-- Make workspace navigation clear on desktop and keep the accessible mobile Sheet.
-- Separate request decisions, visit progress and invoice settlement visually.
+The floating navbar uses shadcn NavigationMenu, Button styles and mobile Sheet.
+One translucent themed material replaces stacked solid backgrounds. A bounded
+independent Snell-law displacement map bends the actual backdrop in Chromium;
+foreground controls stay unfiltered. The map updates only on resize, with no
+continuous optical animation loop. Other engines get a translucent blur fallback,
+which is not described as Liquid Glass or Apple's exact native rendering. Increased
+contrast, reduced transparency and forced colors disable the optical filter.
 
-## Motion rules
+FAQ uses shadcn Card and Collapsible with original editorial images, a rotating
+plus control and an answer inside each card. All five backend-contract answers
+remain available, including without JavaScript. Payment claims require provider
+verification; a redirect is never presented as payment success.
 
-- Pin stable Motion 14.0.0, verified against the npm registry. Use its mini React
-  API for short native Web Animations; do not load layout/drag features.
-- Animate opacity and transforms only. Never animate operational status or fabricate
-  progress. Avoid perpetual animations, scroll hijacking and cursor effects.
-- Render readable server content before JavaScript. Enhance viewport entry once,
-  disconnect observers afterwards and cancel effects when the user requests less motion.
-- Respect reduced motion in custom CSS and official overlays/skeletons.
-- Keep fields mounted through wizard steps; animate their presentation without
-  delaying validation, focus, submit or conflict recovery.
-- Use CSS for button, link and input feedback. Restrict hover movement to fine pointers.
+## Component consistency
 
-## Checkpoints and verification
+- Catalog/request/work filters, wizard service, review decision and technician
+  selection share the preset-matched shadcn Select composition. The library owns
+  popup semantics, keyboard/focus and selection; Controllers retain form validation.
+- Cards compose auth, filters, profile, request/work metadata and operational panels.
+  Reused DetailPanel retains real description-list semantics inside its Card.
+- Empty/Pagination, NavigationMenu/Sheet, AlertDialog and Toast use supported shadcn
+  primitives. Navigation uses shadcn button variants on actual links; action controls
+  remain buttons. Semantic HTML defines layout, headings, lists, labels and forms.
+- Field controls and buttons have 44px minimum touch targets. Long select options
+  wrap, and hidden library inputs do not alter the field's vertical alignment.
+- Preset colors remain unchanged. `brand-ink` maps to primary in light mode and the
+  existing chart-2 token in dark mode. Browser checks require 4.5:1 text contrast in
+  both themes; operational status is always written explicitly.
 
-1. Shared design/motion foundation, with readable no-JavaScript output.
-2. Public journey, catalog, service detail, about and FAQ.
-3. Authentication, workspace navigation, queues, detail panels and wizard.
-4. Browser verification, accessibility/performance corrections and documentation.
+The homepage streams only its API catalog. Known catalog errors are contained
+locally so the headline, navigation and journey stay readable. Public route-wide
+loading boundaries cannot hide the whole no-JavaScript shell. Auth/workspace
+loading and interactive-account requirements remain explicit.
 
-Run formatting, typed lint, strict TypeScript, unit tests and a production build
-at each completed checkpoint. Verify real catalog/navigation behavior, keyboard
-and Sheet focus, reduced motion, no-JavaScript visibility, both themes, mobile
-widths, and role-based screens. Reuse the existing real-API workflow suite after
-interaction changes. Document measurements and limits; do not claim universal
-frame rates or untested browser/device performance. Keep commits meaningful,
-buildable and scoped; do not pad history to reach an arbitrary count.
+## Verification — October 9, 2026
 
-## Official references
+Formatting, typed lint, generated route types, strict TypeScript, all 85 tests
+(81 ordinary plus four real-Redis integration tests) and the supported Webpack
+production build pass. The new lens tests validate geometry bounds, memory size,
+neutral centers and symmetric refraction. CI has not run remotely because nothing
+was pushed.
 
-- [Motion mini and bundle size](https://motion.dev/docs/react-reduce-bundle-size)
-- [Motion accessibility](https://motion.dev/docs/react-accessibility)
-- [shadcn Base UI Accordion](https://ui.shadcn.com/docs/components/base/accordion)
+The Chromium suite adds six optical/component scenarios: accessible hero and route
+cleanup; live reduced-motion transform restoration; actual spatial displacement
+against an identical blur-only reference; increased-contrast fallback; all five FAQ
+answers and close controls fitting at 320px; and styled Select keyboard dismissal,
+selection and GET submission. Existing checks cover no-JavaScript content, keyboard
+FAQ, password visibility, both-theme contrast and public/auth layouts from 320px to
+1440px. All 21 scenarios pass with automatic retries disabled, including the real-API
+workflow suite after interaction changes. Only approved disposable records were
+created; pre-existing work was not progressed.
+
+A separate Firefox smoke run verified the translucent fallback, both themes, FAQ
+keyboard operation, shadcn Select, catalog fit at 320/390/768/1440px, the accessible
+headline and reduced motion, without page errors. WebKit could not launch because
+this host lacks its ICU/XML/Flite and related system libraries; no system packages
+were changed. Actual Safari, physical mobile performance, assistive-technology
+review and deployment HTTPS behavior remain unverified.
+
+Public desktop/mobile screenshots are local review artifacts, not committed golden
+fixtures. The four original PNGs are optimized responsively through Next Image with
+reserved geometry. They are illustrative, not evidence of actual staff or jobs.
+
+## Production performance observation
+
+The final local production Chromium run used a 1440 × 1000 viewport, a warm cache
+and 4× CPU slowdown. Across 120 frames while scrolling the homepage, the median
+frame interval was 16.7ms, p95 17.4ms and maximum 17.8ms. Observed cumulative layout
+shift was 0.014. One 63ms startup long task occurred; none occurred during sampled
+scrolling, and no page errors were reported. This is one desktop simulation, not
+a universal frame-rate guarantee, a Core Web Vitals field assessment or an actual
+slow-phone measurement.
+
+All 21 Chromium scenarios passed together with retries disabled. After the last
+class-merging and 44px-target polish, all 15 affected public/design/optical scenarios
+passed again without repeating external writes. Firefox's final 320px light/dark
+fallback and composed-control geometry smoke checks also passed. Runtime dependency
+audit reported zero findings; the README retains the separate development-tool
+advisory limitations. Tracked files were checked against local private values
+without displaying them. Backend source remained clean; no push/deploy occurred.
+
+## References
+
+- [Apple: Meet Liquid Glass](https://developer.apple.com/videos/play/wwdc2025/219/)
+- [Original SVG refraction study](https://kube.io/blog/liquid-glass-css-svg/)
+- [Community implementation and browser limits](https://github.com/Meapri/liquid-glass-web)
+- [GSAP React cleanup](https://gsap.com/resources/React/)
+- [shadcn Base UI Select](https://ui.shadcn.com/docs/components/base/select)
 - [Animation performance](https://web.dev/articles/animations-guide)
-
-## Implemented composition
-
-Public pages now have an editorial hero, a clearly labelled workflow illustration,
-service cards with API prices, a sticky process section, role explanations and a
-connected footer. A single available service gets a useful next-step panel instead
-of two empty catalog columns. FAQ uses the generated Base UI Accordion.
-
-Authentication has a server-rendered editorial panel, a focused form surface,
-explicit password visibility and role demo controls. Workspaces use icon navigation,
-an accessible mobile Sheet, readable filters, state-labelled cards, detail surfaces,
-a connected event timeline and consistent recovery screens. Wizard transitions keep
-fields mounted and return keyboard focus to the heading on both forward/back steps.
-
-All preset color values remain intact. `brand-ink` uses the preset's primary token
-in light mode and existing chart-2 token in dark mode. This fixes small accent text
-that previously measured approximately 2.61:1 against the dark background. Browser
-checks require at least 4.5:1 in both themes; state labels do not rely on color alone.
-
-The homepage shell and catalog are separate Server Components. Only the API-backed
-catalog uses a local Suspense skeleton. Public route-wide loading boundaries are
-removed so they cannot conceal the entire server-rendered shell when JavaScript is
-unavailable. Auth/workspace loading boundaries remain. The streamed catalog and
-interactive account/operational flows require JavaScript; the fallback says so.
-
-## Performance observation
-
-A local production Chromium run with 4× CPU slowdown sampled 120 animation frames
-while scrolling the homepage. It reported median 16.7 ms and p95 17.2 ms frame
-intervals, cumulative layout shift 0, and no browser errors. Two startup long tasks
-were observed at 50 ms and 131 ms. This is one desktop simulation, not a universal
-frame-rate guarantee, a Core Web Vitals field assessment, or an actual slow-phone test.
-
-Entry effects use the mini Motion API and native Web Animations. Hover movement is
-limited to fine pointers. There are no infinite background effects, video downloads,
-scroll interception, drag/layout animation packages or custom dialog replacements.
-Runtime dependency audit reported zero findings after adding Motion; the previously
-documented development-tool advisories remain. Firefox/WebKit, physical mobile
-hardware, assistive-technology review and deployment measurements remain unverified.
-
-## Verification result — 2026-10-09
-
-All 77 unit/integration checks and the supported Webpack production build pass.
-The nine existing real-API workflows pass with the refined interface, including
-320/768/1440px role workspace fit, mobile Sheet focus and preserved wizard fields/focus.
-Six design scenarios pass on the final public-rendering build: no-JavaScript
-homepage/process content, reduced motion and preference changes, keyboard FAQ,
-password visibility, six public/auth screens at five viewport widths, and readable
-brand-text contrast in both themes. The final 12 affected public/auth/demo scenarios
-were rerun successfully after queue-footer and status-color corrections. Demo queues
-also require readable status-label contrast in both themes. Negative labels use
-foreground text with a red indicator/tint so small text stays readable. No automatic
-test retry was enabled.
-
-All three role workspaces, the mobile wizard and a real technician work detail were
-also visually inspected. Local screenshots are review artifacts, not committed
-fixtures. Backend source and contracts remain unchanged; no push or deployment occurred.
