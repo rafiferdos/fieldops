@@ -1,3 +1,5 @@
+import { ButtonLink } from "@/shared/components/button-link"
+import { invoicePath } from "@/features/billing/schemas"
 import { DetailPanel } from "@/shared/components/detail-panel"
 import { Card } from "@/shared/ui/card"
 import Link from "next/link"
@@ -110,6 +112,14 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
               ? ` · Paid ${formatDate(work.invoice.paidAt)}`
               : ""}
           </p>
+          {role !== "TECHNICIAN" && (
+            <ButtonLink
+              variant="outline"
+              href={invoicePath(role, work.invoice.id)}
+            >
+              View invoice
+            </ButtonLink>
+          )}
         </Card>
       )}
       {work.feedback && (

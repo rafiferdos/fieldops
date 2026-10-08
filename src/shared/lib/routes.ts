@@ -7,4 +7,6 @@ export type RecordRoute = Route<
   | `/customer/work-orders/${string}`
   | `/technician/work-orders/${string}`
   | `/admin/work-orders/${string}`
+  | `/customer/invoices/${string}`
+  | `/admin/invoices/${string}`
 >

@@ -31,6 +31,21 @@ describe("authentication boundaries", () => {
       `/customer/requests/${id}`
     )
   })
+  it("restores invoice routes only within billing roles", () => {
+    const id = "00000000-0000-4000-8000-000000000001"
+    expect(safeReturnPath(`/customer/invoices/${id}`, "CUSTOMER")).toBe(
+      `/customer/invoices/${id}`
+    )
+    expect(safeReturnPath(`/admin/invoices/${id}`, "ADMIN")).toBe(
+      `/admin/invoices/${id}`
+    )
+    expect(safeReturnPath(`/customer/invoices/${id}`, "TECHNICIAN")).toBe(
+      "/technician"
+    )
+    expect(safeReturnPath(`/admin/invoices/${id}`, "CUSTOMER")).toBe(
+      "/customer"
+    )
+  })
   it("does not accept client-selected roles or weak registration passwords", () => {
     expect(
       registerSchema.safeParse({

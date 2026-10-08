@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { invoiceSchema } from "@/features/billing/schemas"
 import { requestStatusSchema } from "@/features/requests/schemas"
 import {
   firstValue,
@@ -13,17 +14,6 @@ import { workStatusSchema } from "./status"
 export const writableVersionSchema = z.number().int().min(1).max(2147483646)
 const storedVersion = z.number().int().min(1).max(2147483647)
 
-// Nested summaries are readable by technicians; the direct invoice API is not.
-const invoiceSchema = z.object({
-  id: z.uuid(),
-  workOrderId: z.uuid(),
-  customerId: z.uuid(),
-  amountMinor: z.number().int().min(0).max(1000000000),
-  currency: z.literal("BDT"),
-  status: z.enum(["UNPAID", "PAID"]),
-  issuedAt: z.iso.datetime(),
-  paidAt: z.iso.datetime().nullable(),
-})
 const feedbackSchema = z.object({
   id: z.uuid(),
   workOrderId: z.uuid(),

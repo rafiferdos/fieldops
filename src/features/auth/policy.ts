@@ -41,6 +41,16 @@ export function safeReturnPath(value: unknown, role: Role): RecordRoute {
       return `/admin/requests?${url.searchParams.toString()}`
     if (role === "ADMIN" && path === "/admin/work-orders")
       return `/admin/work-orders?${url.searchParams.toString()}`
+    if (role !== "TECHNICIAN") {
+      const invoicePrefix = `/${role.toLowerCase()}/invoices/`
+      if (path.startsWith(invoicePrefix)) {
+        const id = z.uuid().safeParse(path.slice(invoicePrefix.length))
+        if (id.success)
+          return role === "ADMIN"
+            ? `/admin/invoices/${id.data}`
+            : `/customer/invoices/${id.data}`
+      }
+    }
     const workPrefix = `/${role.toLowerCase()}/work-orders/`
     if (path.startsWith(workPrefix)) {
       const id = z.uuid().safeParse(path.slice(workPrefix.length))
