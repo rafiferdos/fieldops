@@ -1,10 +1,11 @@
 "use client"
+import { Card } from "@/shared/ui/card"
 import Link from "next/link"
 import { Check } from "lucide-react"
 import { cn } from "@/shared/lib/utils"
 import { useRouter } from "next/navigation"
 import { useState, useRef } from "react"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { z } from "zod"
 import type { Service } from "@/features/services/schemas"
@@ -13,7 +14,7 @@ import { Button } from "@/shared/ui/button"
 import { Input } from "@/shared/ui/input"
 import { Label } from "@/shared/ui/label"
 import { Textarea } from "@/shared/ui/textarea"
-import { NativeSelect, NativeSelectOption } from "@/shared/ui/native-select"
+import { ChoiceSelect } from "@/shared/components/choice-select"
 import { FormMessage } from "@/shared/components/form-message"
 import { toast } from "@/shared/ui/toast"
 import { wizardSchema, dhakaInstant } from "../schemas"
@@ -38,6 +39,7 @@ export function RequestWizard({
   const advancing = useRef(false),
     submitting = useRef(false)
   const {
+    control,
     register,
     trigger,
     handleSubmit,
@@ -132,189 +134,203 @@ export function RequestWizard({
           </li>
         ))}
       </ol>
-      <form
-        onSubmit={(event) => {
-          handleSubmit(submit)(event).catch(() =>
-            setMessage("The form could not be submitted. Please try again.")
-          )
-        }}
-        className="surface space-y-6 p-6 sm:p-8"
-        noValidate
-      >
-        <h2
-          ref={heading}
-          tabIndex={-1}
-          className="font-heading text-2xl font-medium outline-none"
+      <Card className="border p-6 shadow-none sm:p-8">
+        <form
+          onSubmit={(event) => {
+            handleSubmit(submit)(event).catch(() =>
+              setMessage("The form could not be submitted. Please try again.")
+            )
+          }}
+          className="space-y-6"
+          noValidate
         >
-          {steps[step]}
-        </h2>
-        <fieldset disabled={!isReady || isSubmitting} className="space-y-5">
-          <div hidden={step !== 0} className="wizard-panel space-y-3">
-            <Label htmlFor="serviceId">Service</Label>
-            <NativeSelect
-              id="serviceId"
-              aria-invalid={!!errors.serviceId}
-              aria-describedby={
-                errors.serviceId ? "serviceId-error" : undefined
-              }
-              {...register("serviceId")}
-            >
-              <NativeSelectOption value="">Choose a service</NativeSelectOption>
-              {services.map((service) => (
-                <NativeSelectOption key={service.id} value={service.id}>
-                  {service.name} · {formatMoney(service.basePriceMinor)}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-            <FormMessage
-              id="serviceId-error"
-              message={errors.serviceId?.message}
-            />
-            {hasMore && (
-              <p className="text-sm text-muted-foreground">
-                Showing the first 100 services.{" "}
-                <Link href="/services" className="underline">
-                  Search the full catalog
-                </Link>{" "}
-                and start from your chosen service.
-              </p>
-            )}
-          </div>
-          <div hidden={step !== 1} className="wizard-panel space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="description">What needs attention?</Label>
-              <Textarea
-                id="description"
-                rows={5}
-                maxLength={2000}
-                aria-invalid={!!errors.description}
-                aria-describedby={
-                  errors.description ? "description-error" : undefined
-                }
-                {...register("description")}
+          <h2
+            ref={heading}
+            tabIndex={-1}
+            className="font-heading text-2xl font-medium outline-none"
+          >
+            {steps[step]}
+          </h2>
+          <fieldset disabled={!isReady || isSubmitting} className="space-y-5">
+            <div hidden={step !== 0} className="wizard-panel space-y-3">
+              <Label htmlFor="serviceId">Service</Label>
+              {/* Controlled composition preserves selection and RHF's validation focus. */}
+              <Controller
+                name="serviceId"
+                control={control}
+                render={({ field }) => (
+                  <ChoiceSelect
+                    id="serviceId"
+                    name={field.name}
+                    ref={field.ref}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    onBlur={field.onBlur}
+                    disabled={!isReady || isSubmitting}
+                    invalid={!!errors.serviceId}
+                    describedBy={
+                      errors.serviceId ? "serviceId-error" : undefined
+                    }
+                    placeholder="Choose a service"
+                    options={services.map((service) => ({
+                      value: service.id,
+                      label: `${service.name} · ${formatMoney(service.basePriceMinor)}`,
+                    }))}
+                  />
+                )}
               />
               <FormMessage
-                id="description-error"
-                message={errors.description?.message}
+                id="serviceId-error"
+                message={errors.serviceId?.message}
               />
+              {hasMore && (
+                <p className="text-sm text-muted-foreground">
+                  Showing the first 100 services.{" "}
+                  <Link href="/services" className="underline">
+                    Search the full catalog
+                  </Link>{" "}
+                  and start from your chosen service.
+                </p>
+              )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="address">Service address</Label>
-              <Textarea
-                id="address"
-                autoComplete="street-address"
-                maxLength={500}
-                aria-invalid={!!errors.address}
-                aria-describedby={errors.address ? "address-error" : undefined}
-                {...register("address")}
-              />
-              <FormMessage
-                id="address-error"
-                message={errors.address?.message}
-              />
+            <div hidden={step !== 1} className="wizard-panel space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="description">What needs attention?</Label>
+                <Textarea
+                  id="description"
+                  rows={5}
+                  maxLength={2000}
+                  aria-invalid={!!errors.description}
+                  aria-describedby={
+                    errors.description ? "description-error" : undefined
+                  }
+                  {...register("description")}
+                />
+                <FormMessage
+                  id="description-error"
+                  message={errors.description?.message}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">Service address</Label>
+                <Textarea
+                  id="address"
+                  autoComplete="street-address"
+                  maxLength={500}
+                  aria-invalid={!!errors.address}
+                  aria-describedby={
+                    errors.address ? "address-error" : undefined
+                  }
+                  {...register("address")}
+                />
+                <FormMessage
+                  id="address-error"
+                  message={errors.address?.message}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="preferredLocal">
+                  Preferred visit time (Dhaka, UTC+06:00)
+                </Label>
+                <Input
+                  id="preferredLocal"
+                  type="datetime-local"
+                  step={60}
+                  aria-invalid={!!errors.preferredLocal}
+                  aria-describedby={
+                    errors.preferredLocal ? "preferredLocal-error" : undefined
+                  }
+                  {...register("preferredLocal")}
+                />
+                <p className="text-xs text-muted-foreground">
+                  An administrator confirms the assigned visit schedule after
+                  review.
+                </p>
+                <FormMessage
+                  id="preferredLocal-error"
+                  message={errors.preferredLocal?.message}
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="preferredLocal">
-                Preferred visit time (Dhaka, UTC+06:00)
-              </Label>
-              <Input
-                id="preferredLocal"
-                type="datetime-local"
-                step={60}
-                aria-invalid={!!errors.preferredLocal}
-                aria-describedby={
-                  errors.preferredLocal ? "preferredLocal-error" : undefined
-                }
-                {...register("preferredLocal")}
-              />
-              <p className="text-xs text-muted-foreground">
-                An administrator confirms the assigned visit schedule after
-                review.
-              </p>
-              <FormMessage
-                id="preferredLocal-error"
-                message={errors.preferredLocal?.message}
-              />
-            </div>
-          </div>
-          {step === 2 && (
-            <dl className="wizard-panel space-y-5 rounded-2xl border bg-muted/30 p-5">
-              {[
-                ["Service", selected?.name ?? "Selected service"],
-                [
-                  "Base price",
-                  selected
-                    ? formatMoney(selected.basePriceMinor)
-                    : "See catalog",
-                ],
-                ["Description", values.description],
-                ["Address", values.address],
-                [
-                  "Preferred visit",
-                  formatDate(dhakaInstant(values.preferredLocal)),
-                ],
-              ].map(([label, value]) => (
-                <div key={label}>
-                  <dt className="text-sm text-muted-foreground">{label}</dt>
-                  <dd className="mt-1 break-words whitespace-pre-wrap">
-                    {value}
+            {step === 2 && (
+              <dl className="wizard-panel space-y-5 rounded-2xl border bg-muted/30 p-5">
+                {[
+                  ["Service", selected?.name ?? "Selected service"],
+                  [
+                    "Base price",
+                    selected
+                      ? formatMoney(selected.basePriceMinor)
+                      : "See catalog",
+                  ],
+                  ["Description", values.description],
+                  ["Address", values.address],
+                  [
+                    "Preferred visit",
+                    formatDate(dhakaInstant(values.preferredLocal)),
+                  ],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <dt className="text-sm text-muted-foreground">{label}</dt>
+                    <dd className="mt-1 break-words whitespace-pre-wrap">
+                      {value}
+                    </dd>
+                  </div>
+                ))}
+                <div>
+                  <dt className="text-sm text-muted-foreground">
+                    Price confirmation
+                  </dt>
+                  <dd className="mt-1 text-sm">
+                    The assigned visit records the service price; completion
+                    generates your invoice.
                   </dd>
                 </div>
-              ))}
-              <div>
-                <dt className="text-sm text-muted-foreground">
-                  Price confirmation
-                </dt>
-                <dd className="mt-1 text-sm">
-                  The assigned visit records the service price; completion
-                  generates your invoice.
-                </dd>
-              </div>
-            </dl>
+              </dl>
+            )}
+            <div className="flex flex-wrap gap-3">
+              {step > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    // Return keyboard users to the step heading without discarding fields.
+                    setStep((current) => current - 1)
+                    setTimeout(() => heading.current?.focus(), 0)
+                  }}
+                >
+                  Back
+                </Button>
+              )}
+              {/* Keep distinct elements so Continue cannot become a submit mid-click. */}
+              {step < 2 ? (
+                <Button
+                  key="continue"
+                  type="button"
+                  onClick={() => {
+                    void next()
+                  }}
+                >
+                  Continue
+                </Button>
+              ) : (
+                <Button
+                  key="submit"
+                  type="submit"
+                  disabled={uncertain || submitted}
+                >
+                  {isSubmitting ? "Submitting…" : "Submit request"}
+                </Button>
+              )}
+            </div>
+          </fieldset>
+          <FormMessage message={message} />
+          {uncertain && (
+            <Link href="/customer" className="inline-block text-sm underline">
+              Check My requests
+            </Link>
           )}
-          <div className="flex flex-wrap gap-3">
-            {step > 0 && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  // Return keyboard users to the step heading without discarding fields.
-                  setStep((current) => current - 1)
-                  setTimeout(() => heading.current?.focus(), 0)
-                }}
-              >
-                Back
-              </Button>
-            )}
-            {/* Keep distinct elements so Continue cannot become a submit mid-click. */}
-            {step < 2 ? (
-              <Button
-                key="continue"
-                type="button"
-                onClick={() => {
-                  void next()
-                }}
-              >
-                Continue
-              </Button>
-            ) : (
-              <Button
-                key="submit"
-                type="submit"
-                disabled={uncertain || submitted}
-              >
-                {isSubmitting ? "Submitting…" : "Submit request"}
-              </Button>
-            )}
-          </div>
-        </fieldset>
-        <FormMessage message={message} />
-        {uncertain && (
-          <Link href="/customer" className="inline-block text-sm underline">
-            Check My requests
-          </Link>
-        )}
-      </form>
+        </form>
+      </Card>
     </div>
   )
 }

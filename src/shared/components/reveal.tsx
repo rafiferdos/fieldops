@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef, type ReactNode } from "react"
-import { useAnimate } from "motion/react-mini"
 import { cn } from "@/shared/lib/utils"
 
 // Server-rendered content stays visible even when scripts or observers are unavailable.
@@ -14,7 +13,7 @@ export function Reveal({
   className?: string
   stagger?: boolean
 }) {
-  const [scope, animate] = useAnimate<HTMLDivElement>()
+  const scope = useRef<HTMLDivElement>(null)
   const entered = useRef(false)
 
   useEffect(() => {
@@ -22,7 +21,7 @@ export function Reveal({
     if (!element || entered.current) return
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)")
     if (preference.matches || !("IntersectionObserver" in window)) return
-    const animations: ReturnType<typeof animate>[] = []
+    const animations: Animation[] = []
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting || entered.current) return
@@ -32,16 +31,15 @@ export function Reveal({
         targets.forEach((target, index) => {
           if (!(target instanceof HTMLElement)) return
           animations.push(
-            animate(
-              target,
+            target.animate(
+              [
+                { opacity: 0.65, transform: "translateY(18px)" },
+                { opacity: 1, transform: "translateY(0px)" },
+              ],
               {
-                opacity: [0.65, 1],
-                transform: ["translateY(18px)", "translateY(0px)"],
-              },
-              {
-                duration: 0.65,
-                delay: Math.min(index * 0.07, 0.28),
-                ease: [0.22, 1, 0.36, 1],
+                duration: 650,
+                delay: Math.min(index * 70, 280),
+                easing: "cubic-bezier(0.22, 1, 0.36, 1)",
               }
             )
           )
@@ -53,16 +51,16 @@ export function Reveal({
       if (!preference.matches) return
       observer.disconnect()
       // Complete entry immediately if the preference changes during an animation.
-      animations.forEach((animation) => animation.complete())
+      animations.forEach((animation) => animation.cancel())
     }
     observer.observe(element)
     preference.addEventListener("change", stop)
     return () => {
       observer.disconnect()
       preference.removeEventListener("change", stop)
-      animations.forEach((animation) => animation.stop())
+      animations.forEach((animation) => animation.cancel())
     }
-  }, [animate, scope, stagger])
+  }, [stagger])
 
   return (
     <div ref={scope} className={cn(className)} data-reveal="">

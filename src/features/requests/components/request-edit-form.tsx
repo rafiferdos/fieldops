@@ -1,4 +1,5 @@
 "use client"
+import { Card } from "@/shared/ui/card"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -59,7 +60,7 @@ export function RequestEditForm({ request }: { request: ServiceRequest }) {
     }
   }
   return (
-    <section className="surface mt-10 max-w-4xl p-6 sm:p-8">
+    <Card className="mt-10 max-w-4xl border p-6 shadow-none sm:p-8">
       <h2 className="mb-5 font-heading text-xl font-medium">
         Edit pending request
       </h2>
@@ -142,6 +143,6 @@ export function RequestEditForm({ request }: { request: ServiceRequest }) {
           </Button>
         )}
       </form>
-    </section>
+    </Card>
   )
 }

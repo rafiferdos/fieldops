@@ -1,3 +1,4 @@
+import { Card } from "@/shared/ui/card"
 import type { ReactNode } from "react"
 import { ShieldCheck } from "lucide-react"
 import { ThemeToggle } from "@/shared/components/theme-toggle"
@@ -26,11 +27,13 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <ServiceJourney />
         </aside>
         <main id="main-content" className="mx-auto w-full max-w-lg">
-          <Reveal className="surface p-6 sm:p-9 [&_h1]:text-4xl">
-            <div className="mb-7 flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-brand-ink">
-              <ShieldCheck aria-hidden="true" className="size-5" />
-            </div>
-            {children}
+          <Reveal>
+            <Card className="gap-0 border p-6 shadow-none sm:p-9 [&_h1]:text-4xl">
+              <div className="mb-7 flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-brand-ink">
+                <ShieldCheck aria-hidden="true" className="size-5" />
+              </div>
+              {children}
+            </Card>
           </Reveal>
           <p className="mt-6 text-center text-xs text-muted-foreground">
             Your service details, in your own workspace.

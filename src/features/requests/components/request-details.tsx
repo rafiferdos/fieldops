@@ -1,3 +1,5 @@
+import { Card } from "@/shared/ui/card"
+import { DetailPanel } from "@/shared/components/detail-panel"
 import Link from "next/link"
 import { ArrowLeft, ArrowUpRight, CalendarDays } from "lucide-react"
 import type { ServiceRequest } from "@/features/requests/schemas"
@@ -47,7 +49,7 @@ export function RequestDetails({
       >
         {request.status}
       </Badge>
-      <dl className="detail-grid mt-7 max-w-4xl">
+      <DetailPanel className="mt-7 max-w-4xl">
         {[
           ["Description", request.description],
           ["Service address", request.address],
@@ -65,9 +67,9 @@ export function RequestDetails({
             <dd className="mt-2 break-words whitespace-pre-wrap">{value}</dd>
           </div>
         ))}
-      </dl>
+      </DetailPanel>
       {request.workOrder && (
-        <section className="surface mt-8 max-w-4xl p-6 sm:p-8">
+        <Card className="mt-8 max-w-4xl gap-0 border p-6 shadow-none sm:p-8">
           <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
             <CalendarDays
               aria-hidden="true"
@@ -87,7 +89,7 @@ export function RequestDetails({
             {formatDate(request.workOrder.scheduledStart)} →{" "}
             {formatDate(request.workOrder.scheduledEnd)}
           </p>
-        </section>
+        </Card>
       )}
       {role === "CUSTOMER" && request.status === "PENDING" && (
         <RequestEditForm key={request.version} request={request} />

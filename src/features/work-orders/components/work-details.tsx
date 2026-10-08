@@ -1,3 +1,5 @@
+import { DetailPanel } from "@/shared/components/detail-panel"
+import { Card } from "@/shared/ui/card"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -43,7 +45,7 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
           Request: {work.request.status}
         </Badge>
       </div>
-      <dl className="detail-grid mt-7 max-w-4xl">
+      <DetailPanel className="mt-7 max-w-4xl">
         {[
           ["Description", work.request.description],
           ["Service address", work.request.address],
@@ -63,7 +65,7 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
             <dd className="mt-2 break-words whitespace-pre-wrap">{value}</dd>
           </div>
         ))}
-      </dl>
+      </DetailPanel>
       {role !== "TECHNICIAN" && (
         <Link
           href={
@@ -78,17 +80,17 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
         </Link>
       )}
       {work.report && (
-        <section className="surface mt-8 max-w-4xl space-y-4 p-6 sm:p-8">
+        <Card className="mt-8 max-w-4xl border p-6 shadow-none sm:p-8">
           <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
             <FileText aria-hidden="true" className="size-5 text-brand-ink" />
             Completion report
           </h2>
           <p className="break-words whitespace-pre-wrap">{work.report}</p>
-        </section>
+        </Card>
       )}
       {/* The completion response owns invoice creation; this screen only reads its snapshot. */}
       {work.invoice && (
-        <section className="surface mt-8 max-w-4xl space-y-4 p-6 sm:p-8">
+        <Card className="mt-8 max-w-4xl border p-6 shadow-none sm:p-8">
           <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
             <Receipt aria-hidden="true" className="size-5 text-brand-ink" />
             Invoice summary
@@ -108,10 +110,10 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
               ? ` · Paid ${formatDate(work.invoice.paidAt)}`
               : ""}
           </p>
-        </section>
+        </Card>
       )}
       {work.feedback && (
-        <section className="surface mt-8 max-w-4xl space-y-4 p-6 sm:p-8">
+        <Card className="mt-8 max-w-4xl border p-6 shadow-none sm:p-8">
           <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
             <Star aria-hidden="true" className="size-5 text-brand-ink" />
             Customer feedback
@@ -125,9 +127,9 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
               {work.feedback.comment}
             </p>
           )}
-        </section>
+        </Card>
       )}
-      <section className="surface mt-10 max-w-4xl space-y-5 p-6 sm:p-8">
+      <Card className="mt-10 max-w-4xl border p-6 shadow-none sm:p-8">
         <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
           Visit timeline
         </h2>
@@ -165,7 +167,7 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
           ))}
         </ol>
         {!work.timeline.length && <p>No timeline events are available.</p>}
-      </section>
+      </Card>
     </>
   )
 }

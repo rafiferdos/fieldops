@@ -74,9 +74,11 @@ export function WorkspaceNav({ role }: { role: Role }) {
     { href: "/account" as const, label: "Account", icon: UserRound },
   ]
   const navigation = links.map((link) => (
-    <Link
+    <Button
       key={link.href}
-      href={link.href}
+      render={<Link href={link.href} />}
+      nativeButton={false}
+      variant="ghost"
       onClick={() => setOpen(false)}
       aria-current={
         pathname === link.href ||
@@ -88,7 +90,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
     >
       <link.icon aria-hidden="true" className="size-4" />
       {link.label}
-    </Link>
+    </Button>
   ))
   return (
     <>

@@ -19,7 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card"
-import { NativeSelect, NativeSelectOption } from "@/shared/ui/native-select"
+import { ChoiceSelect } from "@/shared/components/choice-select"
 
 // Customer and admin queues share presentation; the server read enforces each scope.
 export async function RequestList({
@@ -50,60 +50,65 @@ export async function RequestList({
           ) : undefined
         }
       />
-      <form
-        action={pathname}
-        className="filter-panel mb-8 grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto_auto]"
-      >
-        <div className="space-y-2">
-          <Label htmlFor="request-search">Search requests</Label>
-          <Input
-            key={query.q}
-            id="request-search"
-            name="q"
-            maxLength={100}
-            defaultValue={query.q}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="request-status">Status</Label>
-          <NativeSelect
-            key={query.status ?? "all"}
-            id="request-status"
-            name="status"
-            defaultValue={query.status ?? ""}
+      <Card className="mb-8 border p-5 shadow-none">
+        {/* Keep GET submission semantics while sharing the shadcn filter surface. */}
+        <form
+          action={pathname}
+          className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto_auto]"
+        >
+          <div className="space-y-2">
+            <Label htmlFor="request-search">Search requests</Label>
+            <Input
+              key={query.q}
+              id="request-search"
+              name="q"
+              maxLength={100}
+              defaultValue={query.q}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="request-status">Status</Label>
+            <ChoiceSelect
+              key={query.status ?? "all"}
+              id="request-status"
+              name="status"
+              defaultValue={query.status ?? ""}
+              options={[
+                { value: "", label: "All statuses" },
+                ...["PENDING", "APPROVED", "REJECTED", "CANCELLED"].map(
+                  (status) => ({ value: status, label: status })
+                ),
+              ]}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="request-sort">Sort by</Label>
+            <ChoiceSelect
+              key={query.sort}
+              id="request-sort"
+              name="sort"
+              defaultValue={query.sort}
+              options={[
+                { value: "newest", label: "Newest first" },
+                { value: "oldest", label: "Oldest first" },
+                { value: "preferred_start_asc", label: "Preferred visit" },
+              ]}
+            />
+          </div>
+          {query.serviceId && (
+            <input type="hidden" name="serviceId" value={query.serviceId} />
+          )}
+          <input type="hidden" name="limit" value={query.limit} />
+          <Button type="submit">Apply filters</Button>
+          <Button
+            variant="ghost"
+            nativeButton={false}
+            render={<Link href={pathname} />}
           >
-            <NativeSelectOption value="">All statuses</NativeSelectOption>
-            {["PENDING", "APPROVED", "REJECTED", "CANCELLED"].map((status) => (
-              <NativeSelectOption key={status} value={status}>
-                {status}
-              </NativeSelectOption>
-            ))}
-          </NativeSelect>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="request-sort">Sort by</Label>
-          <NativeSelect
-            key={query.sort}
-            id="request-sort"
-            name="sort"
-            defaultValue={query.sort}
-          >
-            <NativeSelectOption value="newest">Newest first</NativeSelectOption>
-            <NativeSelectOption value="oldest">Oldest first</NativeSelectOption>
-            <NativeSelectOption value="preferred_start_asc">
-              Preferred visit
-            </NativeSelectOption>
-          </NativeSelect>
-        </div>
-        {query.serviceId && (
-          <input type="hidden" name="serviceId" value={query.serviceId} />
-        )}
-        <input type="hidden" name="limit" value={query.limit} />
-        <Button type="submit">Apply filters</Button>
-        <Link href={pathname} className="text-sm underline">
-          Clear
-        </Link>
-      </form>
+            Clear
+          </Button>
+        </form>
+      </Card>
       {query.serviceId && (
         <p className="mb-5 text-sm text-muted-foreground">
           Filtered by service.{" "}

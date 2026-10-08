@@ -1,3 +1,4 @@
+import { chooseOption } from "./helpers/choice-select"
 import { randomUUID } from "node:crypto"
 import { expect, test } from "@playwright/test"
 import { respectAuthWindow } from "./helpers/auth-window"
@@ -21,7 +22,7 @@ test("real catalog search/sort, empty state, URL history and service entry", asy
     page.getByRole("link", { name: "View service" }).first()
   ).toBeVisible()
   await page.getByLabel("Search services").fill("no-match-" + randomUUID())
-  await page.getByLabel("Sort by").selectOption("price_asc")
+  await chooseOption(page, "Sort by", "Price: low to high")
   await page.getByRole("button", { name: "Apply filters" }).click()
   await expect(page).toHaveURL(/sort=price_asc/)
   await expect(
@@ -196,7 +197,8 @@ test("real disposable customer registration, request create/edit/cancel and fore
     .getByRole("link", { name: "New request", exact: true })
     .last()
     .click()
-  await page.getByLabel("Service", { exact: true }).selectOption({ index: 1 })
+  await page.getByRole("combobox", { name: "Service", exact: true }).click()
+  await page.getByRole("option").first().click()
   await page.getByRole("button", { name: "Continue", exact: true }).click()
   const description = `Frontend verification ${marker}`
   await page.getByLabel("What needs attention?").fill(description)

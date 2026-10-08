@@ -11,6 +11,10 @@ before changing domain behavior. Exactly three roles: CUSTOMER, TECHNICIAN, ADMI
 Use Node 24 LTS, strict TypeScript, App Router and the requested shadcn preset.
 Keep the npm lockfile and meaningful, buildable commits. Do not push or deploy
 without a request. Preserve theme tokens and supported toast/dialog patterns.
+Use preset-matched shadcn components for visible interactive controls and reusable
+UI surfaces by default. Use styled Select rather than browser-native dropdowns.
+Compose supported primitives for custom layouts; retain semantic HTML for document
+structure, labels, headings, forms and nonvisual form fields.
 
 Routes compose feature modules. Colocate feature schemas, types, hooks and UI;
 shared code and infrastructure must not depend on features or routes. Use Server

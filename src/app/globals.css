@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "../features/marketing/styles/editorial.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -155,37 +156,65 @@
     @apply outline-offset-4 focus-visible:outline-2 focus-visible:outline-ring;
   }
   [data-slot="input"],
-  [data-slot="native-select"],
+  [data-slot="select-trigger"],
   [data-slot="textarea"] {
     min-height: 2.75rem;
   }
   [data-slot="button"],
   .group\/button {
-    min-height: 2.5rem;
+    min-height: 2.75rem;
     transition-property:
       background-color, color, border-color, box-shadow, transform;
     transition-duration: 180ms;
   }
   [data-slot="button"]:has(svg:only-child) {
-    min-width: 2.5rem;
+    min-width: 2.75rem;
   }
 }
 
 @layer components {
+  /* A single tinted optical material keeps contrast without an opaque inner panel. */
+  .liquid-lens {
+    position: relative;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklch, var(--foreground) 12%, transparent);
+    box-shadow:
+      0 8px 32px -18px color-mix(in oklch, var(--foreground) 30%, transparent),
+      inset 0 1px 0 color-mix(in oklch, var(--background) 80%, transparent);
+  }
+  .liquid-lens-material {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: color-mix(in oklch, var(--background) 72%, transparent);
+    backdrop-filter: blur(14px);
+    box-shadow:
+      inset 0 1px 1px color-mix(in oklch, var(--background) 85%, transparent),
+      inset 0 -1px 1px color-mix(in oklch, var(--foreground) 14%, transparent);
+  }
+  .liquid-lens[data-optics="refraction"] .liquid-lens-material {
+    background: color-mix(in oklch, var(--background) 72%, transparent);
+  }
+  .nav-island {
+    margin: 6px;
+    border-radius: 999px;
+  }
+  .nav-link {
+    @apply flex items-center gap-1 rounded-full px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted aria-[current=page]:bg-muted;
+  }
+  .nav-link-arrow {
+    @apply size-3.5 text-muted-foreground;
+    transition: transform 220ms ease;
+  }
+  .nav-link:hover .nav-link-arrow {
+    transform: translate(2px, -2px);
+  }
+  .nav-sign-in {
+    @apply inline-flex min-h-10 items-center gap-2 rounded-full bg-foreground px-4 text-sm font-medium text-background transition-opacity hover:opacity-85;
+  }
   .eyebrow {
     @apply text-xs font-semibold tracking-[0.18em] text-brand-ink uppercase;
-  }
-  .surface {
-    @apply rounded-3xl border bg-card text-card-foreground shadow-xs;
-  }
-  .filter-panel {
-    @apply rounded-2xl border bg-card p-5 shadow-xs;
-  }
-  .detail-grid {
-    @apply grid gap-x-8 gap-y-6 rounded-3xl border bg-card p-6 sm:grid-cols-2 sm:p-8;
-  }
-  .detail-grid > div {
-    @apply min-w-0;
   }
   .text-link {
     @apply inline-flex items-center gap-2 text-sm font-medium text-brand-ink underline-offset-4 hover:underline;
@@ -209,6 +238,32 @@
   }
   .group\/button:hover:not(:disabled) {
     transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 639px) {
+  .nav-island {
+    min-height: 3.5rem;
+    padding-inline: 0.5rem;
+  }
+  .nav-island .group > span:first-child {
+    display: none;
+  }
+  .nav-sign-in {
+    padding-inline: 0.8rem;
+  }
+  .nav-sign-in > svg {
+    display: none;
+  }
+}
+
+/* Transparency preferences override both the native fallback and SVG enhancement. */
+@media (prefers-reduced-transparency: reduce),
+  (prefers-contrast: more),
+  (forced-colors: active) {
+  .liquid-lens-material {
+    backdrop-filter: none !important;
+    background: var(--background) !important;
   }
 }
 

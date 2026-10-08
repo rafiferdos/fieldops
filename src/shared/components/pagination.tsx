@@ -1,6 +1,12 @@
-import Link from "next/link"
 import type { Route } from "next"
 import { queryString } from "@/shared/lib/list-query"
+import {
+  Pagination as PaginationRoot,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/shared/ui/pagination"
 
 export function Pagination({
   pathname,
@@ -25,25 +31,25 @@ export function Pagination({
     return `${pathname}?${queryString({ ...query, page: next })}`
   }
   return (
-    <nav
+    <PaginationRoot
       aria-label="Results pagination"
       className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t pt-5 text-sm"
     >
       <p className="text-muted-foreground">
         {total} results · Page {page} of {Math.max(1, totalPages)}
       </p>
-      <div className="flex gap-5">
+      <PaginationContent>
         {page > 1 && (
-          <Link className="underline underline-offset-4" href={href(page - 1)}>
-            Previous
-          </Link>
+          <PaginationItem>
+            <PaginationPrevious href={href(page - 1)} />
+          </PaginationItem>
         )}
         {page < totalPages && (
-          <Link className="underline underline-offset-4" href={href(page + 1)}>
-            Next
-          </Link>
+          <PaginationItem>
+            <PaginationNext href={href(page + 1)} />
+          </PaginationItem>
         )}
-      </div>
-    </nav>
+      </PaginationContent>
+    </PaginationRoot>
   )
 }

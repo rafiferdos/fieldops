@@ -1,3 +1,4 @@
+import { Button } from "@/shared/ui/button"
 import Link from "next/link"
 import { ArrowUpRight, Wrench } from "lucide-react"
 import {
@@ -41,13 +42,14 @@ export function ServiceCard({ service }: { service: Service }) {
             {formatMoney(service.basePriceMinor)}
           </p>
         </div>
-        <Link
-          href={`/services/${service.id}`}
-          className="flex min-h-11 items-center gap-2 rounded-full border bg-background px-3.5 text-xs font-medium transition-colors hover:bg-primary hover:text-primary-foreground"
+        <Button
+          variant="outline"
+          nativeButton={false}
+          render={<Link href={`/services/${service.id}`} />}
         >
           View service
           <ArrowUpRight aria-hidden="true" className="size-4" />
-        </Link>
+        </Button>
       </CardFooter>
     </Card>
   )

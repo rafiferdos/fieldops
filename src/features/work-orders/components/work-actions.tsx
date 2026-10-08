@@ -12,6 +12,7 @@ import {
 } from "../actions"
 import { reportFormSchema, type WorkOrder } from "../schemas"
 import { nextWorkStatus } from "../status"
+import { Card } from "@/shared/ui/card"
 import { Button } from "@/shared/ui/button"
 import { Label } from "@/shared/ui/label"
 import { Textarea } from "@/shared/ui/textarea"
@@ -72,7 +73,7 @@ export function WorkActions({
       ? nextWorkStatus(current.status)
       : null
   return (
-    <section className="surface mt-10 max-w-4xl space-y-5 p-6 sm:p-8">
+    <Card className="mt-10 max-w-4xl border p-6 shadow-none sm:p-8">
       <h2 className="font-heading text-xl font-medium">Visit actions</h2>
       <p className="text-sm">
         Current work state: <strong>{current.status}</strong>
@@ -168,6 +169,6 @@ export function WorkActions({
           </Button>
         </div>
       )}
-    </section>
+    </Card>
   )
 }

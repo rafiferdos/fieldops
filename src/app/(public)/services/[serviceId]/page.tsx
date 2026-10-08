@@ -33,7 +33,7 @@ export default async function ServicePage({
         description="A clear starting point for your next service visit."
       />
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_22rem]">
-        <section className="surface space-y-6 p-6 sm:p-8">
+        <Card className="border p-6 shadow-none sm:p-8">
           <div
             aria-hidden="true"
             className="flex h-44 items-center justify-center rounded-2xl bg-primary/5"
@@ -62,7 +62,7 @@ export default async function ServicePage({
               Completion report
             </p>
           </div>
-        </section>
+        </Card>
         <Reveal className="lg:sticky lg:top-28">
           <Card className="border bg-primary/5 shadow-none">
             <CardHeader>

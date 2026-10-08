@@ -1,7 +1,8 @@
 "use client"
+import { Card } from "@/shared/ui/card"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { z } from "zod"
 import { reviewFormSchema } from "../schemas"
@@ -9,7 +10,7 @@ import { reviewRequest } from "../actions"
 import { Button } from "@/shared/ui/button"
 import { Textarea } from "@/shared/ui/textarea"
 import { Label } from "@/shared/ui/label"
-import { NativeSelect, NativeSelectOption } from "@/shared/ui/native-select"
+import { ChoiceSelect } from "@/shared/components/choice-select"
 import { toast } from "@/shared/ui/toast"
 import { FormMessage } from "@/shared/components/form-message"
 
@@ -19,6 +20,7 @@ export function ReviewForm({ id, version }: { id: string; version: number }) {
   const [message, setMessage] = useState<string>(),
     [blocked, setBlocked] = useState(false)
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors, isReady, isSubmitting },
@@ -51,7 +53,7 @@ export function ReviewForm({ id, version }: { id: string; version: number }) {
     }
   }
   return (
-    <section className="surface mt-10 max-w-2xl space-y-5 p-6 sm:p-8">
+    <Card className="mt-10 max-w-2xl border p-6 shadow-none sm:p-8">
       <h2 className="font-heading text-xl font-medium">Review request</h2>
       <form
         noValidate
@@ -68,10 +70,25 @@ export function ReviewForm({ id, version }: { id: string; version: number }) {
         >
           <div className="space-y-2">
             <Label htmlFor="decision">Decision</Label>
-            <NativeSelect id="decision" {...register("decision")}>
-              <NativeSelectOption value="APPROVE">Approve</NativeSelectOption>
-              <NativeSelectOption value="REJECT">Reject</NativeSelectOption>
-            </NativeSelect>
+            <Controller
+              name="decision"
+              control={control}
+              render={({ field }) => (
+                <ChoiceSelect
+                  id="decision"
+                  name={field.name}
+                  ref={field.ref}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  onBlur={field.onBlur}
+                  disabled={!isReady || isSubmitting || blocked}
+                  options={[
+                    { value: "APPROVE", label: "Approve" },
+                    { value: "REJECT", label: "Reject" },
+                  ]}
+                />
+              )}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="review-reason">Rejection reason</Label>
@@ -107,6 +124,6 @@ export function ReviewForm({ id, version }: { id: string; version: number }) {
           </Button>
         )}
       </form>
-    </section>
+    </Card>
   )
 }

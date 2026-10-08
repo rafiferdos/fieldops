@@ -1,3 +1,4 @@
+import { chooseOption } from "./helpers/choice-select"
 import { expect, test, type Page } from "@playwright/test"
 import { dhakaLocal } from "../../src/features/requests/schemas"
 import { createDispatchFixture } from "./helpers/dispatch-fixtures"
@@ -46,7 +47,7 @@ test("admin review, stale decision, qualified assignment, collision and reschedu
       await expect(
         page.getByRole("heading", { name: "Assign a visit" })
       ).toBeVisible()
-      await stale.getByLabel("Decision", { exact: true }).selectOption("REJECT")
+      await chooseOption(stale, "Decision", "Reject")
       await stale
         .getByLabel("Rejection reason")
         .fill("Stale decision must not replace approval")
@@ -63,9 +64,7 @@ test("admin review, stale decision, qualified assignment, collision and reschedu
       await stale.close()
     }
     await searchWindow(page, fixture.window.start, fixture.window.end)
-    await page
-      .getByLabel("Available technician")
-      .selectOption(fixture.technician.id)
+    await chooseOption(page, "Available technician", fixture.technician.name)
     await page
       .getByLabel("Visit end (Dhaka)")
       .fill(
@@ -75,17 +74,21 @@ test("admin review, stale decision, qualified assignment, collision and reschedu
       )
     await expect(page.getByLabel("Available technician")).not.toBeVisible()
     await searchWindow(page, fixture.window.start, fixture.window.end)
-    await expect(page.getByLabel("Available technician")).toHaveValue("")
-    await page
-      .getByLabel("Available technician")
-      .selectOption(fixture.technician.id)
+    await expect(
+      page
+        .getByLabel("Available technician")
+        .locator('[data-slot="select-value"]')
+    ).toHaveText("Choose a technician")
+    await chooseOption(page, "Available technician", fixture.technician.name)
     const competing = await page.context().newPage()
     try {
       await competing.goto(`/admin/requests/${collision.id}`)
       await searchWindow(competing, fixture.window.start, fixture.window.end)
-      await competing
-        .getByLabel("Available technician")
-        .selectOption(fixture.technician.id)
+      await chooseOption(
+        competing,
+        "Available technician",
+        fixture.technician.name
+      )
       await page.getByRole("button", { name: "Confirm assignment" }).click()
       await expect(page).toHaveURL(/\/admin\/work-orders\/[a-f0-9-]{36}$/)
       await competing
@@ -115,9 +118,7 @@ test("admin review, stale decision, qualified assignment, collision and reschedu
       ).toISOString(),
       nextEnd = new Date(Date.parse(fixture.window.end) + 7200000).toISOString()
     await searchWindow(page, nextStart, nextEnd)
-    await page
-      .getByLabel("Available technician")
-      .selectOption(fixture.technician.id)
+    await chooseOption(page, "Available technician", fixture.technician.name)
     await page.getByRole("button", { name: "Confirm reschedule" }).click()
     await expect(
       page.getByText("Visit rescheduled.", { exact: true })
@@ -127,7 +128,7 @@ test("admin review, stale decision, qualified assignment, collision and reschedu
     expect(after.version).toBeGreaterThan(before.version)
     expect(after.agreedPriceMinor).toBe(before.agreedPriceMinor)
     await page.goto(`/admin/requests/${rejection.id}`)
-    await page.getByLabel("Decision", { exact: true }).selectOption("REJECT")
+    await chooseOption(page, "Decision", "Reject")
     await page.getByRole("button", { name: "Save review", exact: true }).click()
     await expect(
       page.getByText("Explain the rejection in 3–500 characters.")

@@ -1,4 +1,5 @@
 "use client"
+import { Card } from "@/shared/ui/card"
 import Link from "next/link"
 import { useRef, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
@@ -17,7 +18,7 @@ import {
 } from "../schemas"
 import { Input } from "@/shared/ui/input"
 import { Label } from "@/shared/ui/label"
-import { NativeSelect, NativeSelectOption } from "@/shared/ui/native-select"
+import { ChoiceSelect } from "@/shared/components/choice-select"
 import { Button } from "@/shared/ui/button"
 import { toast } from "@/shared/ui/toast"
 import { FormMessage } from "@/shared/components/form-message"
@@ -118,7 +119,7 @@ export function ScheduleForm({
     }
   }
   return (
-    <section className="surface mt-10 max-w-4xl space-y-5 p-6 sm:p-8">
+    <Card className="mt-10 max-w-4xl border p-6 shadow-none sm:p-8">
       <h2 className="font-heading text-xl font-medium">
         {target.kind === "assign" ? "Assign a visit" : "Reschedule visit"}
       </h2>
@@ -177,21 +178,17 @@ export function ScheduleForm({
           {availability.items.length ? (
             <div className="space-y-2">
               <Label htmlFor="available-technician">Available technician</Label>
-              <NativeSelect
+              <ChoiceSelect
                 id="available-technician"
                 value={technicianId}
                 disabled={pending || blocked || searchPending}
-                onChange={(event) => setTechnicianId(event.target.value)}
-              >
-                <NativeSelectOption value="">
-                  Choose a technician
-                </NativeSelectOption>
-                {availability.items.map((item) => (
-                  <NativeSelectOption key={item.id} value={item.id}>
-                    {item.name}
-                  </NativeSelectOption>
-                ))}
-              </NativeSelect>
+                onValueChange={setTechnicianId}
+                placeholder="Choose a technician"
+                options={availability.items.map((item) => ({
+                  value: item.id,
+                  label: item.name,
+                }))}
+              />
             </div>
           ) : (
             <p>
@@ -257,6 +254,6 @@ export function ScheduleForm({
           Reload record and availability
         </Button>
       )}
-    </section>
+    </Card>
   )
 }
