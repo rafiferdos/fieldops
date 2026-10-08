@@ -111,8 +111,8 @@ export function RequestWizard({
             key={title}
             aria-current={step === index ? "step" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-2xl border bg-card p-4 text-xs text-muted-foreground transition-colors aria-[current=step]:border-primary/40 aria-[current=step]:bg-primary/5 aria-[current=step]:text-primary",
-              index < step && "text-primary"
+              "flex items-center gap-3 rounded-2xl border bg-card p-4 text-xs text-muted-foreground transition-colors aria-[current=step]:border-primary/40 aria-[current=step]:bg-primary/5 aria-[current=step]:text-brand-ink",
+              index < step && "text-brand-ink"
             )}
           >
             <span
@@ -278,6 +278,7 @@ export function RequestWizard({
                 type="button"
                 variant="outline"
                 onClick={() => {
+                  // Return keyboard users to the step heading without discarding fields.
                   setStep((current) => current - 1)
                   setTimeout(() => heading.current?.focus(), 0)
                 }}

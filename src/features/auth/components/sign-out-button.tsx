@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react"
+import { LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/shared/ui/button"
 import { FormMessage } from "@/shared/components/form-message"
@@ -27,12 +28,17 @@ export function SignOutButton() {
     <div className="space-y-2">
       <Button
         variant="outline"
+        aria-label={pending ? "Signing out…" : "Sign out"}
         disabled={pending}
         onClick={() => {
           void submit()
         }}
       >
-        {pending ? "Signing out…" : "Sign out"}
+        {/* An icon keeps narrow headers usable; the accessible name stays explicit. */}
+        <LogOut aria-hidden="true" className="size-4" />
+        <span className="sr-only sm:not-sr-only">
+          {pending ? "Signing out…" : "Sign out"}
+        </span>
       </Button>
       <FormMessage message={message} />
     </div>

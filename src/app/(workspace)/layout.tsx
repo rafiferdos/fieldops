@@ -22,8 +22,8 @@ export default async function WorkspaceLayout({
   return (
     <div className="min-h-svh bg-muted/20">
       <header className="sticky top-0 z-40 border-b bg-background/95 supports-[backdrop-filter]:bg-background/85 supports-[backdrop-filter]:backdrop-blur-md">
-        <div className="mx-auto flex min-h-[76px] max-w-7xl items-center justify-between gap-3 px-5 py-3 sm:px-8">
-          <Brand />
+        <div className="mx-auto flex min-h-[76px] max-w-7xl items-center justify-between gap-2 px-5 py-3 sm:px-8">
+          <Brand className="text-lg sm:text-xl" />
           <WorkspaceNav role={profile.role} />
           <div className="flex items-center gap-2">
             <ThemeToggle />

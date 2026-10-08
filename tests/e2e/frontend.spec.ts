@@ -107,6 +107,25 @@ test.describe("configured demo accounts", () => {
       await expect(page).toHaveURL(
         new RegExp(`/${role.toLowerCase()}(?:\\?|$)`)
       )
+      // Workspace navigation must fit before any operational action is attempted.
+      for (const width of [320, 768, 1440]) {
+        await page.setViewportSize({ width, height: 900 })
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth <= window.innerWidth
+          ),
+          `${role} workspace at ${width}px`
+        ).toBe(true)
+      }
+      await page.setViewportSize({ width: 390, height: 844 })
+      const navigation = page.getByRole("button", {
+        name: "Open workspace navigation",
+      })
+      await navigation.click()
+      await expect(page.getByRole("dialog")).toBeVisible()
+      await page.keyboard.press("Escape")
+      await expect(navigation).toBeFocused()
+      await page.setViewportSize({ width: 1440, height: 1000 })
       const cookie = (await context.cookies()).find(
         (value) => value.name === "fieldops-session"
       )
@@ -182,6 +201,17 @@ test("real disposable customer registration, request create/edit/cancel and fore
     page.getByRole("heading", { name: "Review request" })
   ).toBeVisible()
   await expect(page).toHaveURL(/\/customer\/requests\/new$/)
+  await expect(
+    page.getByRole("heading", { name: "Review request" })
+  ).toBeFocused()
+  await page.getByRole("button", { name: "Back", exact: true }).click()
+  await expect(
+    page.getByRole("heading", { name: "Visit details" })
+  ).toBeFocused()
+  await expect(page.getByLabel("What needs attention?")).toHaveValue(
+    description
+  )
+  await page.getByRole("button", { name: "Continue", exact: true }).click()
   await expect(
     page.getByRole("button", { name: "Submit request", exact: true })
   ).toBeEnabled()
