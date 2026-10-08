@@ -1,4 +1,7 @@
 import Link from "next/link"
+import { Suspense } from "react"
+import { PageSkeleton } from "@/shared/components/page-skeleton"
+import { FeaturedServices } from "@/features/marketing/components/featured-services"
 import {
   ArrowRight,
   ArrowUpRight,
@@ -8,28 +11,19 @@ import {
   ShieldCheck,
   Wrench,
 } from "lucide-react"
-import { listServices } from "@/features/services/server"
-import { ServiceCard } from "@/features/services/components/service-card"
 import { ServiceJourney } from "@/features/marketing/components/service-journey"
 import { Reveal } from "@/shared/components/reveal"
-import { EmptyState } from "@/shared/components/empty-state"
 import { buttonVariants } from "@/shared/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { Separator } from "@/shared/ui/separator"
 
 export const dynamic = "force-dynamic"
 
-export default async function HomePage() {
-  const services = await listServices({
-    q: "",
-    page: 1,
-    limit: 3,
-    sort: "newest",
-  })
+export default function HomePage() {
   return (
     <div className="space-y-24 sm:space-y-32">
       <section className="grid items-center gap-10 pt-2 pb-4 lg:grid-cols-[1.15fr_1fr] lg:gap-16 lg:py-8">
-        <div>
+        <Reveal>
           <p className="eyebrow flex items-center gap-2">
             <span className="size-1.5 rounded-full bg-primary" />
             Service, with a clear next step
@@ -37,7 +31,7 @@ export default async function HomePage() {
           <h1 className="mt-7 max-w-3xl font-heading text-[clamp(3.5rem,7vw,6.5rem)] leading-[0.98] font-medium tracking-[-0.06em]">
             Less chasing.
             <br />
-            More <span className="text-primary">handled.</span>
+            More <span className="text-brand-ink">handled.</span>
           </h1>
           <p className="mt-7 max-w-md text-lg leading-relaxed text-muted-foreground">
             A simpler way to get things fixed. Find the right service, plan a
@@ -67,15 +61,21 @@ export default async function HomePage() {
           </div>
           <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <ShieldCheck aria-hidden="true" className="size-4 text-primary" />
+              <ShieldCheck
+                aria-hidden="true"
+                className="size-4 text-brand-ink"
+              />
               Qualified assignment
             </span>
             <span className="flex items-center gap-1.5">
-              <FileCheck2 aria-hidden="true" className="size-4 text-primary" />
+              <FileCheck2
+                aria-hidden="true"
+                className="size-4 text-brand-ink"
+              />
               Documented work
             </span>
           </div>
-        </div>
+        </Reveal>
         <ServiceJourney />
       </section>
 
@@ -104,7 +104,7 @@ export default async function HomePage() {
             <div key={title} className="flex gap-3">
               <Icon
                 aria-hidden="true"
-                className="mt-0.5 size-5 shrink-0 text-primary"
+                className="mt-0.5 size-5 shrink-0 text-brand-ink"
               />
               <div>
                 <h2 className="text-sm font-medium">{title}</h2>
@@ -134,17 +134,9 @@ export default async function HomePage() {
             <ArrowUpRight aria-hidden="true" className="size-4" />
           </Link>
         </Reveal>
-        {services.items.length ? (
-          <Reveal stagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {services.items.map((service) => (
-              <ServiceCard key={service.id} service={service} />
-            ))}
-          </Reveal>
-        ) : (
-          <EmptyState title="No services available yet">
-            Please check back when the catalog is updated.
-          </EmptyState>
-        )}
+        <Suspense fallback={<PageSkeleton />}>
+          <FeaturedServices />
+        </Suspense>
       </section>
 
       <section
@@ -199,7 +191,7 @@ export default async function HomePage() {
                   <span className="font-heading text-3xl text-muted-foreground/50">
                     {number}
                   </span>
-                  <Icon aria-hidden="true" className="size-5 text-primary" />
+                  <Icon aria-hidden="true" className="size-5 text-brand-ink" />
                 </div>
                 <CardTitle className="text-2xl tracking-tight">
                   {title}
@@ -245,7 +237,10 @@ export default async function HomePage() {
               },
             ].map(({ icon: Icon, title, text }) => (
               <div key={title}>
-                <Icon aria-hidden="true" className="mb-4 size-5 text-primary" />
+                <Icon
+                  aria-hidden="true"
+                  className="mb-4 size-5 text-brand-ink"
+                />
                 <h3 className="font-heading text-xl font-medium">{title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                   {text}
