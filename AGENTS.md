@@ -5,8 +5,8 @@ Next.js frontend; the separate fieldops-api backend must remain unchanged unless
 explicitly requested. Public browsing, authentication and customer requests are implemented.
 The user has now authorized admin review/dispatch and technician execution/customer
 work tracking. Invoice details, checkout/payment inspection, customer feedback,
-admin reporting and catalog management are implemented.
-User management, audit browsing and technician skills remain later slices. The
+admin reporting, catalog management, confirmed user access changes and read-only
+audit browsing are implemented. Technician skills remain a later slice. The
 gateway's automatic frontend return transport remains a documented backend gap.
 
 Read the README's official Assignment 7 links and implemented backend contract

@@ -8,7 +8,8 @@ sessions, registration/login/account management, and customer request list, wiza
 detail, edit and cancellation; admin review, qualified dispatch and rescheduling;
 technician progress/completion and role-scoped work tracking; immutable invoices,
 durable checkout recovery, verified payment inspection, eligible customer feedback,
-period reporting and administrative service catalog management.
+period reporting, administrative service catalog management, confirmed user access
+changes and filtered audit-history inspection.
 The backend is a separate repository and has not been modified.
 
 ## Project guide
@@ -21,11 +22,12 @@ The backend is a separate repository and has not been modified.
 - [Original editorial imagery and generation prompts](docs/editorial-assets.md)
 - [Dispatch/execution plan and recovery rules](docs/dispatch-execution-plan.md)
 - [Billing, reporting and catalog boundaries](docs/billing-admin-plan.md)
+- [User access, session revocation and audit boundaries](docs/access-audit-plan.md)
 
-Twenty-six route templates exist, including two conditional payment-return pages.
+Twenty-eight route templates exist, including two conditional payment-return pages.
 Route count alone does not establish assignment completion. The gateway still
 returns to backend JSON callbacks rather than automatically redirecting to the
-frontend. User management, audit browsing, verified contact content and delivery
+frontend. Technician skills, verified contact content and delivery
 remain incomplete. The route plan maps all 38 backend domain APIs and two health endpoints.
 
 ## Run locally
@@ -81,14 +83,14 @@ npm run start
 ```
 
 `check` runs Prettier, typed ESLint, generated route types, TypeScript and Vitest.
-The ordinary suite has 124 tests. Enable six additional real-Redis concurrency
+The ordinary suite has 156 tests. Enable six additional real-Redis concurrency
 checks using the dedicated local store:
 
 ```bash
 SESSION_TEST_REDIS_URL=redis://127.0.0.1:6397 npm test
 ```
 
-CI installs from the lockfile and provisions a pinned Redis image for all 130 tests,
+CI installs from the lockfile and provisions a pinned Redis image for all 162 tests,
 checks and build. Official GitHub actions use immutable revisions. CI does not
 deploy. A hosted CI run has not occurred because this repository has not been pushed.
 
@@ -118,16 +120,18 @@ record no auth traces/video. Opted-in test files wait for a fresh authentication
 window before running, respecting the backend's ten-logins-per-minute limit. Browser
 output folders and environment files are ignored.
 
-The unit/integration suite contains 130 checks. The Chromium suite contains 24 scenarios:
-twelve real-API workflows, six design scenarios and six presentation/component scenarios. It covers
+The unit/integration suite contains 162 checks. The Chromium suite contains 27 scenarios:
+fifteen real-API workflows, six design scenarios and six presentation/component scenarios. It covers
 no-JavaScript public content, reduced motion and cleanup, keyboard disclosures,
 password visibility, 320–1440px layouts, theme contrast, stable animated word geometry,
 CSS frost and styled Select submission. Dispatch coverage includes stale review, competing
 assignment and price-preserving reschedule. Execution commits a real completion,
 deliberately loses its browser response, preserves the report and explicitly reads
 the result without automatic replay. A separate identical backend completion replay
-returns the same invoice. All 24 scenarios have passing results (23 in the full run
-and the corrected read-only overview scenario in a focused rerun). See
+returns the same invoice. The earlier 24-scenario checkpoint passed (23 in the full run
+and the corrected read-only overview scenario in a focused rerun). Three additional
+scenarios cover newly created disposable users, actual revocation/reactivation,
+stale and lost access responses, self-change sign-out and real audit inspection. See
 [current verification](docs/implementation-status.md) and the
 [design checkpoint](docs/design-refinement.md).
 
@@ -155,7 +159,7 @@ src/
     work-orders/               # Scoped queues, tracking, progress, completion and recovery
     billing/                   # Frozen invoices, encrypted checkout intents and verified payment state
     feedback/                  # One-time eligible reviews and explicit outcome inspection
-    admin/                     # Bounded overview schemas, exact revenue and request chart
+    admin/                     # Overview/reporting, managed access and read-only audit history
   shared/
     ui/                        # Official shadcn primitives
     components/                # Reused presentation and layout pieces
@@ -195,6 +199,8 @@ per-request backend account checks and coordinated single-use refresh. Request
 mutations carry explicit versions and respect backend ownership/state rules.
 Conflict/uncertain outcomes preserve inputs and require latest-state inspection.
 Prices are BDT minor units; immutable invoice/payment behavior is not reimplemented.
+User access changes require review and confirmation, preserve backend last-admin/work
+rules and revoke sessions. Audit metadata uses an explicit per-action allowlist.
 See implementation status for the precise session lifecycle and its failure limits.
 
 ## Versions and dependency limits

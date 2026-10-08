@@ -1,6 +1,6 @@
 # User access and audit inspection
 
-The next two authorized slices implement `/admin/users` and `/admin/audit-logs`.
+This checkpoint implements `/admin/users` and `/admin/audit-logs`.
 Backend code remains unchanged. No user creation, deletion, impersonation, credential
 reset or prefilled technician-skill replacement is invented.
 
@@ -42,3 +42,36 @@ recovery without targeting shared demo users. Audit checks inspect the resulting
 real events, URL state, pagination, invalid periods, responsive layout and wrong-role
 boundaries. Last-admin/concurrent-active-work invariants remain backend-authoritative;
 do not claim those were exercised by changing existing operational accounts.
+
+## Verification and limits
+
+Strict formatting, typed lint, generated routes and TypeScript pass. The 156 ordinary
+tests plus six real-Redis checks all pass (162 total). Both feature checkpoints pass
+the supported production Webpack build. No dependencies were added.
+
+The browser scenarios use the actual hosted API and production frontend. They create
+only fresh disposable users and restore them to ACTIVE CUSTOMER before cleanup.
+One access response is lost after the real suspension commits: its original access,
+refresh and password login are rejected, the form blocks replay, and a second stale
+tab cannot overwrite the new state. Explicit inspection restores usable controls.
+Reactivation permits a fresh login and leaves old tokens revoked; a role change
+revokes that fresh session again. Audit inspection reads the three resulting access
+events and their actual metadata, then paginates the same filtered history.
+
+A separate isolated account is promoted to ADMIN while the shared administrator
+remains active. Its own confirmed demotion clears the frontend cookie, blocks the
+protected directory and requires a fresh customer login. Read-only checks cover
+invalid criteria, incomplete periods with preserved inputs, future empty history,
+URL pagination/filter reset, 320/768/1024/1280/1440px layouts, themes and customer/
+technician route boundaries. Browser mutation retries remain disabled.
+
+These tests do not demote the last real administrator or create active work solely
+to probe backend technician-role constraints. They do not establish atomic access
+concurrency absent a backend version. Safari, physical devices, live Google OAuth,
+payment returns and provider settlement remain outside this checkpoint.
+
+All three scenarios have passing Chromium results on the same production application
+code. Self-change passed in the initial run; access/audit recovery and read-only
+filters passed in the focused rerun after test locators were scoped to the account
+Sheet and URL assertions were made independent of parameter order. No application
+fix or automatic mutation retry was needed between those runs.

@@ -4,8 +4,8 @@ This specification accompanies the [route and API plan](route-plan.md). All scre
 below describe the target behavior. See [implementation status](implementation-status.md)
 for delivered public browsing, authentication, customer requests, dispatch,
 technician execution, customer work tracking, billing, feedback, reporting and catalog
-management. Automatic gateway return, user management and audit browsing remain
-later integration work. Browser verification creates
+management, user access and audit-history inspection. Automatic gateway return and
+technician skills remain later integration work. Browser verification creates
 disposable records only when explicitly enabled.
 
 ## Visual and interaction foundation

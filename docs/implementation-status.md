@@ -1,7 +1,8 @@
 # Implementation status
 
 Reviewed October 9, 2026. This checkpoint implements roadmap steps 2–6 and five
-billing/administration slices from steps 7–8. Automatic gateway return remains open. The backend
+billing/administration slices from steps 7–8, followed by user access and audit browsing.
+Automatic gateway return remains open. The backend
 repository is unchanged. No push or deployment was performed. Verification creates
 only disposable accounts and requests, cancels eligible unstarted requests, and
 retains rejected/completed records and unpaid invoices because no deletion API exists.
@@ -24,10 +25,12 @@ Demo credentials remain local-only and were used with explicit permission.
 | Invoices       | `/customer/invoices/[invoiceId]`, `/admin/invoices/[invoiceId]`         | Frozen amount/status, owner checkout entry and role-restricted administrative inspection          |
 | Payments       | `/payments/[paymentId]`, `/payment/success`, `/payment/cancel`          | Verified attempt/invoice inspection and conditional returns; no invented settlement               |
 | Catalog admin  | `/admin/services`                                                       | URL-driven active list, validated create/edit, stale preflight and confirmed soft deletion        |
+| User access    | `/admin/users`                                                          | Safe directory filters, confirmed role/status edits, stale/uncertain blocking and self sign-out   |
+| Audit history  | `/admin/audit-logs`                                                     | Exact filters, paired Dhaka period, newest-first pagination and safe metadata disclosure          |
 
-There are 26 route templates, including two conditional returns, and 30 domain API
+There are 28 route templates, including two conditional returns, and 33 domain API
 operations bound in production code. Route count is not a claim of full assignment
-compliance: automatic gateway return, user management, audit browsing, contact
+compliance: automatic gateway return, technician skills, contact
 content and delivery remain incomplete. Google login is
 configuration-dependent. Refresh concurrency tests use real Redis with a stubbed
 HTTP rotation response, not live Google or backend replay validation.
@@ -139,6 +142,31 @@ updatedAt preflight avoids already-stale edits but cannot provide atomic version
 on the unversioned catalog API. Sheet/AlertDialog controls preserve blocked outcomes
 until inspection; soft deletion preserves historical work and financial records.
 
+## User access and audit history
+
+The [access/audit plan](access-audit-plan.md) records behavior and verification limits.
+The ADMIN directory uses URL search/role/status/sort/pagination and exposes only safe
+managed-user fields. Invalid known criteria withhold reads; forms retain entered
+values for correction. A Sheet reviews role/status edits before explicit AlertDialog
+confirmation. Only changed fields are sent. The original directory page is re-read
+and matched by exact ID, role/status and updatedAt, because there is no single-user
+read or atomic access-version API. A moved/stale record requires inspection; this
+preflight cannot eliminate a race after the read.
+
+The backend protects the last active administrator and active technician work,
+revokes every session on real changes and preserves history. Leaving TECHNICIAN
+removes obsolete skills; suspension retains assignments. Reactivation requires a
+new login. Confirmed self-changes clear the current frontend session. Uncertain
+or conflicting writes remain blocked after reopening the editor until explicit
+directory inspection. Access changes are never automatically retried.
+
+Audit history is read-only. Entity/actor UUIDs, exact uppercase action, optional
+paired Dhaka dates and pagination are validated before reads. Events always use
+the backend's newest-first ordering. Backend metadata is projected through a second
+per-action allowlist with bounded scalar/string-array values before UI serialization.
+Unknown actions retain event identity but no metadata; nested payloads and credential
+keys are omitted. User cards link directly to their real access-change history.
+
 ## Design refinement
 
 The implemented screens share editorial typography, readable card/detail surfaces,
@@ -160,23 +188,27 @@ Public FAQ uses original editorial image cards with accessible in-card disclosur
 ## Verification and remaining limits
 
 - `npm run check`: formatting, typed lint, generated route types, TypeScript and
-  124 ordinary tests. Six real-Redis tests require SESSION_TEST_REDIS_URL.
-- All 130 checks pass with the dedicated frontend Redis. They cover session concurrency/integrity,
+  156 ordinary tests. Six real-Redis tests require SESSION_TEST_REDIS_URL.
+- All 162 checks pass with the dedicated frontend Redis. They cover session concurrency/integrity,
   role return paths, scheduling bounds, strict write schemas, legal transitions,
   timezone conversion, cancellation, encrypted intent reservation, payment evidence,
-  feedback eligibility, report periods and exact BDT arithmetic.
+  feedback eligibility, report periods, exact BDT arithmetic, access schemas and safe audit projection.
 - `npm run build -- --webpack`: production build passes. Default Turbopack was
   previously blocked by this execution environment's port restriction; its default
   command is preserved. Hosted CI has not run because no push occurred.
-- The Chromium suite has twelve real-API workflows, six design scenarios and six
+- The Chromium suite has fifteen real-API workflows, six design scenarios and six
   presentation/component scenarios. Coverage includes no-JavaScript homepage/process,
   reduced motion and cleanup, keyboard FAQ, password visibility, 320–1440px
   public/auth layouts, theme contrast, stable animated word geometry, CSS frost and
   styled Select keyboard/form behavior. Demo queues verify readable status labels in both themes.
-- At this checkpoint, the full Chromium run passed 23 scenarios. The overview
+- At the earlier billing/catalog checkpoint, the full Chromium run passed 23 scenarios. The overview
   scenario then passed separately after its alert locator was scoped to main content
   instead of also matching Next.js's route announcer. All 24 scenarios have passing
-  results; production application code was identical across those runs. Retries are disabled.
+  results; production application code was identical across those runs. The three
+  access/audit scenarios are verified separately against the expanded production build.
+  All three pass: self-change in the initial run, the other two in a focused rerun
+  after test-only locator/URL assertion corrections. Application code was unchanged.
+  Retries are disabled; no single 27-scenario run is implied.
 - Operational coverage against the hosted API and production frontend includes:
   catalog/mobile/auth/customer flows, plus stale review, qualified dispatch,
   competing-slot rejection, price-preserving reschedule, progress, stale technician
@@ -194,6 +226,16 @@ Public FAQ uses original editorial image cards with accessible in-card disclosur
 - Catalog verification creates only a unique disposable service, edits its exact
   decimal price, rejects a stale second tab even after reopening its Sheet, and
   confirms soft deletion removes its public detail. It does not mutate existing services.
+- Access checks lose one real suspension response, verify original access/refresh
+  revocation and rejected login, block a stale second tab, then reactivate and verify
+  fresh login. A role change revokes that fresh session. The resulting real audit
+  events, metadata and pagination are inspected. A separate disposable self-demotion
+  clears the frontend cookie and requires a new customer login. Shared demo access
+  is unchanged and fixtures restore their own accounts to ACTIVE CUSTOMER.
+- Administrative read checks cover invalid criteria, preserved incomplete periods,
+  empty future audit history, filter/page URL state, wrong-role redirects and
+  320–1440px layout fit in light/dark presentation. The backend last-admin/active-work
+  guards are retained, not tested by changing existing operational users.
 - Opted-in browser groups wait for a fresh authentication window to respect the
   backend's ten-logins-per-minute limit; throttling is not disabled or bypassed.
 - The hosted connection can time out. Test writes have no automatic retries; inspect
