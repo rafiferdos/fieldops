@@ -38,7 +38,7 @@ export default async function ServicePage({
             aria-hidden="true"
             className="flex h-44 items-center justify-center rounded-2xl bg-primary/5"
           >
-            <Wrench className="size-14 text-primary/70" />
+            <Wrench className="size-14 text-brand-ink/70" />
           </div>
           <h2 className="font-heading text-xl font-medium">
             About this service
@@ -50,12 +50,15 @@ export default async function ServicePage({
             <p className="flex items-center gap-2 text-sm">
               <CalendarCheck2
                 aria-hidden="true"
-                className="size-4 text-primary"
+                className="size-4 text-brand-ink"
               />
               Coordinated visit
             </p>
             <p className="flex items-center gap-2 text-sm">
-              <FileCheck2 aria-hidden="true" className="size-4 text-primary" />
+              <FileCheck2
+                aria-hidden="true"
+                className="size-4 text-brand-ink"
+              />
               Completion report
             </p>
           </div>

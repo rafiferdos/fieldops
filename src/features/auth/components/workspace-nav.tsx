@@ -84,7 +84,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
           ? "page"
           : undefined
       }
-      className="inline-flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-primary/10 aria-[current=page]:text-primary"
+      className="inline-flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-primary/10 aria-[current=page]:text-brand-ink"
     >
       <link.icon aria-hidden="true" className="size-4" />
       {link.label}

@@ -38,7 +38,7 @@ export function ServiceJourney() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center gap-4">
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-brand-ink">
                 <Wrench aria-hidden="true" className="size-6" />
               </span>
               <div>
@@ -76,7 +76,7 @@ export function ServiceJourney() {
                 },
               ].map(({ icon: Icon, title, detail, label }) => (
                 <li key={title} className="relative flex gap-4">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-primary/15 bg-card text-primary">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-primary/15 bg-card text-brand-ink">
                     <Icon aria-hidden="true" className="size-4" />
                   </span>
                   <div className="min-w-0 flex-1">

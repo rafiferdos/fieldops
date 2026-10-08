@@ -21,7 +21,7 @@ export function ServiceCard({ service }: { service: Service }) {
         >
           <span className="absolute size-36 rounded-full border border-primary/10" />
           <span className="absolute size-24 rounded-full border border-primary/15" />
-          <span className="relative flex size-14 items-center justify-center rounded-2xl border border-primary/10 bg-card text-primary shadow-sm">
+          <span className="relative flex size-14 items-center justify-center rounded-2xl border border-primary/10 bg-card text-brand-ink shadow-sm">
             <Wrench className="size-6" />
           </span>
         </div>

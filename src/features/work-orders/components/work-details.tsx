@@ -80,7 +80,7 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
       {work.report && (
         <section className="surface mt-8 max-w-4xl space-y-4 p-6 sm:p-8">
           <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
-            <FileText aria-hidden="true" className="size-5 text-primary" />
+            <FileText aria-hidden="true" className="size-5 text-brand-ink" />
             Completion report
           </h2>
           <p className="break-words whitespace-pre-wrap">{work.report}</p>
@@ -90,7 +90,7 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
       {work.invoice && (
         <section className="surface mt-8 max-w-4xl space-y-4 p-6 sm:p-8">
           <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
-            <Receipt aria-hidden="true" className="size-5 text-primary" />
+            <Receipt aria-hidden="true" className="size-5 text-brand-ink" />
             Invoice summary
           </h2>
           <p className="text-sm break-all text-muted-foreground">
@@ -113,7 +113,7 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
       {work.feedback && (
         <section className="surface mt-8 max-w-4xl space-y-4 p-6 sm:p-8">
           <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
-            <Star aria-hidden="true" className="size-5 text-primary" />
+            <Star aria-hidden="true" className="size-5 text-brand-ink" />
             Customer feedback
           </h2>
           <p>
@@ -143,7 +143,7 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
             >
               <span
                 aria-hidden="true"
-                className="absolute top-0 left-0 flex size-8 items-center justify-center rounded-full border bg-primary/5 text-primary"
+                className="absolute top-0 left-0 flex size-8 items-center justify-center rounded-full border bg-primary/5 text-brand-ink"
               >
                 <Check className="size-3.5" />
               </span>

@@ -21,13 +21,13 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <h2 className="mt-5 max-w-lg font-heading text-5xl leading-[1.08] font-medium tracking-[-0.04em]">
             Everything connected.
             <br />
-            <span className="text-primary">A little less to carry.</span>
+            <span className="text-brand-ink">A little less to carry.</span>
           </h2>
           <ServiceJourney />
         </aside>
         <main id="main-content" className="mx-auto w-full max-w-lg">
           <Reveal className="surface p-6 sm:p-9 [&_h1]:text-4xl">
-            <div className="mb-7 flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <div className="mb-7 flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-brand-ink">
               <ShieldCheck aria-hidden="true" className="size-5" />
             </div>
             {children}

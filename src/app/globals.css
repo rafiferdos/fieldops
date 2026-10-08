@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --brand-ink: var(--primary);
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
@@ -40,6 +41,7 @@
 }
 
 .dark {
+  --brand-ink: var(--chart-2);
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
@@ -74,6 +76,7 @@
 }
 
 @theme inline {
+  --color-brand-ink: var(--brand-ink);
   --font-sans: var(--font-sans);
   --font-heading: var(--font-heading);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -170,7 +173,7 @@
 
 @layer components {
   .eyebrow {
-    @apply text-xs font-semibold tracking-[0.18em] text-primary uppercase;
+    @apply text-xs font-semibold tracking-[0.18em] text-brand-ink uppercase;
   }
   .surface {
     @apply rounded-3xl border bg-card text-card-foreground shadow-xs;
@@ -185,7 +188,7 @@
     @apply min-w-0;
   }
   .text-link {
-    @apply inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline;
+    @apply inline-flex items-center gap-2 text-sm font-medium text-brand-ink underline-offset-4 hover:underline;
   }
   .journey-line {
     background: linear-gradient(to bottom, var(--primary), var(--border));
@@ -231,7 +234,7 @@
     @apply size-1.5 rounded-full bg-current;
   }
   .status-badge:is([data-status="APPROVED"], [data-status="COMPLETED"]) {
-    @apply border-primary/20 bg-primary/8 text-primary;
+    @apply border-primary/20 bg-primary/8 text-brand-ink;
   }
   .status-badge:is(
     [data-status="EN_ROUTE"],

@@ -57,7 +57,7 @@ export default async function AdminPage() {
           >
             <CardHeader>
               <div className="mb-4 flex items-center justify-between">
-                <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-brand-ink">
                   <Icon aria-hidden="true" className="size-5" />
                 </span>
                 <ArrowUpRight

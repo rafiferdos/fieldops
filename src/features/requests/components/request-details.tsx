@@ -69,7 +69,10 @@ export function RequestDetails({
       {request.workOrder && (
         <section className="surface mt-8 max-w-4xl p-6 sm:p-8">
           <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
-            <CalendarDays aria-hidden="true" className="size-5 text-primary" />
+            <CalendarDays
+              aria-hidden="true"
+              className="size-5 text-brand-ink"
+            />
             Assigned work
           </h2>
           <Link

@@ -46,7 +46,7 @@ export default function AboutPage() {
                 <span className="font-heading text-4xl text-muted-foreground/40">
                   {number}
                 </span>
-                <Icon aria-hidden="true" className="size-6 text-primary" />
+                <Icon aria-hidden="true" className="size-6 text-brand-ink" />
               </div>
               <CardTitle className="text-2xl">{title}</CardTitle>
             </CardHeader>
