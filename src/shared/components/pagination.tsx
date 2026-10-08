@@ -18,6 +18,7 @@ export function Pagination({
   pathname:
     | "/services"
     | "/admin/services"
+    | "/admin/users"
     | "/customer"
     | "/admin/requests"
     | "/admin/work-orders"

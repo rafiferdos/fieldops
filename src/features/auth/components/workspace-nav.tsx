@@ -13,6 +13,7 @@ import {
   Plus,
   LayoutDashboard,
   UserRound,
+  Users,
   type LucideIcon,
 } from "lucide-react"
 import type { Role } from "../schemas"
@@ -73,6 +74,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
             icon: CalendarDays,
           },
           { href: "/admin/services" as const, label: "Services", icon: Wrench },
+          { href: "/admin/users" as const, label: "Users", icon: Users },
         ]
       : []),
     { href: "/account" as const, label: "Account", icon: UserRound },
@@ -97,7 +99,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
   ))
   return (
     <>
-      <nav aria-label="Workspace navigation" className="hidden gap-1 lg:flex">
+      <nav aria-label="Workspace navigation" className="hidden gap-1 xl:flex">
         {navigation}
       </nav>
       <Sheet open={open} onOpenChange={setOpen}>
@@ -106,7 +108,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
             <Button
               variant="outline"
               size="icon"
-              className="lg:hidden"
+              className="xl:hidden"
               aria-label="Open workspace navigation"
             />
           }

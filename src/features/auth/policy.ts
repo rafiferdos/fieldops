@@ -39,6 +39,8 @@ export function safeReturnPath(value: unknown, role: Role): RecordRoute {
       return `/customer/work-orders?${url.searchParams.toString()}`
     if (role === "ADMIN" && path === "/admin/services")
       return `/admin/services?${url.searchParams.toString()}`
+    if (role === "ADMIN" && path === "/admin/users")
+      return `/admin/users?${url.searchParams.toString()}`
     if (role === "ADMIN" && path === "/admin/requests")
       return `/admin/requests?${url.searchParams.toString()}`
     if (role === "ADMIN" && path === "/admin/work-orders")
