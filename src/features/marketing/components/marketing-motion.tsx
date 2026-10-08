@@ -4,9 +4,8 @@ import { useRef, type ReactNode } from "react"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { SplitText } from "gsap/SplitText"
 
-gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText)
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 // Server content owns the markup; this boundary adds scoped, disposable choreography.
 export function MarketingMotion({ children }: { children: ReactNode }) {
@@ -16,28 +15,16 @@ export function MarketingMotion({ children }: { children: ReactNode }) {
     () => {
       const media = gsap.matchMedia()
       media.add("(prefers-reduced-motion: no-preference)", () => {
-        const title = scope.current?.querySelector("[data-split-title]")
-        if (title instanceof HTMLElement) {
-          const split = SplitText.create(title, {
-            type: "words",
-            mask: "words",
-            ignore: "[data-tool]",
-          })
-          // Give descenders room below the mask; clipping must never cut the glyphs.
-          gsap.set(split.masks, {
-            paddingBottom: "0.16em",
-            marginBottom: "-0.16em",
-          })
-          // Word wrappers reflow naturally; avoid fixed line measurements on resize.
-          gsap.from(split.words, {
-            yPercent: 105,
-            rotate: 2,
-            duration: 0.95,
-            stagger: 0.085,
-            ease: "power4.out",
-            onComplete: () => split.revert(),
-          })
-        }
+        // Stable server words preserve kerning, whitespace and glyph overhang throughout entry.
+        gsap.from("[data-hero-word]", {
+          yPercent: 45,
+          rotate: 1.5,
+          opacity: 0,
+          duration: 0.85,
+          stagger: 0.09,
+          ease: "power3.out",
+          clearProps: "transform,opacity",
+        })
         gsap.from("[data-tool]", {
           rotate: -70,
           scale: 0.75,
@@ -100,7 +87,7 @@ export function MarketingMotion({ children }: { children: ReactNode }) {
             })
         }
       )
-      // matchMedia reverts split markup and styles on preference changes and unmount.
+      // matchMedia reverts animation styles on preference changes and unmount.
       return () => media.revert()
     },
     { scope }

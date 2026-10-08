@@ -1,17 +1,76 @@
 import { expect, test } from "@playwright/test"
 
-test("headline retains its name and removes clipping masks after entry", async ({
+test("headline preserves unclipped word geometry throughout entry and route return", async ({
   page,
 }) => {
-  await page.goto("/")
+  const start = new Date("2026-10-09T00:00:00Z")
+  await page.clock.install({ time: start })
+  await page.clock.pauseAt(new Date(start.getTime() + 100))
   const title = page.getByRole("heading", {
     name: "Less chasing. More handled.",
     exact: true,
   })
-  await expect(title).toBeVisible()
-  await expect
-    .poll(() => title.locator("[style*='overflow: clip']").count())
-    .toBe(0)
+  const words = title.locator("[data-hero-word]")
+  const geometry = () =>
+    title.evaluate((node) =>
+      Array.from(
+        node.querySelectorAll<HTMLElement>("[data-hero-word]"),
+        (word) => ({
+          text: word.textContent,
+          left: word.offsetLeft,
+          top: word.offsetTop,
+          width: word.offsetWidth,
+          height: word.offsetHeight,
+        })
+      )
+    )
+  for (const width of [320, 768, 1440]) {
+    await page.setViewportSize({ width, height: 1000 })
+    await page.goto("/")
+    await expect(words).toHaveCount(4)
+    await page.evaluate(() => document.fonts.ready)
+    // Hydration can schedule work on the clock; advance until the entry actually starts.
+    await expect
+      .poll(async () => {
+        await page.clock.runFor(16)
+        return Number(
+          await words.first().evaluate((node) => getComputedStyle(node).opacity)
+        )
+      })
+      .toBeLessThan(1)
+    const initial = await geometry()
+    // Sample the actual tween, including completion, instead of only its final appearance.
+    for (const elapsed of [160, 240, 400, 600]) {
+      await page.clock.runFor(elapsed)
+      expect(await geometry(), `Stable word layout at ${width}px`).toEqual(
+        initial
+      )
+      expect(
+        await title.evaluate((node) =>
+          Array.from(node.querySelectorAll("[data-hero-word]")).every(
+            (word) => {
+              let ancestor: Element | null = word
+              while (ancestor && ancestor !== node.parentElement) {
+                const style = getComputedStyle(ancestor)
+                if (
+                  style.overflowX !== "visible" ||
+                  style.overflowY !== "visible"
+                )
+                  return false
+                ancestor = ancestor.parentElement
+              }
+              return true
+            }
+          )
+        )
+      ).toBe(true)
+    }
+    for (const word of await words.all()) {
+      await expect(word).toHaveCSS("opacity", "1")
+      await expect(word).toHaveCSS("transform", "none")
+    }
+  }
+  await page.clock.resume()
   await page
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "FAQ", exact: true })
@@ -19,9 +78,7 @@ test("headline retains its name and removes clipping masks after entry", async (
   await expect(page).toHaveURL(/\/faq$/)
   await page.goBack()
   await expect(title).toBeVisible()
-  await expect
-    .poll(() => title.locator("[style*='overflow: clip']").count())
-    .toBe(0)
+  await expect(words).toHaveCount(4)
 })
 
 test("reduced motion restores split text and all scroll transforms", async ({

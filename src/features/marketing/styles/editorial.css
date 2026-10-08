@@ -8,6 +8,15 @@
     font-weight: 450;
     letter-spacing: -0.065em;
   }
+  /* Unclipped inline words retain real spaces and negative-tracking glyph overhang. */
+  .hero-title-copy {
+    white-space: nowrap;
+    word-spacing: 0.08em;
+  }
+  .hero-word {
+    display: inline-block;
+    transform-origin: left bottom;
+  }
   .hero-title-line {
     display: flex;
     align-items: center;

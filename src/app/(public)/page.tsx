@@ -34,13 +34,28 @@ export default function HomePage() {
               REQUEST / COORDINATE / RESOLVE
             </span>
           </div>
-          <h1 id="hero-title" className="hero-title" data-split-title="">
-            <span className="block">Less chasing.</span>{" "}
+          {/* Word boundaries and spaces stay identical before, during and after GSAP entry. */}
+          <h1 id="hero-title" className="hero-title">
+            <span className="hero-title-copy block">
+              <span className="hero-word" data-hero-word="">
+                Less
+              </span>{" "}
+              <span className="hero-word" data-hero-word="">
+                chasing.
+              </span>
+            </span>{" "}
             <span className="hero-title-line">
               <span className="hero-tool" data-tool="" aria-hidden="true">
                 <Wrench />
               </span>
-              More <span className="text-brand-ink">handled.</span>
+              <span className="hero-title-copy">
+                <span className="hero-word" data-hero-word="">
+                  More
+                </span>{" "}
+                <span className="hero-word text-brand-ink" data-hero-word="">
+                  handled.
+                </span>
+              </span>
             </span>
           </h1>
           <div className="hero-rule" data-hero-rule="" />
