@@ -74,7 +74,10 @@ export async function cancelRequest(
       message: "Provide a cancellation reason of 3–500 characters.",
     }
   await requireSameOrigin()
-  const { accessToken } = await requireViewer("CUSTOMER")
+  // Both supported callers cancel with the request version, never a work version.
+  const { accessToken, profile } = await requireViewer()
+  if (profile.role === "TECHNICIAN")
+    return { ok: false, message: "Technicians cannot cancel requests." }
   try {
     await apiRequest(`/requests/${identifier.data}/cancel`, requestSchema, {
       method: "POST",
@@ -83,6 +86,11 @@ export async function cancelRequest(
     })
     revalidatePath(`/customer/requests/${identifier.data}`)
     revalidatePath("/customer")
+    revalidatePath(`/admin/requests/${identifier.data}`)
+    revalidatePath("/admin/requests")
+    revalidatePath("/admin/work-orders")
+    revalidatePath("/customer/work-orders")
+    revalidatePath("/technician")
     return { ok: true, message: "Request cancelled." }
   } catch (error) {
     return actionFailure(error)

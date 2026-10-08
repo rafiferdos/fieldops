@@ -22,10 +22,24 @@ export function WorkspaceNav({ role }: { role: Role }) {
   const links: { href: Route; label: string }[] = [
     {
       href: roleHome(role),
-      label: role === "CUSTOMER" ? "My requests" : "Workspace",
+      label:
+        role === "CUSTOMER"
+          ? "My requests"
+          : role === "TECHNICIAN"
+            ? "Assigned visits"
+            : "Admin home",
     },
     ...(role === "CUSTOMER"
-      ? [{ href: "/customer/requests/new" as const, label: "New request" }]
+      ? [
+          { href: "/customer/requests/new" as const, label: "New request" },
+          { href: "/customer/work-orders" as const, label: "Work orders" },
+        ]
+      : []),
+    ...(role === "ADMIN"
+      ? [
+          { href: "/admin/requests" as const, label: "Requests" },
+          { href: "/admin/work-orders" as const, label: "Work orders" },
+        ]
       : []),
     { href: "/account" as const, label: "Account" },
   ]
@@ -34,7 +48,12 @@ export function WorkspaceNav({ role }: { role: Role }) {
       key={link.href}
       href={link.href}
       onClick={() => setOpen(false)}
-      aria-current={pathname === link.href ? "page" : undefined}
+      aria-current={
+        pathname === link.href ||
+        (link.href !== roleHome(role) && pathname.startsWith(`${link.href}/`))
+          ? "page"
+          : undefined
+      }
       className="rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground"
     >
       {link.label}

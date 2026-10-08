@@ -51,4 +51,23 @@ describe("authentication boundaries", () => {
       loginSchema.parse({ email: " User@Example.com ", password: " secret " })
     ).toEqual({ email: "user@example.com", password: " secret " })
   })
+  it("restores implemented work and dispatch routes only within the current role", () => {
+    const id = "00000000-0000-4000-8000-000000000001"
+    expect(safeReturnPath(`/admin/requests/${id}`, "ADMIN")).toBe(
+      `/admin/requests/${id}`
+    )
+    expect(safeReturnPath(`/technician/work-orders/${id}`, "TECHNICIAN")).toBe(
+      `/technician/work-orders/${id}`
+    )
+    expect(safeReturnPath(`/customer/work-orders/${id}`, "CUSTOMER")).toBe(
+      `/customer/work-orders/${id}`
+    )
+    expect(safeReturnPath(`/admin/work-orders/${id}`, "CUSTOMER")).toBe(
+      "/customer"
+    )
+    expect(safeReturnPath(`/customer/work-orders/${id}`, "TECHNICIAN")).toBe(
+      "/technician"
+    )
+    expect(safeReturnPath("/admin/work-orders/invalid", "ADMIN")).toBe("/admin")
+  })
 })

@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { workStatusSchema } from "@/features/work-orders/status"
 import {
   firstValue,
   limitSchema,
@@ -12,13 +13,6 @@ export const requestStatusSchema = z.enum([
   "PENDING",
   "APPROVED",
   "REJECTED",
-  "CANCELLED",
-])
-const workStatusSchema = z.enum([
-  "ASSIGNED",
-  "EN_ROUTE",
-  "IN_PROGRESS",
-  "COMPLETED",
   "CANCELLED",
 ])
 export const requestSchema = z.object({

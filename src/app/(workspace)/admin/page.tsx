@@ -9,9 +9,18 @@ export default async function AdminPage() {
       <PageHeading
         eyebrow="Administrator workspace"
         title={`Welcome, ${profile.name}`}
-        description="Your administrator account is connected. Manage your contact details or explore the current service catalog."
+        description="Review customer requests, assign qualified technicians and follow confirmed visits."
       />
       <div className="flex flex-wrap gap-5">
+        <Link href="/admin/requests" className="underline underline-offset-4">
+          Review requests
+        </Link>
+        <Link
+          href="/admin/work-orders"
+          className="underline underline-offset-4"
+        >
+          Follow work orders
+        </Link>
         <Link href="/account" className="underline underline-offset-4">
           Manage account
         </Link>

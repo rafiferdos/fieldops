@@ -2,9 +2,9 @@
 
 Use Bengali in conversation and English for all repository artifacts. This is the
 Next.js frontend; the separate fieldops-api backend must remain unchanged unless
-explicitly requested. The user has authorized the next three slices: public/workspace
-layouts and service browsing, secure authentication, and customer request workflows.
-Dispatch, technician execution and payment implementation remain outside this checkpoint.
+explicitly requested. Public browsing, authentication and customer requests are implemented.
+The user has now authorized admin review/dispatch and technician execution/customer
+work tracking. Payment initiation, feedback and reporting remain later slices.
 
 Read the README's official Assignment 7 links and implemented backend contract
 before changing domain behavior. Exactly three roles: CUSTOMER, TECHNICIAN, ADMIN.
@@ -19,6 +19,9 @@ Validate external values with Zod; do not use any, unsafe assertions, ignored
 errors, browser alert/confirm or unnecessary abstractions. Keep secrets server-only.
 Backend authorization and provider-verified payments remain authoritative. Never
 retry mutations or rotate refresh tokens automatically without a designed policy.
+
+Add concise English comments for mini-features, business constraints and non-obvious
+decisions. Explain intent without repeating syntax or adding large comment blocks.
 
 Run npm run check and npm run build at meaningful checkpoints. Add tests for
 security/money boundaries and actual behavior; do not manufacture feature claims

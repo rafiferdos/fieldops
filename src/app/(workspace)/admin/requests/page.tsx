@@ -1,10 +1,10 @@
 import { RequestList } from "@/features/requests/components/request-list"
 import type { SearchValues } from "@/shared/lib/list-query"
-export const metadata = { title: "My requests" }
-export default async function CustomerPage({
+export const metadata = { title: "Request review queue" }
+export default async function AdminRequestsPage({
   searchParams,
 }: {
   searchParams: Promise<SearchValues>
 }) {
-  return <RequestList role="CUSTOMER" values={await searchParams} />
+  return <RequestList role="ADMIN" values={await searchParams} />
 }

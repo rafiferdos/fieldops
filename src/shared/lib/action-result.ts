@@ -1,11 +1,11 @@
 import { ApiError } from "@/infrastructure/api/error"
-import type { Route } from "next"
+import type { RecordRoute } from "./routes"
 
 export type ActionResult =
   | {
       ok: true
       message: string
-      destination?: Route<`/customer/requests/${string}`>
+      destination?: RecordRoute
     }
   | { ok: false; message: string; conflict?: boolean; uncertain?: boolean }
 

@@ -9,7 +9,13 @@ export function Pagination({
   totalPages,
   total,
 }: {
-  pathname: "/services" | "/customer"
+  pathname:
+    | "/services"
+    | "/customer"
+    | "/admin/requests"
+    | "/admin/work-orders"
+    | "/customer/work-orders"
+    | "/technician"
   query: Record<string, string | number | undefined>
   page: number
   totalPages: number
