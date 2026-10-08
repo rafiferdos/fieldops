@@ -7,6 +7,7 @@ import type { Route } from "next"
 import { usePathname } from "next/navigation"
 import {
   Menu,
+  Wrench,
   ClipboardList,
   CalendarDays,
   Plus,
@@ -43,7 +44,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
           ? "My requests"
           : role === "TECHNICIAN"
             ? "Assigned visits"
-            : "Admin home",
+            : "Overview",
     },
     ...(role === "CUSTOMER"
       ? [
@@ -71,6 +72,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
             label: "Work orders",
             icon: CalendarDays,
           },
+          { href: "/admin/services" as const, label: "Services", icon: Wrench },
         ]
       : []),
     { href: "/account" as const, label: "Account", icon: UserRound },
