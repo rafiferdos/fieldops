@@ -1,7 +1,8 @@
 # Feature modules
 
 Add a feature folder when implementing its first real workflow. Keep its components,
-API schemas, input schemas, types and hooks together. Current modules are auth, account, services, requests, dispatch and work-orders.
+API schemas, input schemas, types and hooks together. Current modules are auth, account, services, marketing, requests, dispatch and work-orders.
+Marketing composes public presentation and server catalog reads; it has no operational writes.
 Use meaningful component nesting and add schemas/hooks folders only as needed.
 Do not create empty domain modules or generic CRUD abstractions in advance.
 

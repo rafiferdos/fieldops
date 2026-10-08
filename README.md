@@ -15,6 +15,7 @@ The backend is a separate repository and has not been modified.
 - [Implementation status and verification limits](docs/implementation-status.md)
 - [Target route, role and API mapping](docs/route-plan.md)
 - [Screen flows and design handoff](docs/screen-flows.md)
+- [Design refinement and motion verification](docs/design-refinement.md)
 - [Dispatch/execution plan and recovery rules](docs/dispatch-execution-plan.md)
 
 Twenty route templates exist. Route count alone does not establish completion of
@@ -110,7 +111,10 @@ record no auth traces/video. Opted-in test files wait for a fresh authentication
 window before running, respecting the backend's ten-logins-per-minute limit. Browser
 output folders and environment files are ignored.
 
-All 77 unit/integration checks and nine Chromium scenarios passed at this checkpoint.
+All 77 unit/integration checks pass. Nine real-API workflows and six design/browser
+scenarios are verified. The final 12 public/auth/demo scenarios were rerun
+successfully after rendering, queue-footer and status-contrast corrections. They cover no-JavaScript public content, reduced motion,
+keyboard disclosures, password visibility, 320–1440px layouts and theme contrast.
 Dispatch coverage includes stale review, competing assignment and price-preserving
 reschedule. Execution coverage commits a real completion, deliberately loses its
 browser response, preserves the report and explicitly reads the result without
@@ -129,6 +133,7 @@ src/
     (workspace)/               # Protected role entries, account and customer requests
   features/
     services/                  # Catalog schemas, server reads, cards and tests
+    marketing/                 # Server-rendered public journey and featured catalog
     auth/                      # Auth actions, current viewer, return policy and forms
     account/                   # Own-profile form, schema and action
     requests/                  # Shared customer/admin requests and customer forms
@@ -154,7 +159,7 @@ is parsed; there is no any, unsafe cast, ignored type error or unrestricted API 
 
 Preserve the exact preset: Base UI Rhea, zinc/emerald semantic tokens, Outfit headings,
 Geist body and supported light/dark themes. Use installed shadcn controls, including
-NativeSelect, Sheet, AlertDialog and Toast. Do not use browser alert/confirm. Add a
+NativeSelect, Accordion, Separator, Sheet, AlertDialog and Toast. Do not use browser alert/confirm. Add a
 component with the pinned CLI only when a real screen needs it:
 
 ```bash
@@ -185,6 +190,8 @@ Verified against official documentation and registry metadata on October 8, 2026
   registry ESLint 10.12.0 is outside them. ESLint 9's end of support remains a limitation.
 - Zod 4.6.5, React Hook Form 7.89.0, resolvers 5.9.1 and Redis client 6.3.0.
   Forms support React 19/Zod 4; Node 24 satisfies the client runtime requirement.
+- Motion 14.0.0 is pinned. Entry effects use `motion/react-mini`, native animations,
+  one-time observers and reduced-motion handling; heavier drag/layout features are unused.
 - Vitest 5.0.3 and Playwright 1.64.0. The pinned official Redis test image reports 8.10.2.
 
 The audit still has nine high-severity development/build-tool findings through braces

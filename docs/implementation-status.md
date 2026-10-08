@@ -38,7 +38,7 @@ HTTP rotation response, not live Google or backend replay validation.
 - The frontend Redis store is independent of backend cache/data ownership. Production
   requires a private authenticated `rediss://` store, persistent storage and deliberate
   expiry/eviction settings. Local Compose exposes Redis only on loopback with a pinned
-  official image and persistent volume. Browser tests used a separate ephemeral store.
+  official image and persistent volume. Browser checks use the dedicated frontend session store, never the backend Redis service.
 - Current account and role are verified through `/users/me` per request. React's
   request-scoped cache avoids redundant reads within one render; it is not a shared
   authorization cache. Page reads and every mutation enforce access independently.
@@ -104,6 +104,21 @@ retried. Customer/admin screens show request review state separately from work
 progress, the latest 100 timeline events and immutable invoice summaries. Existing
 feedback is readable; checkout and feedback submission are not implemented.
 
+## Design refinement
+
+The implemented screens share editorial typography, readable card/detail surfaces,
+responsive icon navigation and the original emerald/zinc preset. Public composition
+is server-rendered; the homepage streams only its featured catalog. Authentication,
+queues, wizard steps, timelines and recovery screens use the same visual hierarchy.
+Official Base UI Accordion and Separator join the existing shadcn controls.
+
+Motion 14.0.0 uses the mini React API for one-time transform/opacity entry effects.
+Reduced motion disables custom effects and generated overlay/skeleton animation.
+Pointer hover effects are restricted to suitable devices; no scroll interception or
+perpetual decorative loops are present. The `brand-ink` alias uses existing preset
+colors to make dark-mode text readable. See [design refinement](design-refinement.md)
+for composition, browser coverage, performance observations and precise limits.
+
 ## Verification and remaining limits
 
 - `npm run check`: formatting, typed lint, generated route types, TypeScript and
@@ -114,8 +129,13 @@ feedback is readable; checkout and feedback submission are not implemented.
 - `npm run build -- --webpack`: production build passes. Default Turbopack was
   previously blocked by this execution environment's port restriction; its default
   command is preserved. Hosted CI has not run because no push occurred.
-- Nine Chromium scenarios pass against the hosted API and production frontend:
-  original catalog/mobile/auth/customer flows, plus stale review, qualified dispatch,
+- Nine real-API Chromium workflows and six design scenarios are verified. The six
+  design checks passed again in the final 12 public/auth/demo scenarios, including no-JavaScript
+  homepage/process content, reduced motion, keyboard FAQ, explicit password visibility,
+  320–1440px public/auth layouts and light/dark brand-text contrast. Demo queues also
+  verify readable status labels in both themes.
+- Operational coverage against the hosted API and production frontend includes:
+  catalog/mobile/auth/customer flows, plus stale review, qualified dispatch,
   competing-slot rejection, price-preserving reschedule, progress, stale technician
   recovery, completion, customer tracking and foreign-record privacy.
 - One browser scenario deliberately drops a real completion response after the
