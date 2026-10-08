@@ -1,5 +1,7 @@
 "use client"
 import Link from "next/link"
+import { Check } from "lucide-react"
+import { cn } from "@/shared/lib/utils"
 import { useRouter } from "next/navigation"
 import { useState, useRef } from "react"
 import { useForm } from "react-hook-form"
@@ -108,9 +110,25 @@ export function RequestWizard({
           <li
             key={title}
             aria-current={step === index ? "step" : undefined}
-            className="rounded-xl border p-3 text-sm text-muted-foreground aria-[current=step]:border-primary aria-[current=step]:text-primary"
+            className={cn(
+              "flex items-center gap-3 rounded-2xl border bg-card p-4 text-xs text-muted-foreground transition-colors aria-[current=step]:border-primary/40 aria-[current=step]:bg-primary/5 aria-[current=step]:text-primary",
+              index < step && "text-primary"
+            )}
           >
-            {index + 1}. {title}
+            <span
+              className={cn(
+                "flex size-7 shrink-0 items-center justify-center rounded-full border text-xs",
+                index <= step &&
+                  "border-primary bg-primary text-primary-foreground"
+              )}
+            >
+              {index < step ? (
+                <Check aria-hidden="true" className="size-3.5" />
+              ) : (
+                index + 1
+              )}
+            </span>
+            {title}
           </li>
         ))}
       </ol>
@@ -120,7 +138,7 @@ export function RequestWizard({
             setMessage("The form could not be submitted. Please try again.")
           )
         }}
-        className="space-y-6"
+        className="surface space-y-6 p-6 sm:p-8"
         noValidate
       >
         <h2
@@ -131,7 +149,7 @@ export function RequestWizard({
           {steps[step]}
         </h2>
         <fieldset disabled={!isReady || isSubmitting} className="space-y-5">
-          <div hidden={step !== 0} className="space-y-3">
+          <div hidden={step !== 0} className="wizard-panel space-y-3">
             <Label htmlFor="serviceId">Service</Label>
             <NativeSelect
               id="serviceId"
@@ -162,7 +180,7 @@ export function RequestWizard({
               </p>
             )}
           </div>
-          <div hidden={step !== 1} className="space-y-5">
+          <div hidden={step !== 1} className="wizard-panel space-y-5">
             <div className="space-y-2">
               <Label htmlFor="description">What needs attention?</Label>
               <Textarea
@@ -220,7 +238,7 @@ export function RequestWizard({
             </div>
           </div>
           {step === 2 && (
-            <dl className="space-y-5 rounded-2xl border bg-muted/30 p-5">
+            <dl className="wizard-panel space-y-5 rounded-2xl border bg-muted/30 p-5">
               {[
                 ["Service", selected?.name ?? "Selected service"],
                 [
@@ -261,6 +279,7 @@ export function RequestWizard({
                 variant="outline"
                 onClick={() => {
                   setStep((current) => current - 1)
+                  setTimeout(() => heading.current?.focus(), 0)
                 }}
               >
                 Back

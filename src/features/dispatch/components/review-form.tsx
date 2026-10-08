@@ -51,7 +51,7 @@ export function ReviewForm({ id, version }: { id: string; version: number }) {
     }
   }
   return (
-    <section className="mt-10 max-w-xl space-y-5 rounded-2xl border p-5">
+    <section className="surface mt-10 max-w-2xl space-y-5 p-6 sm:p-8">
       <h2 className="font-heading text-xl font-medium">Review request</h2>
       <form
         noValidate

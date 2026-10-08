@@ -3,7 +3,15 @@ import Link from "next/link"
 import { useState } from "react"
 import type { Route } from "next"
 import { usePathname } from "next/navigation"
-import { Menu } from "lucide-react"
+import {
+  Menu,
+  ClipboardList,
+  CalendarDays,
+  Plus,
+  LayoutDashboard,
+  UserRound,
+  type LucideIcon,
+} from "lucide-react"
 import type { Role } from "../schemas"
 import { roleHome } from "../policy"
 import {
@@ -19,9 +27,15 @@ import { Button } from "@/shared/ui/button"
 export function WorkspaceNav({ role }: { role: Role }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
-  const links: { href: Route; label: string }[] = [
+  const links: { href: Route; label: string; icon: LucideIcon }[] = [
     {
       href: roleHome(role),
+      icon:
+        role === "ADMIN"
+          ? LayoutDashboard
+          : role === "TECHNICIAN"
+            ? CalendarDays
+            : ClipboardList,
       label:
         role === "CUSTOMER"
           ? "My requests"
@@ -31,17 +45,33 @@ export function WorkspaceNav({ role }: { role: Role }) {
     },
     ...(role === "CUSTOMER"
       ? [
-          { href: "/customer/requests/new" as const, label: "New request" },
-          { href: "/customer/work-orders" as const, label: "Work orders" },
+          {
+            href: "/customer/requests/new" as const,
+            label: "New request",
+            icon: Plus,
+          },
+          {
+            href: "/customer/work-orders" as const,
+            label: "Work orders",
+            icon: CalendarDays,
+          },
         ]
       : []),
     ...(role === "ADMIN"
       ? [
-          { href: "/admin/requests" as const, label: "Requests" },
-          { href: "/admin/work-orders" as const, label: "Work orders" },
+          {
+            href: "/admin/requests" as const,
+            label: "Requests",
+            icon: ClipboardList,
+          },
+          {
+            href: "/admin/work-orders" as const,
+            label: "Work orders",
+            icon: CalendarDays,
+          },
         ]
       : []),
-    { href: "/account" as const, label: "Account" },
+    { href: "/account" as const, label: "Account", icon: UserRound },
   ]
   const navigation = links.map((link) => (
     <Link
@@ -54,14 +84,15 @@ export function WorkspaceNav({ role }: { role: Role }) {
           ? "page"
           : undefined
       }
-      className="rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground"
+      className="inline-flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-primary/10 aria-[current=page]:text-primary"
     >
+      <link.icon aria-hidden="true" className="size-4" />
       {link.label}
     </Link>
   ))
   return (
     <>
-      <nav aria-label="Workspace navigation" className="hidden gap-1 md:flex">
+      <nav aria-label="Workspace navigation" className="hidden gap-1 lg:flex">
         {navigation}
       </nav>
       <Sheet open={open} onOpenChange={setOpen}>
@@ -70,7 +101,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
             <Button
               variant="outline"
               size="icon"
-              className="md:hidden"
+              className="lg:hidden"
               aria-label="Open workspace navigation"
             />
           }

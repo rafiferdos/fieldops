@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -43,6 +44,7 @@ export function AuthForm({
   })
   const [message, setMessage] = useState<string>()
   const [demoPending, setDemoPending] = useState(false)
+  const [passwordVisible, setPasswordVisible] = useState(false)
   const busy = !isReady || isSubmitting || demoPending
 
   async function submit(values: Fields) {
@@ -121,21 +123,40 @@ export function AuthForm({
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              autoComplete={registering ? "new-password" : "current-password"}
-              aria-invalid={!!errors.password}
-              aria-describedby={
-                [
-                  registering ? "password-help" : null,
-                  errors.password ? "password-error" : null,
-                ]
-                  .filter(Boolean)
-                  .join(" ") || undefined
-              }
-              {...register("password")}
-            />
+            {/* Reveal is explicit and never changes password storage or autocomplete. */}
+            <div className="relative">
+              <Input
+                id="password"
+                className="pr-12"
+                type={passwordVisible ? "text" : "password"}
+                autoComplete={registering ? "new-password" : "current-password"}
+                aria-invalid={!!errors.password}
+                aria-describedby={
+                  [
+                    registering ? "password-help" : null,
+                    errors.password ? "password-error" : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" ") || undefined
+                }
+                {...register("password")}
+              />
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                className="absolute top-0.5 right-0.5"
+                aria-label={passwordVisible ? "Hide password" : "Show password"}
+                aria-pressed={passwordVisible}
+                onClick={() => setPasswordVisible((current) => !current)}
+              >
+                {passwordVisible ? (
+                  <EyeOff aria-hidden="true" />
+                ) : (
+                  <Eye aria-hidden="true" />
+                )}
+              </Button>
+            </div>
             {registering && (
               <p id="password-help" className="text-xs text-muted-foreground">
                 Use 15–128 characters. Your account will be a customer account.
@@ -146,7 +167,7 @@ export function AuthForm({
               message={errors.password?.message}
             />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="h-11 w-full">
             {isSubmitting
               ? "Please wait…"
               : registering
@@ -164,7 +185,7 @@ export function AuthForm({
           <p className="text-sm text-muted-foreground">
             Explore with a demo account
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {demoRoles.map((role) => (
               <Button
                 key={role}

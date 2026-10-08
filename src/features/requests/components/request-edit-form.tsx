@@ -59,7 +59,7 @@ export function RequestEditForm({ request }: { request: ServiceRequest }) {
     }
   }
   return (
-    <section className="mt-10 max-w-2xl border-t pt-8">
+    <section className="surface mt-10 max-w-4xl p-6 sm:p-8">
       <h2 className="mb-5 font-heading text-xl font-medium">
         Edit pending request
       </h2>

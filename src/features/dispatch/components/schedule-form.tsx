@@ -118,7 +118,7 @@ export function ScheduleForm({
     }
   }
   return (
-    <section className="mt-10 max-w-2xl space-y-5 rounded-2xl border p-5 sm:p-6">
+    <section className="surface mt-10 max-w-4xl space-y-5 p-6 sm:p-8">
       <h2 className="font-heading text-xl font-medium">
         {target.kind === "assign" ? "Assign a visit" : "Reschedule visit"}
       </h2>

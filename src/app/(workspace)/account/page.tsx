@@ -10,7 +10,7 @@ export default async function AccountPage() {
         title="Your account"
         description="Keep your contact details current for your service visits."
       />
-      <dl className="mb-8 flex flex-wrap gap-8 text-sm">
+      <dl className="surface mb-8 flex max-w-2xl flex-wrap gap-8 p-6 text-sm">
         <div>
           <dt className="text-muted-foreground">Email</dt>
           <dd className="mt-1 break-all">{profile.email}</dd>

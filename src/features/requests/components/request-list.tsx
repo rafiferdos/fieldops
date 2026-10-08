@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { ArrowUpRight, CalendarDays } from "lucide-react"
+import { Reveal } from "@/shared/components/reveal"
 import { listRequests } from "@/features/requests/server"
 import { parseRequestQuery } from "@/features/requests/schemas"
 import { firstValue, type SearchValues } from "@/shared/lib/list-query"
@@ -44,7 +46,7 @@ export async function RequestList({
       />
       <form
         action={pathname}
-        className="mb-8 grid items-end gap-4 rounded-2xl border p-5 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto_auto]"
+        className="filter-panel mb-8 grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto_auto]"
       >
         <div className="space-y-2">
           <Label htmlFor="request-search">Search requests</Label>
@@ -104,13 +106,27 @@ export async function RequestList({
           </Link>
         </p>
       )}
+      {/* Entry motion never changes record ordering or operational state. */}
       {result.items.length ? (
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <Reveal
+          key={`${query.q}:${query.status}:${query.sort}:${query.page}`}
+          stagger
+          className="grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+        >
           {result.items.map((request) => (
-            <Card key={request.id}>
+            <Card
+              key={request.id}
+              className="interactive-card border shadow-none"
+            >
               <CardHeader>
                 <div className="mb-3">
-                  <Badge variant="secondary">{request.status}</Badge>
+                  <Badge
+                    variant="outline"
+                    className="status-badge"
+                    data-status={request.status}
+                  >
+                    {request.status}
+                  </Badge>
                 </div>
                 <CardTitle className="font-heading text-xl">
                   {request.service.name}
@@ -120,7 +136,11 @@ export async function RequestList({
                 <p className="line-clamp-2 text-sm text-muted-foreground">
                   {request.description}
                 </p>
-                <p className="text-sm">
+                <p className="flex items-start gap-2 text-sm">
+                  <CalendarDays
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+                  />
                   Preferred: {formatDate(request.preferredStart)}
                 </p>
                 <Link
@@ -129,14 +149,15 @@ export async function RequestList({
                       ? `/admin/requests/${request.id}`
                       : `/customer/requests/${request.id}`
                   }
-                  className="text-sm font-medium text-primary underline underline-offset-4"
+                  className="text-link min-h-11 justify-between border-t pt-4"
                 >
                   View request
+                  <ArrowUpRight aria-hidden="true" className="size-4" />
                 </Link>
               </CardContent>
             </Card>
           ))}
-        </div>
+        </Reveal>
       ) : (
         <EmptyState
           title={

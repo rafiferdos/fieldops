@@ -50,7 +50,7 @@ export function ProfileForm({
           setMessage("The form could not be submitted. Please try again.")
         )
       }}
-      className="max-w-lg space-y-5"
+      className="surface max-w-2xl space-y-5 p-6 sm:p-8"
       noValidate
     >
       <fieldset disabled={!isReady || isSubmitting} className="space-y-5">

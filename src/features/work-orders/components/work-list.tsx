@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { ArrowUpRight, CalendarDays } from "lucide-react"
+import { Reveal } from "@/shared/components/reveal"
 import type { Role } from "@/features/auth/schemas"
 import type { SearchValues } from "@/shared/lib/list-query"
 import { PageHeading } from "@/shared/components/page-heading"
@@ -46,7 +48,7 @@ export async function WorkList({
       {/* GET filters reset pagination while preserving an explicit service scope. */}
       <form
         action={pathname}
-        className="mb-8 grid items-end gap-4 rounded-2xl border p-5 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto_auto]"
+        className="filter-panel mb-8 grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto_auto]"
       >
         <div className="space-y-2">
           <Label htmlFor="work-search">Search work orders</Label>
@@ -106,13 +108,24 @@ export async function WorkList({
           </Link>
         </p>
       )}
+      {/* Entry motion never changes record ordering or operational state. */}
       {result.items.length ? (
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <Reveal
+          key={`${query.q}:${query.status}:${query.sort}:${query.page}`}
+          stagger
+          className="grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+        >
           {result.items.map((work) => (
-            <Card key={work.id}>
+            <Card key={work.id} className="interactive-card border shadow-none">
               <CardHeader>
                 <div className="mb-3">
-                  <Badge variant="secondary">{work.status}</Badge>
+                  <Badge
+                    variant="outline"
+                    className="status-badge"
+                    data-status={work.status}
+                  >
+                    {work.status}
+                  </Badge>
                 </div>
                 <CardTitle className="font-heading text-xl">
                   {work.request.service.name}
@@ -122,18 +135,25 @@ export async function WorkList({
                 <p className="line-clamp-2 text-sm text-muted-foreground">
                   {work.request.description}
                 </p>
-                <p className="text-sm">{formatDate(work.scheduledStart)}</p>
+                <p className="flex items-start gap-2 text-sm">
+                  <CalendarDays
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+                  />
+                  {formatDate(work.scheduledStart)}
+                </p>
                 <p className="text-sm">Technician: {work.technician.name}</p>
                 <Link
                   href={workDetailPath(role, work.id)}
-                  className="text-sm font-medium text-primary underline underline-offset-4"
+                  className="text-link min-h-11 justify-between border-t pt-4"
                 >
                   View work order
+                  <ArrowUpRight aria-hidden="true" className="size-4" />
                 </Link>
               </CardContent>
             </Card>
           ))}
-        </div>
+        </Reveal>
       ) : (
         <EmptyState
           title={

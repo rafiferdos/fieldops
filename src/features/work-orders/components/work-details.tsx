@@ -1,4 +1,12 @@
 import Link from "next/link"
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Check,
+  FileText,
+  Receipt,
+  Star,
+} from "lucide-react"
 import type { Role } from "@/features/auth/schemas"
 import { PageHeading } from "@/shared/components/page-heading"
 import { Badge } from "@/shared/ui/badge"
@@ -10,10 +18,8 @@ import type { WorkDetail } from "../schemas"
 export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
   return (
     <>
-      <Link
-        href={workListPath(role)}
-        className="mb-7 inline-block text-sm underline"
-      >
+      <Link href={workListPath(role)} className="text-link mb-7">
+        <ArrowLeft aria-hidden="true" className="size-4" />
         Back to work orders
       </Link>
       <PageHeading
@@ -22,10 +28,22 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
         description={`Work ${work.id}`}
       />
       <div className="flex flex-wrap gap-3">
-        <Badge>Work: {work.status}</Badge>
-        <Badge variant="secondary">Request: {work.request.status}</Badge>
+        <Badge
+          variant="outline"
+          className="status-badge"
+          data-status={work.status}
+        >
+          Work: {work.status}
+        </Badge>
+        <Badge
+          variant="outline"
+          className="status-badge"
+          data-status={work.request.status}
+        >
+          Request: {work.request.status}
+        </Badge>
       </div>
-      <dl className="mt-7 grid max-w-4xl gap-6 sm:grid-cols-2">
+      <dl className="detail-grid mt-7 max-w-4xl">
         {[
           ["Description", work.request.description],
           ["Service address", work.request.address],
@@ -53,14 +71,16 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
               ? `/admin/requests/${work.requestId}`
               : `/customer/requests/${work.requestId}`
           }
-          className="mt-6 inline-block text-sm underline"
+          className="text-link mt-6"
         >
           View related request
+          <ArrowUpRight aria-hidden="true" className="size-4" />
         </Link>
       )}
       {work.report && (
-        <section className="mt-8 max-w-3xl space-y-3 rounded-2xl border p-5">
-          <h2 className="font-heading text-xl font-medium">
+        <section className="surface mt-8 max-w-4xl space-y-4 p-6 sm:p-8">
+          <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
+            <FileText aria-hidden="true" className="size-5 text-primary" />
             Completion report
           </h2>
           <p className="break-words whitespace-pre-wrap">{work.report}</p>
@@ -68,14 +88,20 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
       )}
       {/* The completion response owns invoice creation; this screen only reads its snapshot. */}
       {work.invoice && (
-        <section className="mt-8 max-w-3xl space-y-3 rounded-2xl border p-5">
-          <h2 className="font-heading text-xl font-medium">Invoice summary</h2>
+        <section className="surface mt-8 max-w-4xl space-y-4 p-6 sm:p-8">
+          <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
+            <Receipt aria-hidden="true" className="size-5 text-primary" />
+            Invoice summary
+          </h2>
           <p className="text-sm break-all text-muted-foreground">
             Invoice {work.invoice.id}
           </p>
-          <p>
-            {formatMoney(work.invoice.amountMinor)} · {work.invoice.status}
-          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="font-heading text-3xl font-medium tabular-nums">
+              {formatMoney(work.invoice.amountMinor)}
+            </p>
+            <Badge variant="outline">{work.invoice.status}</Badge>
+          </div>
           <p className="text-sm">
             Issued {formatDate(work.invoice.issuedAt)}
             {work.invoice.paidAt
@@ -85,8 +111,9 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
         </section>
       )}
       {work.feedback && (
-        <section className="mt-8 max-w-3xl space-y-3 rounded-2xl border p-5">
-          <h2 className="font-heading text-xl font-medium">
+        <section className="surface mt-8 max-w-4xl space-y-4 p-6 sm:p-8">
+          <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
+            <Star aria-hidden="true" className="size-5 text-primary" />
             Customer feedback
           </h2>
           <p>
@@ -100,16 +127,27 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
           )}
         </section>
       )}
-      <section className="mt-10 max-w-3xl space-y-5 border-t pt-8">
-        <h2 className="font-heading text-xl font-medium">Visit timeline</h2>
+      <section className="surface mt-10 max-w-4xl space-y-5 p-6 sm:p-8">
+        <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
+          Visit timeline
+        </h2>
         <p className="text-sm text-muted-foreground">
           Latest {work.timeline.length} events, up to 100. This is the
           work-order timeline.
         </p>
-        <ol className="space-y-5 border-l pl-5">
+        <ol className="relative space-y-7">
           {work.timeline.map((event) => (
-            <li key={event.id}>
-              <p className="font-medium">
+            <li
+              key={event.id}
+              className="relative pl-12 before:absolute before:top-8 before:bottom-[-28px] before:left-4 before:w-px before:bg-border last:before:hidden"
+            >
+              <span
+                aria-hidden="true"
+                className="absolute top-0 left-0 flex size-8 items-center justify-center rounded-full border bg-primary/5 text-primary"
+              >
+                <Check className="size-3.5" />
+              </span>
+              <p className="font-medium capitalize">
                 {event.action.toLowerCase().replaceAll("_", " ")}
               </p>
               {event.metadata?.fromStatus && event.metadata.toStatus && (

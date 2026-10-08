@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ArrowLeft, ArrowUpRight, CalendarDays } from "lucide-react"
 import type { ServiceRequest } from "@/features/requests/schemas"
 import { workDetailPath } from "@/features/work-orders/routes"
 import { canCancelRequest } from "@/features/requests/schemas"
@@ -20,8 +21,9 @@ export function RequestDetails({
     <>
       <Link
         href={role === "ADMIN" ? "/admin/requests" : "/customer"}
-        className="mb-7 inline-block text-sm underline underline-offset-4"
+        className="text-link mb-7"
       >
+        <ArrowLeft aria-hidden="true" className="size-4" />
         Back to requests
       </Link>
       <PageHeading
@@ -38,8 +40,14 @@ export function RequestDetails({
           ) : undefined
         }
       />
-      <Badge variant="secondary">{request.status}</Badge>
-      <dl className="mt-7 grid max-w-4xl gap-6 sm:grid-cols-2">
+      <Badge
+        variant="outline"
+        className="status-badge"
+        data-status={request.status}
+      >
+        {request.status}
+      </Badge>
+      <dl className="detail-grid mt-7 max-w-4xl">
         {[
           ["Description", request.description],
           ["Service address", request.address],
@@ -59,13 +67,17 @@ export function RequestDetails({
         ))}
       </dl>
       {request.workOrder && (
-        <section className="mt-8 rounded-2xl border p-5">
-          <h2 className="font-heading text-xl font-medium">Assigned work</h2>
+        <section className="surface mt-8 max-w-4xl p-6 sm:p-8">
+          <h2 className="flex items-center gap-3 font-heading text-xl font-medium">
+            <CalendarDays aria-hidden="true" className="size-5 text-primary" />
+            Assigned work
+          </h2>
           <Link
             href={workDetailPath(role, request.workOrder.id)}
-            className="mt-3 inline-block text-sm underline"
+            className="text-link mt-4"
           >
             Track work order
+            <ArrowUpRight aria-hidden="true" className="size-4" />
           </Link>
           <p className="mt-3">Work status: {request.workOrder.status}</p>
           <p className="mt-2 text-sm text-muted-foreground">
