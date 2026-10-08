@@ -112,6 +112,11 @@ export function WorkDetails({ work, role }: { work: WorkDetail; role: Role }) {
               <p className="font-medium">
                 {event.action.toLowerCase().replaceAll("_", " ")}
               </p>
+              {event.metadata?.fromStatus && event.metadata.toStatus && (
+                <p className="mt-1 text-sm">
+                  {event.metadata.fromStatus} → {event.metadata.toStatus}
+                </p>
+              )}
               <time
                 dateTime={event.createdAt}
                 className="text-sm text-muted-foreground"

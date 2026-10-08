@@ -1,27 +1,31 @@
 # Implementation status
 
-Reviewed October 8, 2026. This checkpoint implements roadmap steps 2–4. The backend
-repository is unchanged. No push, deployment, dispatch or payment implementation
-was performed. Real verification created disposable customer/request records and
-cancelled the verification requests; these records remain because no deletion API
-exists. Demo credentials are local-only and were used with explicit permission.
+Reviewed October 8, 2026. This checkpoint implements roadmap steps 2–6. The backend
+repository is unchanged. No push or deployment was performed. Verification creates
+only disposable accounts and requests, cancels eligible unstarted requests, and
+retains rejected/completed records and unpaid invoices because no deletion API exists.
+Demo credentials remain local-only and were used with explicit permission.
 
 ## Delivered routes and workflows
 
-| Area           | Routes                                                                  | Implemented behavior                                                                                                                                  |
-| -------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Public         | `/`, `/about`, `/faq`                                                   | Preset-based responsive shell, real catalog preview, accurate process/FAQ content, theme and accessible mobile Sheet                                  |
-| Catalog        | `/services`, `/services/[serviceId]`                                    | Real API data, search/sort/pagination in URL, empty/failed/missing states, validated service entry into login/request flow                            |
-| Authentication | `/login`, `/register`                                                   | Customer registration, password login, configured three-role demo login, safe role destinations, Google Identity Services integration when configured |
-| Account        | `/account`                                                              | Backend-verified current account, name/nullable-phone update, logout                                                                                  |
-| Customer       | `/customer`, `/customer/requests/new`, `/customer/requests/[requestId]` | Scoped list, URL filters, three-step wizard, Dhaka timestamps, request detail, pending edit, eligible cancellation with AlertDialog                   |
-| Role entry     | `/admin`, `/technician`                                                 | Backend-verified role landing and account navigation; operational dashboards/queues are not implemented                                               |
+| Area           | Routes                                                                  | Implemented behavior                                                                              |
+| -------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Public         | `/`, `/about`, `/faq`                                                   | Responsive preset shell, real catalog preview, process/FAQ, theme and accessible mobile Sheet     |
+| Catalog        | `/services`, `/services/[serviceId]`                                    | Real search/sort/pagination URL state, empty/error/missing states and validated request entry     |
+| Authentication | `/login`, `/register`                                                   | Customer registration, password/demo login, role destinations and configurable Google integration |
+| Account        | `/account`                                                              | Current backend-verified profile, own name/phone update and logout                                |
+| Requests       | `/customer`, `/customer/requests/new`, `/customer/requests/[requestId]` | Own queue, three-step wizard, pending edit, eligible cancellation and linked work                 |
+| Dispatch       | `/admin/requests`, `/admin/requests/[requestId]`                        | Review queue, versioned approval/rejection, cancellation and qualified assignment                 |
+| Admin work     | `/admin/work-orders`, `/admin/work-orders/[workOrderId]`                | Global scoped work queue, timeline, invoice/feedback summaries and eligible reschedule            |
+| Technician     | `/technician`, `/technician/work-orders/[workOrderId]`                  | Scheduled queue, legal progress, completion report and explicit uncertain-outcome inspection      |
+| Customer work  | `/customer/work-orders`, `/customer/work-orders/[workOrderId]`          | Own confirmed visits, report, timeline, invoice and existing feedback                             |
+| Admin entry    | `/admin`                                                                | Protected navigation to review/dispatch and account; analytics remains later work                 |
 
-There are 13 route templates, including the two limited role landing pages. This
-does not satisfy or claim the assignment's 18-functional-page delivery requirement.
-Fourteen domain API operations are bound in production code. Google login is
-configuration-dependent; refresh uses real Redis tests with a mocked HTTP rotation
-response, not a claim of live Google or backend replay validation.
+There are 20 route templates and 22 domain API operations bound in production code.
+Route count is not a claim of full assignment compliance: payment initiation/return,
+feedback submission, management and reporting remain incomplete. Google login is
+configuration-dependent. Refresh concurrency tests use real Redis with a stubbed
+HTTP rotation response, not live Google or backend replay validation.
 
 ## Session design
 
@@ -69,28 +73,64 @@ transactions remain authoritative. Stale or uncertain outcomes block another
 submission until the latest record is inspected. No mutation is automatically retried.
 Request detail includes its available work summary; full work tracking is a later slice.
 
+## Dispatch and execution rules
+
+The [implementation plan](dispatch-execution-plan.md) records scope, composition
+and acceptance gates. Admin queues reuse request presentation with independently
+checked role boundaries. Approval/rejection use the request version; rejection
+requires its reason. Assignment uses only technicianId/start/end and accepts no
+version or client price. Reschedule uses the work version and preserves the agreed
+price. Available technicians are active, qualified and unbooked according to the API.
+
+Visit windows are explicit Dhaka times, future, positive and at most eight hours.
+Window and availability page are URL state. Editing the window clears technician
+selection; even re-searching the identical URL reads again. Availability does not
+reserve a visit. A conflict or uncertain write blocks submission until the record
+and availability are refreshed and a technician is explicitly chosen again.
+
+The availability API cannot exclude the current booking. To keep the same technician
+when rescheduling, the operator must search outside that booking's window. No
+unsupported exclusion parameter, skill overwrite or eligibility shortcut was added.
+
+Only the assigned technician sees execution controls. The UI offers ASSIGNED →
+EN_ROUTE → IN_PROGRESS, then a separate report/completion action. Backend ownership,
+versions and transactions remain authoritative. Completion atomically freezes the
+report and creates the unique invoice; the browser cannot specify invoice data.
+
+On stale or uncertain execution, the report stays in the form and actions are
+blocked. Explicit inspection reads the latest work; a confirmed completed state
+removes write controls and shows the actual invoice. No action is automatically
+retried. Customer/admin screens show request review state separately from work
+progress, the latest 100 timeline events and immutable invoice summaries. Existing
+feedback is readable; checkout and feedback submission are not implemented.
+
 ## Verification and remaining limits
 
 - `npm run check`: formatting, typed lint, generated route types, TypeScript and
-  59 ordinary tests; four real-Redis tests are skipped without SESSION_TEST_REDIS_URL.
-- With the isolated Redis URL: all 63 tests pass, including concurrent refresh,
-  uncertain/crashed rotation, ciphertext integrity, role return paths, strict schemas,
-  timezone conversion and cancellation rules. CI provisions Redis for those tests.
-- `npm run build -- --webpack`: production build passes. The default Turbopack
-  build was blocked by this execution environment's port restriction; no default
-  bundler change is committed. Hosted CI has not run because no push occurred.
-- Seven Chromium browser tests pass against the hosted API and production frontend:
-  real catalog/URL history, mobile/keyboard/theme, registration validation, all three
-  demo role login/logout/cookie protections, disposable registration/profile update,
-  request create/edit/cancel and foreign request privacy. Tests do not ship mocks.
-- Real Google OAuth requires an authorized Web client ID, configured Google origins
-  and a human Google account. Its browser/provider round trip has not been verified.
-- Refresh HTTP behavior is stubbed in focused concurrency tests. Browser tests do
-  not wait 15 minutes to exercise actual backend rotation/replay. Distributed Redis
-  failover and production HTTPS cookies need deployment-environment verification.
-- Automated checks are not a complete accessibility audit or a Firefox/WebKit
-  compatibility claim. Admin dispatch, technician execution, invoice/payment return,
-  feedback and reporting remain outside this checkpoint.
+  73 ordinary tests. Four real-Redis tests require SESSION_TEST_REDIS_URL.
+- With the dedicated Redis URL all 77 tests pass: session concurrency/integrity,
+  role return paths, scheduling bounds, strict write schemas, legal transitions,
+  timezone conversion, cancellation and mutation recovery classification.
+- `npm run build -- --webpack`: production build passes. Default Turbopack was
+  previously blocked by this execution environment's port restriction; its default
+  command is preserved. Hosted CI has not run because no push occurred.
+- Nine Chromium scenarios pass against the hosted API and production frontend:
+  original catalog/mobile/auth/customer flows, plus stale review, qualified dispatch,
+  competing-slot rejection, price-preserving reschedule, progress, stale technician
+  recovery, completion, customer tracking and foreign-record privacy.
+- One browser scenario deliberately drops a real completion response after the
+  backend commits. It confirms the report is retained, only one completion call was
+  made, and explicit inspection discovers the actual invoice. A separate intentional
+  identical API replay returns that same invoice. Business data is not mocked.
+- Opted-in browser groups wait for a fresh authentication window to respect the
+  backend's ten-logins-per-minute limit; throttling is not disabled or bypassed.
+- The hosted connection can time out. Test writes have no automatic retries; inspect
+  uncertain outcomes. Tests do not progress or complete pre-existing work fixtures.
+- Real Google OAuth still needs configured authorized origins/client ID and a human
+  account. Refresh HTTP behavior is stubbed in focused Redis tests; browsers do not
+  wait 15 minutes to exercise actual backend refresh replay or distributed failover.
+- Production HTTPS cookie behavior, Firefox/WebKit and a complete accessibility
+  audit remain deployment/review verification. No claim of these checks is made.
 
 Payment-return and current-skill read gaps remain as described in the route plan.
-No contact page was invented without verified support details.
+No unsupported contact channel, technician earnings or operational report was invented.

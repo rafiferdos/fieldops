@@ -2,8 +2,9 @@
 
 This specification accompanies the [route and API plan](route-plan.md). All screens
 below describe the target behavior. See [implementation status](implementation-status.md)
-for delivered public browsing, authentication and customer requests. Dispatch,
-technician execution and payment UI remain planned. Browser verification creates
+for delivered public browsing, authentication, customer requests, dispatch,
+technician execution and customer work tracking. Payment initiation,
+feedback submission and reporting remain planned. Browser verification creates
 disposable records only when explicitly enabled.
 
 ## Visual and interaction foundation

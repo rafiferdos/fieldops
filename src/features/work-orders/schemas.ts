@@ -61,17 +61,21 @@ export const workOrderSchema = z.object({
   feedback: feedbackSchema.nullable(),
 })
 export type WorkOrder = z.infer<typeof workOrderSchema>
+export const timelineEntrySchema = z.object({
+  id: z.uuid(),
+  action: z.string(),
+  createdAt: z.iso.datetime(),
+  // Only known transition fields cross the rendering boundary; arbitrary audit data stays out.
+  metadata: z
+    .object({
+      fromStatus: workStatusSchema.optional(),
+      toStatus: workStatusSchema.optional(),
+    })
+    .nullable(),
+})
 export const workDetailSchema = workOrderSchema.extend({
   // Parse only the safe fields displayed; audit metadata is not executable UI.
-  timeline: z
-    .array(
-      z.object({
-        id: z.uuid(),
-        action: z.string(),
-        createdAt: z.iso.datetime(),
-      })
-    )
-    .max(100),
+  timeline: z.array(timelineEntrySchema).max(100),
 })
 export type WorkDetail = z.infer<typeof workDetailSchema>
 export const workPageSchema = z.object({
@@ -109,6 +113,10 @@ export const progressSchema = z.strictObject({
 })
 export const completionSchema = z.strictObject({
   version: writableVersionSchema,
-  report: z.string().trim().min(10).max(2000),
+  report: z
+    .string()
+    .trim()
+    .min(10, "Describe the completed work in at least 10 characters.")
+    .max(2000, "Keep the completion report within 2000 characters."),
 })
 export const reportFormSchema = completionSchema.omit({ version: true })

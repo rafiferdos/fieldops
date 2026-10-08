@@ -1,6 +1,12 @@
 import { expect, test, type Page } from "@playwright/test"
 import { dhakaLocal } from "../../src/features/requests/schemas"
 import { createDispatchFixture } from "./helpers/dispatch-fixtures"
+import { respectAuthWindow } from "./helpers/auth-window"
+
+test.beforeAll(async () => {
+  test.setTimeout(70000)
+  await respectAuthWindow()
+})
 
 test.skip(
   process.env.E2E_LIVE_WRITES !== "1" || process.env.E2E_DEMO_ACCOUNTS !== "1",

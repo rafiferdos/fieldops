@@ -5,8 +5,9 @@ Next.js App Router with strict TypeScript and the exact shadcn preset `b2w3Yl9Yg
 
 Implemented: responsive public pages and real service browsing, secure server-owned
 sessions, registration/login/account management, and customer request list, wizard,
-detail, edit and cancellation. Administrator and technician routes currently provide
-protected account landing pages; dispatch, work execution and payment UI are later work.
+detail, edit and cancellation; admin review, qualified dispatch and rescheduling;
+technician progress/completion and role-scoped work tracking with invoice summaries.
+Payment initiation, feedback submission and administrative reporting are later work.
 The backend is a separate repository and has not been modified.
 
 ## Project guide
@@ -14,9 +15,11 @@ The backend is a separate repository and has not been modified.
 - [Implementation status and verification limits](docs/implementation-status.md)
 - [Target route, role and API mapping](docs/route-plan.md)
 - [Screen flows and design handoff](docs/screen-flows.md)
+- [Dispatch/execution plan and recovery rules](docs/dispatch-execution-plan.md)
 
-Thirteen route templates exist, including two limited role landing pages. This is
-not a claim that the assignment's 18 functional pages are complete. The target plan
+Twenty route templates exist. Route count alone does not establish completion of
+the assignment's functional-page and delivery requirements; admin home is navigation,
+and mandatory payment return plus management/reporting remain incomplete. The target plan
 has 26 core templates and two conditional payment-return templates; it maps all
 38 backend domain APIs and two health endpoints.
 
@@ -73,14 +76,14 @@ npm run start
 ```
 
 `check` runs Prettier, typed ESLint, generated route types, TypeScript and Vitest.
-The ordinary suite has 59 tests. Enable four additional real-Redis concurrency
+The ordinary suite has 73 tests. Enable four additional real-Redis concurrency
 checks using the dedicated local store:
 
 ```bash
 SESSION_TEST_REDIS_URL=redis://127.0.0.1:6397 npm test
 ```
 
-CI installs from the lockfile and provisions a pinned Redis image for all 63 tests,
+CI installs from the lockfile and provisions a pinned Redis image for all 77 tests,
 checks and build. Official GitHub actions use immutable revisions. CI does not
 deploy. A hosted CI run has not occurred because this repository has not been pushed.
 
@@ -100,11 +103,18 @@ E2E_DEMO_ACCOUNTS=1 E2E_LIVE_WRITES=1 npm run test:e2e
 The first command runs read-only/validation browser tests. The opt-in flags enable
 configured demo accounts and create a disposable customer/request, verify profile
 update and request edit/cancellation, then verify foreign-record privacy. The test
-request is cancelled; its account, request and audit records remain. Do not run
+eligible unstarted requests are cancelled. Execution checks create a real completed
+work order and an unpaid invoice; completed/rejected records and audit history remain. Do not run
 these writes against real customer accounts. Tests have no automatic retries and
-record no auth traces/video. Browser output folders and environment files are ignored.
+record no auth traces/video. Opted-in test files wait for a fresh authentication
+window before running, respecting the backend's ten-logins-per-minute limit. Browser
+output folders and environment files are ignored.
 
-All 63 unit/integration checks and seven Chromium scenarios passed at this checkpoint.
+All 77 unit/integration checks and nine Chromium scenarios passed at this checkpoint.
+Dispatch coverage includes stale review, competing assignment and price-preserving
+reschedule. Execution coverage commits a real completion, deliberately loses its
+browser response, preserves the report and explicitly reads the result without
+automatic replay. A separate identical backend completion replay returns the same invoice.
 Real Redis is used for refresh coordination; its backend HTTP rotation response is
 stubbed. Real Google OAuth, backend replay after token expiry, distributed failover,
 Firefox/WebKit and deployment HTTPS behavior are not claimed as verified.
@@ -121,7 +131,9 @@ src/
     services/                  # Catalog schemas, server reads, cards and tests
     auth/                      # Auth actions, current viewer, return policy and forms
     account/                   # Own-profile form, schema and action
-    requests/                  # Request schemas, policy, reads/actions, forms and tests
+    requests/                  # Shared customer/admin requests and customer forms
+    dispatch/                  # Review, qualified availability, assignment and reschedule
+    work-orders/               # Scoped queues, tracking, progress, completion and recovery
   shared/
     ui/                        # Official shadcn primitives
     components/                # Reused presentation and layout pieces
@@ -133,7 +145,8 @@ src/
     session/                   # Redis coordination, authenticated encryption and origin checks
 ```
 
-Colocate schemas/types/tests with their workflow. Routes compose features; shared
+Colocate schemas/types/tests with their workflow. Add concise English intent comments
+for mini-features, business rules and non-obvious decisions; avoid narrating syntax. Routes compose features; shared
 code and infrastructure never import domain features. Server Components read/render;
 client boundaries handle interactive forms, navigation and dialogs. React Hook Form
 and Zod validate client input again at the explicit server boundary. External data

@@ -1,5 +1,11 @@
 import { randomUUID } from "node:crypto"
 import { expect, test } from "@playwright/test"
+import { respectAuthWindow } from "./helpers/auth-window"
+
+test.beforeAll(async () => {
+  test.setTimeout(70000)
+  await respectAuthWindow()
+})
 
 test("real catalog search/sort, empty state, URL history and service entry", async ({
   page,

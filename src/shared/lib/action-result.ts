@@ -9,7 +9,9 @@ export type ActionResult =
     }
   | { ok: false; message: string; conflict?: boolean; uncertain?: boolean }
 
-export function actionFailure(error: unknown): ActionResult {
+export function actionFailure(
+  error: unknown
+): Extract<ActionResult, { ok: false }> {
   if (error instanceof ApiError) {
     if (error.status === 409)
       return {

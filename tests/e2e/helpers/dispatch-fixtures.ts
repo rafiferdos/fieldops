@@ -6,7 +6,10 @@ import { credentialsSchema } from "../../../src/features/auth/schemas"
 import { servicePageSchema } from "../../../src/features/services/schemas"
 import { requestSchema } from "../../../src/features/requests/schemas"
 import { availabilityPageSchema } from "../../../src/features/dispatch/schemas"
-import { workDetailSchema } from "../../../src/features/work-orders/schemas"
+import {
+  workDetailSchema,
+  workOrderSchema,
+} from "../../../src/features/work-orders/schemas"
 
 // Live checks create only owned disposable records; never mutate existing work fixtures.
 export async function createDispatchFixture() {
@@ -169,6 +172,25 @@ export async function createDispatchFixture() {
       },
       async getWork(id: string) {
         return call(`/work-orders/${id}`, workDetailSchema, admin.accessToken)
+      },
+      async assign(requestId: string) {
+        return call(
+          `/requests/${requestId}/assignment`,
+          workOrderSchema,
+          admin.accessToken,
+          "POST",
+          { technicianId: technician.user.id, start, end }
+        )
+      },
+      // Explicitly test the documented identical replay; production never retries it automatically.
+      async replayCompletion(id: string, version: number, report: string) {
+        return call(
+          `/work-orders/${id}/complete`,
+          workOrderSchema,
+          technician.accessToken,
+          "POST",
+          { version, report }
+        )
       },
     }
   } catch (error) {

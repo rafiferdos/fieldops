@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache"
 import { apiRequest } from "@/infrastructure/api/server"
 import { requireSameOrigin } from "@/infrastructure/session/origin"
 import { requireViewer } from "@/features/auth/session"
+import { workDetailPath } from "@/features/work-orders/routes"
 import { actionFailure, type ActionResult } from "@/shared/lib/action-result"
 import {
   createRequestSchema,
@@ -79,11 +80,17 @@ export async function cancelRequest(
   if (profile.role === "TECHNICIAN")
     return { ok: false, message: "Technicians cannot cancel requests." }
   try {
-    await apiRequest(`/requests/${identifier.data}/cancel`, requestSchema, {
-      method: "POST",
-      accessToken,
-      body: parsed.data,
-    })
+    const cancelled = (
+      await apiRequest(`/requests/${identifier.data}/cancel`, requestSchema, {
+        method: "POST",
+        accessToken,
+        body: parsed.data,
+      })
+    ).data
+    // Cancellation changes both records atomically; invalidate their separate detail routes.
+    if (cancelled.workOrder)
+      for (const role of ["CUSTOMER", "TECHNICIAN", "ADMIN"] as const)
+        revalidatePath(workDetailPath(role, cancelled.workOrder.id))
     revalidatePath(`/customer/requests/${identifier.data}`)
     revalidatePath("/customer")
     revalidatePath(`/admin/requests/${identifier.data}`)
