@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import { usePathname } from "next/navigation"
-import { Menu, Wrench } from "lucide-react"
+import { Menu } from "lucide-react"
 import { Button } from "@/shared/ui/button"
 import {
   Sheet,
@@ -13,6 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/shared/ui/sheet"
+import { Brand } from "./brand"
 import { ThemeToggle } from "./theme-toggle"
 
 const links = [
@@ -30,30 +31,27 @@ export function SiteHeader() {
       href={link.href}
       onClick={() => setOpen(false)}
       aria-current={pathname === link.href ? "page" : undefined}
-      className="text-sm text-muted-foreground hover:text-foreground aria-[current=page]:text-primary"
+      className="rounded-full px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
     >
       {link.label}
     </Link>
   ))
   return (
-    <header className="border-b bg-background/95">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
-        <Link
-          href="/"
-          className="flex items-center gap-2 font-heading text-xl font-semibold"
-        >
-          <Wrench className="size-5 text-primary" />
-          FieldOps<span className="sr-only"> home</span>
-        </Link>
+    <header className="sticky top-0 z-40 border-b bg-background/95 supports-[backdrop-filter]:bg-background/85 supports-[backdrop-filter]:backdrop-blur-md">
+      <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
+        <Brand />
         <nav
           aria-label="Main navigation"
-          className="hidden items-center gap-7 md:flex"
+          className="hidden items-center gap-1 md:flex"
         >
           {navigation}
         </nav>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Link className="text-sm font-medium" href="/login">
+          <Link
+            className="rounded-full border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+            href="/login"
+          >
             Sign in
           </Link>
           <Sheet open={open} onOpenChange={setOpen}>

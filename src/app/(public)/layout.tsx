@@ -1,6 +1,9 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
+import { ArrowUpRight } from "lucide-react"
 import { SiteHeader } from "@/shared/components/site-header"
+import { Brand } from "@/shared/components/brand"
+import { Separator } from "@/shared/ui/separator"
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
@@ -12,14 +15,42 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       >
         {children}
       </main>
-      <footer className="border-t">
-        <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-5 px-5 py-8 text-sm text-muted-foreground sm:px-8">
-          <p>FieldOps · Service, from request to resolution.</p>
-          <nav aria-label="Footer navigation" className="flex gap-5">
-            <Link href="/services">Services</Link>
-            <Link href="/about">How it works</Link>
-            <Link href="/faq">FAQ</Link>
-          </nav>
+      <footer className="mt-8 border-t bg-muted/20">
+        <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8">
+          <div className="flex flex-wrap justify-between gap-10">
+            <div>
+              <Brand />
+              <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted-foreground">
+                Service, from request to resolution.
+                <br />A clearer way to keep things moving.
+              </p>
+            </div>
+            <nav
+              aria-label="Footer navigation"
+              className="grid content-start gap-4 text-sm"
+            >
+              {(
+                [
+                  { href: "/services", title: "Services" },
+                  { href: "/about", title: "How it works" },
+                  { href: "/faq", title: "FAQ" },
+                ] as const
+              ).map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="flex items-center justify-between gap-12 text-muted-foreground hover:text-foreground"
+                >
+                  {link.title}
+                  <ArrowUpRight aria-hidden="true" className="size-3.5" />
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <Separator className="my-8" />
+          <p className="text-xs text-muted-foreground">
+            FieldOps · Thoughtfully coordinated. Clearly documented.
+          </p>
         </div>
       </footer>
     </>

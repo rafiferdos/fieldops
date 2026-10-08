@@ -10,29 +10,43 @@ import {
 import { formatMoney } from "@/shared/lib/format"
 import type { Service } from "../schemas"
 
+// Keep the API's base price visible without implying a confirmed quote or booking.
 export function ServiceCard({ service }: { service: Service }) {
   return (
-    <Card className="h-full">
+    <Card className="interactive-card group h-full border shadow-none">
       <CardHeader>
-        <Wrench className="mb-5 size-6 text-primary" />
-        <CardTitle className="font-heading text-xl">{service.name}</CardTitle>
+        <div
+          aria-hidden="true"
+          className="relative mb-7 flex h-36 items-center justify-center overflow-hidden rounded-2xl border border-primary/10 bg-primary/5"
+        >
+          <span className="absolute size-36 rounded-full border border-primary/10" />
+          <span className="absolute size-24 rounded-full border border-primary/15" />
+          <span className="relative flex size-14 items-center justify-center rounded-2xl border border-primary/10 bg-card text-primary shadow-sm">
+            <Wrench className="size-6" />
+          </span>
+        </div>
+        <CardTitle className="font-heading text-2xl tracking-tight">
+          {service.name}
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
         <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
           {service.description}
         </p>
       </CardContent>
-      <CardFooter className="flex justify-between gap-4 border-t pt-5">
+      <CardFooter className="flex justify-between gap-4 border-t bg-muted/20 pb-1">
         <div>
-          <p className="text-xs text-muted-foreground">Base price</p>
-          <p className="font-semibold">{formatMoney(service.basePriceMinor)}</p>
+          <p className="mb-1 text-xs text-muted-foreground">Base price</p>
+          <p className="font-heading text-xl font-medium tabular-nums">
+            {formatMoney(service.basePriceMinor)}
+          </p>
         </div>
         <Link
           href={`/services/${service.id}`}
-          className="flex items-center gap-1 text-sm font-medium text-primary"
+          className="flex min-h-11 items-center gap-2 rounded-full border bg-background px-3.5 text-xs font-medium transition-colors hover:bg-primary hover:text-primary-foreground"
         >
           View service
-          <ArrowUpRight className="size-4" />
+          <ArrowUpRight aria-hidden="true" className="size-4" />
         </Link>
       </CardFooter>
     </Card>

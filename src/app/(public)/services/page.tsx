@@ -3,6 +3,7 @@ import { listServices } from "@/features/services/server"
 import { parseServiceQuery } from "@/features/services/schemas"
 import { ServiceCard } from "@/features/services/components/service-card"
 import type { SearchValues } from "@/shared/lib/list-query"
+import { Reveal } from "@/shared/components/reveal"
 import { PageHeading } from "@/shared/components/page-heading"
 import { EmptyState } from "@/shared/components/empty-state"
 import { Pagination } from "@/shared/components/pagination"
@@ -28,7 +29,7 @@ export default async function ServicesPage({
       />
       <form
         action="/services"
-        className="mb-8 grid items-end gap-4 rounded-2xl border bg-muted/30 p-5 sm:grid-cols-[1fr_auto_auto_auto]"
+        className="filter-panel mb-8 grid items-end gap-4 sm:grid-cols-[1fr_auto_auto_auto]"
       >
         <div className="space-y-2">
           <Label htmlFor="service-search">Search services</Label>
@@ -67,11 +68,15 @@ export default async function ServicesPage({
         </Link>
       </form>
       {result.items.length ? (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal
+          key={`${query.q}:${query.sort}:${query.page}`}
+          stagger
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {result.items.map((service) => (
             <ServiceCard key={service.id} service={service} />
           ))}
-        </div>
+        </Reveal>
       ) : (
         <EmptyState
           title={query.q ? "No matching services" : "No services available"}
