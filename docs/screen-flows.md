@@ -1,8 +1,10 @@
 # Screen flows and design handoff
 
 This specification accompanies the [route and API plan](route-plan.md). All screens
-below are planned. Current implementation remains the setup page, shared boundaries
-and transport utilities. No backend writes were performed for this checkpoint.
+below describe the target behavior. See [implementation status](implementation-status.md)
+for delivered public browsing, authentication and customer requests. Dispatch,
+technician execution and payment UI remain planned. Browser verification creates
+disposable records only when explicitly enabled.
 
 ## Visual and interaction foundation
 

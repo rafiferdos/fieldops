@@ -1,8 +1,8 @@
 # Route, role and API plan
 
 Reviewed October 8, 2026. This is the first planning checkpoint after initialization.
-The tables specify future implementation; they do not describe shipped pages.
-Only the initialization home page and framework error boundaries currently exist.
+The tables specify the target implementation; they do not imply every page is shipped.
+See [implementation status](implementation-status.md) for completed slices and limits.
 
 ## Sources and scope
 

@@ -1,0 +1,15 @@
+services:
+  sessions:
+    image: redis@sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0
+    ports:
+      - "127.0.0.1:6397:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - frontend-sessions:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  frontend-sessions:
