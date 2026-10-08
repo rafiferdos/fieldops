@@ -4,10 +4,23 @@ import { Label } from "@/shared/ui/label"
 import { Button } from "@/shared/ui/button"
 import { ButtonLink } from "@/shared/components/button-link"
 import { ChoiceSelect } from "@/shared/components/choice-select"
-import type { ManagedUsersQuery } from "../schemas"
+import { firstValue, type SearchValues } from "@/shared/lib/list-query"
 
 // A GET submission resets pagination while preserving the selected page size.
-export function UserFilters({ query }: { query: ManagedUsersQuery }) {
+export function UserFilters({
+  values,
+  limit,
+}: {
+  values: SearchValues
+  limit: number
+}) {
+  // Preserve entered fields after validation errors without using them for an API read.
+  const query = {
+    q: firstValue(values.q) ?? "",
+    role: firstValue(values.role) || undefined,
+    status: firstValue(values.status) || undefined,
+    sort: firstValue(values.sort) ?? "newest",
+  }
   return (
     <Card className="mb-8 border p-5 shadow-none">
       <form
@@ -67,7 +80,7 @@ export function UserFilters({ query }: { query: ManagedUsersQuery }) {
             ]}
           />
         </div>
-        <input type="hidden" name="limit" value={query.limit} />
+        <input type="hidden" name="limit" value={limit} />
         <div className="flex flex-wrap gap-3 sm:col-span-2 xl:col-span-4">
           <Button type="submit">Apply filters</Button>
           <ButtonLink href="/admin/users" variant="ghost">

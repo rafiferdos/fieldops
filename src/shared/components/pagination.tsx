@@ -19,6 +19,7 @@ export function Pagination({
     | "/services"
     | "/admin/services"
     | "/admin/users"
+    | "/admin/audit-logs"
     | "/customer"
     | "/admin/requests"
     | "/admin/work-orders"

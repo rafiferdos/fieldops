@@ -19,7 +19,8 @@ export default async function UsersPage({
   searchParams: Promise<SearchValues>
 }) {
   const { profile } = await requireViewer("ADMIN", "/admin/users"),
-    parsed = parseManagedUsersQuery(await searchParams),
+    values = await searchParams,
+    parsed = parseManagedUsersQuery(values),
     query = parsed.success ? parsed.data : managedUsersQuerySchema.parse({}),
     result = parsed.success ? await listManagedUsers(query) : null
   return (
@@ -29,7 +30,7 @@ export default async function UsersPage({
         title="User directory"
         description="Manage primary roles and account access. Every actual change revokes existing sessions and preserves account history."
       />
-      <UserFilters query={query} />
+      <UserFilters values={values} limit={query.limit} />
       {!parsed.success && (
         <FormMessage message="Use a valid role/status, search within 100 characters and pagination within supported bounds. Clear filters to start again." />
       )}

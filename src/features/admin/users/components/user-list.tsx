@@ -3,6 +3,7 @@ import { Badge } from "@/shared/ui/badge"
 import { formatDate } from "@/shared/lib/format"
 import type { ManagedUser, ManagedUsersQuery } from "../schemas"
 import { AccessEditor } from "./access-editor"
+import { ButtonLink } from "@/shared/components/button-link"
 
 export function UserList({
   users,
@@ -37,11 +38,19 @@ export function UserList({
           <p className="text-xs text-muted-foreground">
             Updated {formatDate(user.updatedAt)}
           </p>
-          <AccessEditor
-            user={user}
-            query={query}
-            ownAccount={user.id === viewerId}
-          />
+          <div className="flex flex-wrap gap-3">
+            <AccessEditor
+              user={user}
+              query={query}
+              ownAccount={user.id === viewerId}
+            />
+            <ButtonLink
+              href={`/admin/audit-logs?entityType=USER&entityId=${user.id}&action=USER_ACCESS_UPDATED`}
+              variant="ghost"
+            >
+              View access history
+            </ButtonLink>
+          </div>
         </Card>
       ))}
     </div>

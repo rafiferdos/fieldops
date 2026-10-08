@@ -14,6 +14,7 @@ import {
   LayoutDashboard,
   UserRound,
   Users,
+  History,
   type LucideIcon,
 } from "lucide-react"
 import type { Role } from "../schemas"
@@ -75,6 +76,11 @@ export function WorkspaceNav({ role }: { role: Role }) {
           },
           { href: "/admin/services" as const, label: "Services", icon: Wrench },
           { href: "/admin/users" as const, label: "Users", icon: Users },
+          {
+            href: "/admin/audit-logs" as const,
+            label: "Audit logs",
+            icon: History,
+          },
         ]
       : []),
     { href: "/account" as const, label: "Account", icon: UserRound },
