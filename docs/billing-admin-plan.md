@@ -30,3 +30,19 @@ an unpaid invoice and no review hold. Gateway URLs must use the exact supported
 HTTPS SSLCommerz origin without credentials. Administrative inspection cannot pay
 as a customer. Revenue remains exact decimal minor units, without floating-point
 coercion. Report ranges are paired, half-open and at most 366 days.
+
+## Checkout recovery storage
+
+The frontend's private Redis stores AES-256-GCM encrypted billing and its immutable
+UUID key before the API call. Authenticated context binds the payload to customer
+and invoice. Atomic reservation shares one intent across tabs/instances; guarded
+updates prevent stale responses overwriting a replacement. Retention is 30 days,
+independent of logout. Persist and protect the Redis volume and encryption key.
+Eviction, expiry or loss can remove recovery information; the backend still rejects
+a different key while an attempt is unresolved. There is no attempt-list or lookup
+by key API, so a lost unresolved intent needs operator investigation, not guessing
+a replacement key. Storage errors fail closed. No billing is written to localStorage.
+
+Sandbox initiation/recovery is implemented through the real API. A successful
+settlement and cancellation require the actual sandbox flow; focused schema/policy
+tests alone do not establish gateway completion or automatic return readiness.

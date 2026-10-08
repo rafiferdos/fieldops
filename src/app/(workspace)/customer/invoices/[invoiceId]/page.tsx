@@ -1,3 +1,4 @@
+import { CheckoutPanel } from "@/features/billing/components/checkout-panel"
 import { getInvoice } from "@/features/billing/server"
 import { InvoiceDetails } from "@/features/billing/components/invoice-details"
 
@@ -8,5 +9,10 @@ export default async function InvoicePage({
   params: Promise<{ invoiceId: string }>
 }) {
   const invoice = await getInvoice((await params).invoiceId, "CUSTOMER")
-  return <InvoiceDetails invoice={invoice} role="CUSTOMER" />
+  return (
+    <>
+      <InvoiceDetails invoice={invoice} role="CUSTOMER" />
+      <CheckoutPanel invoice={invoice} />
+    </>
+  )
 }
