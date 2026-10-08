@@ -3,8 +3,9 @@
 This specification accompanies the [route and API plan](route-plan.md). All screens
 below describe the target behavior. See [implementation status](implementation-status.md)
 for delivered public browsing, authentication, customer requests, dispatch,
-technician execution and customer work tracking. Payment initiation,
-feedback submission and reporting remain planned. Browser verification creates
+technician execution, customer work tracking, billing, feedback, reporting and catalog
+management. Automatic gateway return, user management and audit browsing remain
+later integration work. Browser verification creates
 disposable records only when explicitly enabled.
 
 ## Visual and interaction foundation

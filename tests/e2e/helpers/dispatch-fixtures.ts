@@ -2,7 +2,10 @@ import { randomInt, randomUUID } from "node:crypto"
 import { z } from "zod"
 import { apiSuccessSchema } from "../../../src/infrastructure/api/schemas"
 import { serverEnvSchema } from "../../../src/infrastructure/env/schema"
-import { credentialsSchema } from "../../../src/features/auth/schemas"
+import {
+  credentialsSchema,
+  profileSchema,
+} from "../../../src/features/auth/schemas"
 import { servicePageSchema } from "../../../src/features/services/schemas"
 import { requestSchema } from "../../../src/features/requests/schemas"
 import { availabilityPageSchema } from "../../../src/features/dispatch/schemas"
@@ -70,7 +73,7 @@ export async function createDispatchFixture() {
     local.DEMO_TECHNICIAN_PASSWORD
   )
   const marker = randomUUID(),
-    email = `dispatch-${marker}@example.com`,
+    email = `dispatch-${marker.replaceAll("-", "").slice(0, 20)}@example.com`,
     password = `FieldOps-${randomUUID()}`
   await call("/auth/register", z.unknown(), undefined, "POST", {
     name: "Dispatch Verification",
@@ -172,6 +175,38 @@ export async function createDispatchFixture() {
       },
       async getWork(id: string) {
         return call(`/work-orders/${id}`, workDetailSchema, admin.accessToken)
+      },
+      async prepareBillingProfile() {
+        return call("/users/me", profileSchema, customer.accessToken, "PATCH", {
+          name: "Disposable Billing Test",
+          phone: "+8801712345678",
+        })
+      },
+      async completeAssignedWork(id: string) {
+        let work = await call(
+          `/work-orders/${id}`,
+          workOrderSchema,
+          technician.accessToken
+        )
+        for (const status of ["EN_ROUTE", "IN_PROGRESS"]) {
+          work = await call(
+            `/work-orders/${id}/status`,
+            workOrderSchema,
+            technician.accessToken,
+            "PATCH",
+            { version: work.version, status }
+          )
+        }
+        return call(
+          `/work-orders/${id}/complete`,
+          workOrderSchema,
+          technician.accessToken,
+          "POST",
+          {
+            version: work.version,
+            report: `Completed disposable billing verification ${marker}.`,
+          }
+        )
       },
       async assign(requestId: string) {
         return call(

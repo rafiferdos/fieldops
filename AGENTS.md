@@ -4,7 +4,10 @@ Use Bengali in conversation and English for all repository artifacts. This is th
 Next.js frontend; the separate fieldops-api backend must remain unchanged unless
 explicitly requested. Public browsing, authentication and customer requests are implemented.
 The user has now authorized admin review/dispatch and technician execution/customer
-work tracking. Payment initiation, feedback and reporting remain later slices.
+work tracking. Invoice details, checkout/payment inspection, customer feedback,
+admin reporting and catalog management are implemented.
+User management, audit browsing and technician skills remain later slices. The
+gateway's automatic frontend return transport remains a documented backend gap.
 
 Read the README's official Assignment 7 links and implemented backend contract
 before changing domain behavior. Exactly three roles: CUSTOMER, TECHNICIAN, ADMIN.

@@ -53,13 +53,16 @@ locally so the headline, navigation and journey stay readable. Public route-wide
 loading boundaries cannot hide the whole no-JavaScript shell. Auth/workspace
 loading and interactive-account requirements remain explicit.
 
-## Verification — October 9, 2026
+## Historical design checkpoint — October 9, 2026
 
 Formatting, typed lint, generated route types, strict TypeScript, all 77 tests
 (73 ordinary plus four real-Redis integration tests) and the supported Webpack
 production build pass. The eight tests for the removed optical math are deleted
 with that unused implementation; domain/session checks remain intact. CI has not
 run remotely because nothing was pushed.
+
+These counts describe the hero/navigation checkpoint before billing and administration.
+See [current implementation status](implementation-status.md) for the expanded suite.
 
 Six presentation/component scenarios cover hero geometry during actual controlled
 animation frames and route return; live reduced-motion restoration; CSS frost in

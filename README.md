@@ -6,8 +6,9 @@ Next.js App Router with strict TypeScript and the exact shadcn preset `b2w3Yl9Yg
 Implemented: responsive public pages and real service browsing, secure server-owned
 sessions, registration/login/account management, and customer request list, wizard,
 detail, edit and cancellation; admin review, qualified dispatch and rescheduling;
-technician progress/completion and role-scoped work tracking with invoice summaries.
-Payment initiation, feedback submission and administrative reporting are later work.
+technician progress/completion and role-scoped work tracking; immutable invoices,
+durable checkout recovery, verified payment inspection, eligible customer feedback,
+period reporting and administrative service catalog management.
 The backend is a separate repository and has not been modified.
 
 ## Project guide
@@ -19,12 +20,13 @@ The backend is a separate repository and has not been modified.
 - [Hero motion, frosted navigation and component decisions](docs/optical-design.md)
 - [Original editorial imagery and generation prompts](docs/editorial-assets.md)
 - [Dispatch/execution plan and recovery rules](docs/dispatch-execution-plan.md)
+- [Billing, reporting and catalog boundaries](docs/billing-admin-plan.md)
 
-Twenty route templates exist. Route count alone does not establish completion of
-the assignment's functional-page and delivery requirements; admin home is navigation,
-and mandatory payment return plus management/reporting remain incomplete. The target plan
-has 26 core templates and two conditional payment-return templates; it maps all
-38 backend domain APIs and two health endpoints.
+Twenty-six route templates exist, including two conditional payment-return pages.
+Route count alone does not establish assignment completion. The gateway still
+returns to backend JSON callbacks rather than automatically redirecting to the
+frontend. User management, audit browsing, verified contact content and delivery
+remain incomplete. The route plan maps all 38 backend domain APIs and two health endpoints.
 
 ## Run locally
 
@@ -79,14 +81,14 @@ npm run start
 ```
 
 `check` runs Prettier, typed ESLint, generated route types, TypeScript and Vitest.
-The ordinary suite has 73 tests. Enable four additional real-Redis concurrency
+The ordinary suite has 124 tests. Enable six additional real-Redis concurrency
 checks using the dedicated local store:
 
 ```bash
 SESSION_TEST_REDIS_URL=redis://127.0.0.1:6397 npm test
 ```
 
-CI installs from the lockfile and provisions a pinned Redis image for all 77 tests,
+CI installs from the lockfile and provisions a pinned Redis image for all 130 tests,
 checks and build. Official GitHub actions use immutable revisions. CI does not
 deploy. A hosted CI run has not occurred because this repository has not been pushed.
 
@@ -107,21 +109,27 @@ The first command runs read-only/validation browser tests. The opt-in flags enab
 configured demo accounts and create a disposable customer/request, verify profile
 update and request edit/cancellation, then verify foreign-record privacy. The test
 eligible unstarted requests are cancelled. Execution checks create a real completed
-work order and an unpaid invoice; completed/rejected records and audit history remain. Do not run
+work order and an unpaid invoice; completed/rejected records and audit history remain. Catalog
+checks soft-delete only their uniquely named disposable services. Checkout checks initiate
+an actual sandbox session, deliberately lose its response and recover the same attempt.
+Do not run
 these writes against real customer accounts. Tests have no automatic retries and
 record no auth traces/video. Opted-in test files wait for a fresh authentication
 window before running, respecting the backend's ten-logins-per-minute limit. Browser
 output folders and environment files are ignored.
 
-All 77 unit/integration checks pass. The Chromium suite contains nine real-API
-workflows, six design scenarios and six presentation/component scenarios. It covers
+The unit/integration suite contains 130 checks. The Chromium suite contains 24 scenarios:
+twelve real-API workflows, six design scenarios and six presentation/component scenarios. It covers
 no-JavaScript public content, reduced motion and cleanup, keyboard disclosures,
 password visibility, 320–1440px layouts, theme contrast, stable animated word geometry,
 CSS frost and styled Select submission. Dispatch coverage includes stale review, competing
 assignment and price-preserving reschedule. Execution commits a real completion,
 deliberately loses its browser response, preserves the report and explicitly reads
 the result without automatic replay. A separate identical backend completion replay
-returns the same invoice. See [verification results](docs/design-refinement.md).
+returns the same invoice. All 24 scenarios have passing results (23 in the full run
+and the corrected read-only overview scenario in a focused rerun). See
+[current verification](docs/implementation-status.md) and the
+[design checkpoint](docs/design-refinement.md).
 
 Real Redis is used for refresh coordination; its backend HTTP rotation response is
 stubbed. Firefox public presentation/control smoke checks pass. WebKit cannot launch
@@ -145,6 +153,9 @@ src/
     requests/                  # Shared customer/admin requests and customer forms
     dispatch/                  # Review, qualified availability, assignment and reschedule
     work-orders/               # Scoped queues, tracking, progress, completion and recovery
+    billing/                   # Frozen invoices, encrypted checkout intents and verified payment state
+    feedback/                  # One-time eligible reviews and explicit outcome inspection
+    admin/                     # Bounded overview schemas, exact revenue and request chart
   shared/
     ui/                        # Official shadcn primitives
     components/                # Reused presentation and layout pieces
@@ -200,6 +211,9 @@ Verified against official documentation and registry metadata on October 8, 2026
 - GSAP 3.15.0 and @gsap/react 2.1.2 were verified on October 9, 2026. Marketing
   uses scoped word transforms and ScrollTrigger; shared entry effects use native
   Web Animations. Motion was removed to avoid overlapping animation engines.
+- Recharts 3.10.1 with react-is 19.3.0 was verified against official registry metadata
+  and shadcn Chart documentation on October 9, 2026. The stable version supports
+  React 19 and provides the actual reporting chart. No new résumé claim is implied.
 - Vitest 5.0.3 and Playwright 1.64.0. The pinned official Redis test image reports 8.10.2.
 
 The audit still has nine high-severity development/build-tool findings through braces
@@ -232,7 +246,8 @@ TanStack Query and automated testing were not listed; absence does not imply lac
 ability. The original resume file was not available in this workspace. New project
 evidence now includes validated forms, tested API boundaries, Redis-backed encrypted
 sessions and browser tests; these are potential resume additions, not a claim that
-the full product is finished. TanStack Query/state/chart packages are not installed.
+the full product is finished. TanStack Query and an additional client state store are not installed;
+Recharts is used only for the actual administration chart.
 The previously reviewed [Hyperlink role](https://www.thehyperlink.io/jobs/full-stack-engineer-mid-senior-typescript)
 provides one signal for RHF/Zod, Vitest and Playwright, not a market ranking or verified
 posting date. Contract needs and working evidence take precedence over dependency count.
@@ -241,6 +256,9 @@ Official references: [Next.js authentication](https://nextjs.org/docs/app/guides
 [Next.js installation](https://nextjs.org/docs/app/getting-started/installation),
 [environment variables](https://nextjs.org/docs/app/guides/environment-variables),
 [shadcn CLI](https://ui.shadcn.com/docs/cli),
+[shadcn Chart](https://ui.shadcn.com/docs/components/base/chart),
+[Recharts installation](https://recharts.github.io/en-US/guide/installation/),
+[SSLCommerz integration](https://developer.sslcommerz.com/doc/v4/),
 [RHF forms](https://ui.shadcn.com/docs/forms/react-hook-form),
 [Zod resolver](https://github.com/react-hook-form/resolvers#zod),
 [Google Identity Services](https://developers.google.com/identity/gsi/web/guides/display-button),
