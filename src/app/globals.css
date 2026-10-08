@@ -131,3 +131,92 @@
     @apply font-sans;
   }
 }
+
+/* A shared visual rhythm keeps public pages and operational forms consistent. */
+@layer base {
+  html {
+    scroll-padding-top: 6rem;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--primary) 22%, transparent);
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  a {
+    @apply outline-offset-4 focus-visible:outline-2 focus-visible:outline-ring;
+  }
+  [data-slot="input"],
+  [data-slot="native-select"],
+  [data-slot="textarea"] {
+    min-height: 2.75rem;
+  }
+  [data-slot="button"],
+  .group\/button {
+    min-height: 2.5rem;
+    transition-property:
+      background-color, color, border-color, box-shadow, transform;
+    transition-duration: 180ms;
+  }
+  [data-slot="button"]:has(svg:only-child) {
+    min-width: 2.5rem;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.18em] text-primary uppercase;
+  }
+  .surface {
+    @apply rounded-3xl border bg-card text-card-foreground shadow-xs;
+  }
+  .filter-panel {
+    @apply rounded-2xl border bg-card p-5 shadow-xs;
+  }
+  .detail-grid {
+    @apply grid gap-x-8 gap-y-6 rounded-3xl border bg-card p-6 sm:grid-cols-2 sm:p-8;
+  }
+  .detail-grid > div {
+    @apply min-w-0;
+  }
+  .text-link {
+    @apply inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline;
+  }
+  .journey-line {
+    background: linear-gradient(to bottom, var(--primary), var(--border));
+  }
+}
+
+/* Pointer feedback never shifts layout or runs on touch-only devices. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .interactive-card {
+    transition:
+      transform 250ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 250ms;
+  }
+  .interactive-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px -24px
+      color-mix(in oklch, var(--foreground) 30%, transparent);
+  }
+  .group\/button:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+}
+
+/* Reduce all motion, including the generated shadcn overlays and skeletons. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
