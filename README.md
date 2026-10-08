@@ -1,10 +1,28 @@
 # FieldOps Frontend
 
 Programming Hero B7A7 frontend for Field Service Management (student ID ending in 7).
-This checkpoint contains initialization and essential configuration only. The home
-route reports setup status; no authentication, dashboards, business workflows,
-payment UI or backend mutations are implemented. The backend remains a separate
-repository and workspace.
+This checkpoint contains initialization, essential configuration and the first
+route/role/API planning handoff. The home route reports setup status; no authentication,
+dashboards, business workflows, payment UI or backend mutations are implemented.
+The backend remains a separate repository and workspace.
+
+## First implementation checkpoint
+
+- [Route, role and API plan](docs/route-plan.md): 26 core route templates, 2 conditional
+  payment-return templates, all 38 domain APIs and 2 health endpoints, access rules,
+  URL queries, feature ownership and implementation order.
+- [Screen flows and design handoff](docs/screen-flows.md): layouts, request wizard,
+  dispatch, technician progress, payment recovery, administrative workflows and
+  acceptance gates, using the exact theme preset.
+- Transport now supports the backend's `PUT` skill replacement. Empty/full skill-set
+  boundary tests pass; no skill editor or backend mutation was added.
+
+These are planned screens, not completed product pages. Two integration gaps remain
+explicit: the backend has no current-skill read API, and its provider callbacks return
+JSON rather than redirecting to frontend success/cancel pages. Resolve the relevant
+design before implementing those flows; do not silently overwrite unknown skills or
+claim verified browser payment returns. The next slice is public/workspace layout
+and real service browsing, followed by secure authentication.
 
 ## Run locally
 
@@ -119,6 +137,8 @@ Never place gateway credentials, session tokens or demo passwords in `NEXT_PUBLI
   Idempotency-Key only as headers, refuses redirects and uses `cache: "no-store"`.
 - Uses a 30-second timeout and optional cancellation. No automatic retries,
   refresh attempts, caching or payment interpretation are performed.
+- Supports GET, POST, PUT, PATCH and DELETE; GET/DELETE cannot carry a body through
+  the typed options. Feature schemas still validate mutation input before transport.
 
 Parse outbound inputs through the feature's Zod schema before calling the helper.
 Future Client Components should call explicit same-origin Server Actions or Route
@@ -167,10 +187,18 @@ These remain future delivery requirements, not completed initialization features
 
 ## Testing and dependency limits
 
-Verified locally: fresh `npm ci`, formatting, typed lint, TypeScript, all 30 boundary
-tests and the production build. Production HTTP/browser smoke checks cover the
+Initialization verification included fresh `npm ci`, formatting, typed lint,
+TypeScript, 30 boundary tests and a production build. Production HTTP/browser smoke checks covered the
 initialization page, 404, keyboard return-home navigation and response headers.
 No browser console warnings/errors appeared during those checks.
+
+At the route-planning checkpoint, formatting, typed lint, TypeScript and all **32
+boundary tests** pass. The default Turbopack build was blocked by this execution
+environment's local-port restriction, including an elevated attempt. The supported
+`npm run build -- --webpack` production build passes; the default build command
+remains unchanged. Browser checks were not repeated because no rendered UI changed.
+The endpoint matrix was compared with the backend collection for all 40 unique
+method/path pairs; the 28 planned route templates were checked for uniqueness.
 
 The focused Vitest suite covers environment validation, response contracts,
 version-prefix/origin confinement, status preservation, token headers and no retry
