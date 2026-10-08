@@ -1,3 +1,4 @@
+import { ButtonLink } from "@/shared/components/button-link"
 import Link from "next/link"
 import { ArrowUpRight, CalendarDays } from "lucide-react"
 import { Reveal } from "@/shared/components/reveal"
@@ -103,13 +104,9 @@ export async function WorkList({
           )}
           <input type="hidden" name="limit" value={query.limit} />
           <Button type="submit">Apply filters</Button>
-          <Button
-            variant="ghost"
-            nativeButton={false}
-            render={<Link href={pathname} />}
-          >
+          <ButtonLink variant="ghost" href={pathname}>
             Clear
-          </Button>
+          </ButtonLink>
         </form>
       </Card>
       {query.serviceId && (

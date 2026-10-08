@@ -1,3 +1,4 @@
+import { ButtonLink } from "@/shared/components/button-link"
 import { Card } from "@/shared/ui/card"
 import Link from "next/link"
 import { listServices } from "@/features/services/server"
@@ -63,13 +64,9 @@ export default async function ServicesPage({
           </div>
           <input type="hidden" name="limit" value={query.limit} />
           <Button type="submit">Apply filters</Button>
-          <Button
-            variant="ghost"
-            nativeButton={false}
-            render={<Link href="/services" />}
-          >
+          <ButtonLink variant="ghost" href="/services">
             Clear
-          </Button>
+          </ButtonLink>
         </form>
       </Card>
       {result.items.length ? (

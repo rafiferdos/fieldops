@@ -1,5 +1,4 @@
-import { Button } from "@/shared/ui/button"
-import Link from "next/link"
+import { ButtonLink } from "@/shared/components/button-link"
 import { ArrowUpRight, Wrench } from "lucide-react"
 import {
   Card,
@@ -42,14 +41,10 @@ export function ServiceCard({ service }: { service: Service }) {
             {formatMoney(service.basePriceMinor)}
           </p>
         </div>
-        <Button
-          variant="outline"
-          nativeButton={false}
-          render={<Link href={`/services/${service.id}`} />}
-        >
+        <ButtonLink variant="outline" href={`/services/${service.id}`}>
           View service
           <ArrowUpRight aria-hidden="true" className="size-4" />
-        </Button>
+        </ButtonLink>
       </CardFooter>
     </Card>
   )

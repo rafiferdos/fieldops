@@ -1,6 +1,5 @@
-import Link from "next/link"
+import { ButtonLink } from "@/shared/components/button-link"
 import { ArrowLeft } from "lucide-react"
-import { Button } from "@/shared/ui/button"
 import { StatusScreen } from "@/shared/components/status-screen"
 
 export default function NotFound() {
@@ -11,10 +10,10 @@ export default function NotFound() {
         title="Page not found"
         description="The requested page does not exist."
       >
-        <Button render={<Link href="/" />}>
+        <ButtonLink href="/">
           <ArrowLeft aria-hidden="true" />
           Return home
-        </Button>
+        </ButtonLink>
       </StatusScreen>
     </main>
   )

@@ -1,5 +1,7 @@
 "use client"
-import Link from "next/link"
+
+import { ButtonLink } from "@/shared/components/button-link"
+
 import { useState } from "react"
 import type { Route } from "next"
 import { usePathname } from "next/navigation"
@@ -74,10 +76,9 @@ export function WorkspaceNav({ role }: { role: Role }) {
     { href: "/account" as const, label: "Account", icon: UserRound },
   ]
   const navigation = links.map((link) => (
-    <Button
+    <ButtonLink
       key={link.href}
-      render={<Link href={link.href} />}
-      nativeButton={false}
+      href={link.href}
       variant="ghost"
       onClick={() => setOpen(false)}
       aria-current={
@@ -90,7 +91,7 @@ export function WorkspaceNav({ role }: { role: Role }) {
     >
       <link.icon aria-hidden="true" className="size-4" />
       {link.label}
-    </Button>
+    </ButtonLink>
   ))
   return (
     <>
