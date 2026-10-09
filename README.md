@@ -23,11 +23,12 @@ The backend is a separate repository and has not been modified.
 - [Dispatch/execution plan and recovery rules](docs/dispatch-execution-plan.md)
 - [Billing, reporting and catalog boundaries](docs/billing-admin-plan.md)
 - [User access, session revocation and audit boundaries](docs/access-audit-plan.md)
+- [Payment return transport and sandbox verification](docs/payment-return-plan.md)
 
-Twenty-eight route templates exist, including two conditional payment-return pages.
-Route count alone does not establish assignment completion. The gateway still
-returns to backend JSON callbacks rather than automatically redirecting to the
-frontend. Technician skills, verified contact content and delivery
+Twenty-eight route templates exist, including two payment-return pages that read
+actual owned payment/invoice state. The narrowly authorized backend browser-return
+transport is implemented; the hosted API still needs a separately authorized update.
+Route count alone does not establish assignment completion. Technician skills, verified contact content and delivery
 remain incomplete. The route plan maps all 38 backend domain APIs and two health endpoints.
 
 ## Run locally
@@ -240,8 +241,10 @@ APIs, three demo logins, validated forms, supported test-mode payments, at least
 meaningful frontend commits, live URL/demo credentials and a 5–10 minute walkthrough.
 Those delivery requirements remain incomplete.
 
-The backend callbacks currently return JSON instead of browser redirects. Payment
-return integration needs an explicit design and any backend change needs authorization.
+The backend retains JSON/IPN callbacks and adds a no-store 303 browser transport.
+An expired frontend session preserves the attempt through login. Invalid or forged
+return queries cannot establish payment success. See the payment-return plan for
+verification and deployment limits.
 There is no current-skill read API, so do not silently overwrite unknown skills with
 an empty prefilled editor. No contact channel, public review feed, earnings report
 or unsupported write endpoint has been invented.

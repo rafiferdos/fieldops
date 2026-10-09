@@ -7,6 +7,7 @@ import { Card } from "@/shared/ui/card"
 import { Badge } from "@/shared/ui/badge"
 import { buttonVariants } from "@/shared/ui/button"
 import { formatDate, formatMoney } from "@/shared/lib/format"
+import { workDetailPath } from "@/features/work-orders/routes"
 import { PaymentRefresh } from "./payment-refresh"
 
 export async function PaymentStatus({ paymentId }: { paymentId: string }) {
@@ -42,7 +43,7 @@ export async function PaymentStatus({ paymentId }: { paymentId: string }) {
         {payment.settledAt && (
           <p className="text-sm">Settled {formatDate(payment.settledAt)}</p>
         )}
-        {/* Keep this owned status page open while the provider handles its own checkout tab. */}
+        {/* Preserve the original status tab while the provider returns its own tab to this app. */}
         {checkout && (
           <>
             <a
@@ -55,8 +56,8 @@ export async function PaymentStatus({ paymentId }: { paymentId: string }) {
             </a>
             <p className="text-sm leading-relaxed text-muted-foreground">
               Checkout opens in another tab. After completing or cancelling it,
-              return here and check the latest status. The current gateway
-              callback ends on the API response page.
+              the provider returns you to FieldOps. The displayed result comes
+              from your verified payment record, not the return URL.
             </p>
           </>
         )}
@@ -65,6 +66,11 @@ export async function PaymentStatus({ paymentId }: { paymentId: string }) {
           <ButtonLink variant="ghost" href={invoicePath(role, invoice.id)}>
             View invoice
           </ButtonLink>
+          {outcome.kind === "verified" && (
+            <ButtonLink href={workDetailPath(role, invoice.workOrderId)}>
+              View completed service
+            </ButtonLink>
+          )}
         </div>
       </Card>
     </>

@@ -7,7 +7,9 @@ The user has now authorized admin review/dispatch and technician execution/custo
 work tracking. Invoice details, checkout/payment inspection, customer feedback,
 admin reporting, catalog management, confirmed user access changes and read-only
 audit browsing are implemented. Technician skills remain a later slice. The
-gateway's automatic frontend return transport remains a documented backend gap.
+gateway browser-return transport now has a narrowly authorized backend exception
+for payment callback/configuration changes and real sandbox verification. Do not
+expand that exception to other backend features or push/deploy without a request.
 
 Read the README's official Assignment 7 links and implemented backend contract
 before changing domain behavior. Exactly three roles: CUSTOMER, TECHNICIAN, ADMIN.

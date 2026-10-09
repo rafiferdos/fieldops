@@ -1,19 +1,31 @@
 import type { Invoice, Payment } from "./schemas"
 
+type PaymentOutcome = {
+  kind:
+    "inspection" | "review" | "verified" | "cancelled" | "failed" | "pending"
+  title: string
+  description: string
+}
+
 // Backend state, matching frozen money and settlement evidence must agree before success.
-export function paymentOutcome(payment: Payment, invoice: Invoice) {
+export function paymentOutcome(
+  payment: Payment,
+  invoice: Invoice
+): PaymentOutcome {
   if (
     payment.invoiceId !== invoice.id ||
     payment.amountMinor !== invoice.amountMinor ||
     payment.currency !== invoice.currency
   )
     return {
+      kind: "inspection",
       title: "Payment needs inspection",
       description:
         "The payment and invoice details do not agree. Do not start another attempt.",
     }
   if (payment.requiresReview || payment.status === "REVIEW")
     return {
+      kind: "review",
       title: "Payment needs review",
       description:
         "This attempt needs administrator review. Any existing paid settlement remains recorded. Do not start another charge.",
@@ -26,6 +38,7 @@ export function paymentOutcome(payment: Payment, invoice: Invoice) {
     invoice.paidAt
   )
     return {
+      kind: "verified",
       title: "Payment verified",
       description:
         "The provider-verified payment has settled and the invoice is paid.",
@@ -36,12 +49,14 @@ export function paymentOutcome(payment: Payment, invoice: Invoice) {
     payment.verifiedAt
   )
     return {
+      kind: payment.status === "CANCELLED" ? "cancelled" : "failed",
       title:
         payment.status === "CANCELLED" ? "Payment cancelled" : "Payment failed",
       description:
         "The invoice remains unpaid. You can review the invoice before explicitly starting a new attempt.",
     }
   return {
+    kind: "pending",
     title: "Payment not yet confirmed",
     description:
       "Check the latest status after checkout. A redirect or callback acknowledgement alone does not confirm payment.",

@@ -8,9 +8,10 @@ import { PaymentStatus } from "./payment-status"
 
 // Return labels and query values cannot manufacture payment success or cancellation.
 export async function PaymentReturn({ values }: { values: SearchValues }) {
-  const { profile } = await requireViewer()
   const id = z.uuid().safeParse(firstValue(values.paymentId))
+  // The payment read preserves this exact attempt through reauthentication and checks ownership.
   if (id.success) return <PaymentStatus paymentId={id.data} />
+  const { profile } = await requireViewer()
   return (
     <>
       <PageHeading
