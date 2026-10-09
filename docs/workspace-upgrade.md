@@ -51,3 +51,47 @@ References: [TanStack SSR](https://tanstack.com/query/latest/docs/framework/reac
 [Axios cancellation](https://axios.rest/pages/advanced/cancellation),
 [GSAP ScrollSmoother](https://gsap.com/docs/v3/Plugins/ScrollSmoother/),
 [shadcn Sidebar](https://ui.shadcn.com/docs/components/base/sidebar).
+
+## Implemented motion and navigation
+
+The public layout owns one GSAP ScrollSmoother on wide, fine-pointer screens. Fixed
+navigation and portalled shadcn dialogs stay outside its transformed content. Streamed
+catalog content and font readiness refresh the scroll range; observers, timelines and
+animation contexts are disposed when routes or preferences change. Touch and reduced
+motion use native scrolling.
+
+One shared entry policy serves explicit groups and automatically discovered shadcn cards
+and content sections. It starts near the viewport edge, never hides server-rendered
+content before JavaScript, keeps full text opacity and avoids nested/duplicate animations.
+Workflow cards use theme-token frost with opaque contrast/transparency fallbacks.
+
+New workspace routes reset to their heading while Back/Forward restoration and settings
+anchors remain available. The root skip link uses Next.js Link, preserving router history
+for fragment navigation. The API has no avatar URL field: account initials are the supported
+identity representation rather than an invented profile-photo upload.
+
+## Local verification checkpoint
+
+- Strict formatting, generated route types, TypeScript and typed lint pass.
+- All 185 Vitest checks pass, including six actual Redis coordination checks. Their
+  refresh HTTP transport is stubbed; they do not prove live backend token rotation.
+- The default Turbopack production build passes.
+- The full 39-case Chromium baseline passed 36, failed two and skipped the separately
+  opted-in real-provider settlement scenario. It used actual disposable backend records.
+- Follow-up checks pass all three dashboard roles, real counts, explicit refresh, queue
+  drill-down, account navigation, confirmed sign-out and new-route scroll position.
+- Authenticated axe scans pass both themes after waiting for the hydrated profile form.
+  No accessibility rules are excluded. The initial failure sampled the intentionally
+  disabled pre-hydration form.
+- All eight presentation checks pass, including hero geometry, reduced motion, FAQ,
+  styled select keyboard behavior, contrast fallback, End/skip navigation and browser
+  history. The fragment-history failure required an application fix, not a weaker assertion.
+- Lighthouse 13.5 on the local production build reports mobile **87/100/100/100** and
+  desktop **99/100/100/100** (performance/accessibility/best practices/SEO). Mobile LCP is
+  4.0 seconds, TBT 30 ms and CLS 0; desktop LCP 0.9 seconds, TBT 0 ms and CLS 0. These
+  individual lab runs are not field performance or real-device guarantees.
+
+The full baseline and focused follow-ups are separate evidence; no single all-passing
+39-case run is claimed. Unchanged real-provider settlement, IPN and Google consent retain
+their earlier [hosted evidence](hosted-release.md). Updated hosted acceptance is recorded
+separately after release.

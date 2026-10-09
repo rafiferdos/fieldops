@@ -15,6 +15,11 @@ qualified availability and inspect the operational and financial record.
 
 [![Frontend CI](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml/badge.svg)](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml)
 
+![FieldOps administrator dashboard with live operational metrics](docs/images/workspace-overview.png)
+
+Administrator workspace captured against dedicated demo accounts. The values are actual
+sandbox records at capture time; they change as requests, visits and payments change.
+
 ## The problem it solves
 
 Disconnected requests, technician schedules and payment records make service delivery

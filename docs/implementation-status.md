@@ -3,7 +3,8 @@
 Reviewed October 9, 2026. Product slices now include safe technician skills and
 owner-verified Contact channels. The owner authorized the remaining delivery stages,
 including limited backend skills/payment changes, QA, publishing and submission
-artifacts. Both applications are live on their CI-verified revisions. Dedicated
+artifacts. Both applications have live CI-verified baseline releases; the workspace
+upgrade below has a separate verification/release record. Dedicated
 session storage, protected production settings and evaluation accounts are configured
 with specific owner approval. See [hosted release evidence](hosted-release.md).
 Use [Frontend CI](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml)
@@ -15,25 +16,26 @@ stay in ignored local files or approved protected host configuration.
 
 ## Delivered routes and workflows
 
-| Area           | Routes                                                                  | Implemented behavior                                                                              |
-| -------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Public         | `/`, `/about`, `/faq`, `/contact`                                       | Responsive shell, real catalog preview, process/FAQ, verified support and mobile Sheet            |
-| Catalog        | `/services`, `/services/[serviceId]`                                    | Real search/sort/pagination URL state, empty/error/missing states and validated request entry     |
-| Authentication | `/login`, `/register`                                                   | Customer registration, password/demo login, role destinations and configurable Google integration |
-| Account        | `/account`                                                              | Current backend-verified profile, own name/phone update and logout                                |
-| Requests       | `/customer`, `/customer/requests/new`, `/customer/requests/[requestId]` | Own queue, three-step wizard, pending edit, eligible cancellation and linked work                 |
-| Dispatch       | `/admin/requests`, `/admin/requests/[requestId]`                        | Review queue, versioned approval/rejection, cancellation and qualified assignment                 |
-| Admin work     | `/admin/work-orders`, `/admin/work-orders/[workOrderId]`                | Global scoped work queue, timeline, invoice/feedback summaries and eligible reschedule            |
-| Technician     | `/technician`, `/technician/work-orders/[workOrderId]`                  | Scheduled queue, legal progress, completion report and explicit uncertain-outcome inspection      |
-| Customer work  | `/customer/work-orders`, `/customer/work-orders/[workOrderId]`          | Own confirmed visits, report, timeline, invoice and existing feedback                             |
-| Admin overview | `/admin`                                                                | URL period validation, creation-cohort counts, exact verified revenue and status chart            |
-| Invoices       | `/customer/invoices/[invoiceId]`, `/admin/invoices/[invoiceId]`         | Frozen amount/status, owner checkout entry and role-restricted administrative inspection          |
-| Payments       | `/payments/[paymentId]`, `/payment/success`, `/payment/cancel`          | Provider browser returns and verified attempt/invoice inspection; no invented settlement          |
-| Catalog admin  | `/admin/services`                                                       | URL-driven active list, validated create/edit, stale preflight and confirmed soft deletion        |
-| User access    | `/admin/users`                                                          | Safe directory filters, confirmed role/status edits, stale/uncertain blocking and self sign-out   |
-| Audit history  | `/admin/audit-logs`                                                     | Exact filters, paired Dhaka period, newest-first pagination and safe metadata disclosure          |
+| Area           | Routes                                                                           | Implemented behavior                                                                              |
+| -------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Public         | `/`, `/about`, `/faq`, `/contact`                                                | Responsive shell, real catalog preview, process/FAQ, verified support and mobile Sheet            |
+| Catalog        | `/services`, `/services/[serviceId]`                                             | Real search/sort/pagination URL state, empty/error/missing states and validated request entry     |
+| Authentication | `/login`, `/register`                                                            | Customer registration, password/demo login, role destinations and configurable Google integration |
+| Account        | `/account`                                                                       | Current backend-verified profile, own name/phone update and logout                                |
+| Dashboards     | `/customer`, `/technician`, `/admin`                                             | Account-scoped live counts, status charts, recent records and explicit refresh                    |
+| Requests       | `/customer/requests`, `/customer/requests/new`, `/customer/requests/[requestId]` | Own queue, three-step wizard, pending edit, eligible cancellation and linked work                 |
+| Dispatch       | `/admin/requests`, `/admin/requests/[requestId]`                                 | Review queue, versioned approval/rejection, cancellation and qualified assignment                 |
+| Admin work     | `/admin/work-orders`, `/admin/work-orders/[workOrderId]`                         | Global scoped work queue, timeline, invoice/feedback summaries and eligible reschedule            |
+| Technician     | `/technician/work-orders`, `/technician/work-orders/[workOrderId]`               | Scheduled queue, legal progress, completion report and explicit uncertain-outcome inspection      |
+| Customer work  | `/customer/work-orders`, `/customer/work-orders/[workOrderId]`                   | Own confirmed visits, report, timeline, invoice and existing feedback                             |
+| Admin overview | `/admin`                                                                         | URL period validation, creation-cohort counts, exact verified revenue and status chart            |
+| Invoices       | `/customer/invoices/[invoiceId]`, `/admin/invoices/[invoiceId]`                  | Frozen amount/status, owner checkout entry and role-restricted administrative inspection          |
+| Payments       | `/payments/[paymentId]`, `/payment/success`, `/payment/cancel`                   | Provider browser returns and verified attempt/invoice inspection; no invented settlement          |
+| Catalog admin  | `/admin/services`                                                                | URL-driven active list, validated create/edit, stale preflight and confirmed soft deletion        |
+| User access    | `/admin/users`                                                                   | Safe directory filters, confirmed role/status edits, stale/uncertain blocking and self sign-out   |
+| Audit history  | `/admin/audit-logs`                                                              | Exact filters, paired Dhaka period, newest-first pagination and safe metadata disclosure          |
 
-There are 29 route templates, including two authenticated payment returns, and 35
+There are 31 route templates, including two authenticated payment returns, and 35
 domain API operations bound in production code. The backend has 39 domain APIs,
 two health endpoints and one additional browser-return route template. This count
 excludes framework utility routes and does not establish delivery completion.
@@ -185,15 +187,22 @@ Preset-matched shadcn Select, Card, Collapsible, NavigationMenu, Empty and Pagin
 compositions replace browser-native dropdowns and custom panel controls. Native
 link semantics remain intact with shadcn button styles.
 
-GSAP 3.15.0 owns marketing word entry and scroll-linked image/card depth. Shared entry
-effects use native Web Animations; Motion is removed. Reduced motion reverts text and
+GSAP 3.15.0 owns marketing word entry, shared surface reveals and scroll-linked image/card
+depth. Desktop public pages use ScrollSmoother; touch and reduced-motion browsing retain
+native scrolling. Entry observers start near the viewport edge and keep reading contrast
+at full opacity. Reduced motion reverts text and
 transforms. Stable server word markup avoids clipping and completion spacing shifts.
 The navbar uses one CSS frosted shadcn Card with an opaque accessibility fallback.
 Public FAQ uses original editorial image cards with accessible in-card disclosures. See
 [hero and navbar design](optical-design.md), [asset provenance](editorial-assets.md) and
 [design verification](design-refinement.md) for decisions and precise limits.
 
-## Verification and remaining limits
+## Baseline verification and remaining limits
+
+This section preserves the earlier release's evidence. The newer session-scoped dashboards,
+account menu, sidebar and motion changes have their own
+[workspace-upgrade verification](workspace-upgrade.md#local-verification-checkpoint): 185
+passing checks, a production build, real-role follow-ups and eight presentation checks.
 
 - Frontend strict checks pass: formatting, typed lint, generated route types,
   TypeScript and 170 tests (164 ordinary plus six real-Redis checks). Redis refresh
