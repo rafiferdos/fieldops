@@ -8,10 +8,17 @@ FieldOps' shadcn Card primitives and theme tokens. It narrows the interaction to
 local pointer events, batches paints, and disables movement for reduced motion.
 It does not redistribute React Bits as a component library.
 
+**ScrollFloat** informs a word-based scroll reveal with full text opacity and no
+clipping masks. **Waves** informs the pointer-reactive closing backdrop; FieldOps
+uses its own bounded harmonic curves instead of the upstream noise grid. These
+adaptations share the existing GSAP runtime and native Canvas 2D, respectively.
+
 - Author: David Haz
 - Source revision: `d86fccbd477786f94ca7eb891fbe0ec039d3cd3b`
 - [SpotlightCard source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Components/SpotlightCard)
 - [GlareHover source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Animations/GlareHover)
+- [ScrollFloat source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/TextAnimations/ScrollFloat)
+- [Waves source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Backgrounds/Waves)
 - [Upstream license](https://github.com/DavidHDev/react-bits/blob/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/LICENSE.md)
 
 The upstream license is reproduced below.

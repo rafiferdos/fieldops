@@ -13,10 +13,12 @@ import {
 import { ServiceScene } from "@/features/marketing/components/service-scene"
 import { MarketingMotion } from "@/features/marketing/components/marketing-motion"
 import { SpotlightCard } from "@/features/marketing/components/spotlight-card"
+import { CoordinationWaves } from "@/features/marketing/components/coordination-waves"
+import { ScrollWords } from "@/features/marketing/components/scroll-words"
 import { FaqCards } from "@/features/marketing/components/faq-cards"
 import { Reveal } from "@/shared/components/reveal"
 import { buttonVariants } from "@/shared/ui/button"
-import { CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { Separator } from "@/shared/ui/separator"
 
 export const metadata = publicMetadata(
@@ -155,8 +157,9 @@ export default function HomePage() {
                 id="services-title"
                 className="mt-4 font-heading text-4xl font-medium tracking-[-0.04em] sm:text-5xl"
               >
-                The right help.
-                <br />A better starting point.
+                <ScrollWords>The right help.</ScrollWords>
+                <br />
+                <ScrollWords>A better starting point.</ScrollWords>
               </h2>
             </div>
             <Link href="/services" className="text-link">
@@ -179,8 +182,9 @@ export default function HomePage() {
               id="process-title"
               className="mt-4 font-heading text-4xl font-medium tracking-[-0.04em] sm:text-5xl"
             >
-              A little structure.
-              <br />A lot less guesswork.
+              <ScrollWords>A little structure.</ScrollWords>
+              <br />
+              <ScrollWords>A lot less guesswork.</ScrollWords>
             </h2>
             <p className="mt-6 max-w-md leading-relaxed text-muted-foreground">
               Every visit has a next step. FieldOps keeps the details connected,
@@ -307,16 +311,20 @@ export default function HomePage() {
           <FaqCards preview />
         </section>
         <Reveal>
-          <section className="relative isolate overflow-hidden rounded-3xl border bg-primary/5 px-6 py-14 text-center sm:py-20">
-            <div
-              aria-hidden="true"
-              className="absolute -top-32 left-1/2 -z-10 size-96 -translate-x-1/2 rounded-full border border-primary/10"
-            />
+          <Card
+            className="coordination-stage gap-0 px-6 py-14 text-center sm:py-20"
+            role="region"
+            aria-labelledby="next-step-title"
+          >
+            <CoordinationWaves />
             <p className="eyebrow">Your next step</p>
-            <h2 className="mx-auto mt-4 max-w-2xl font-heading text-4xl font-medium tracking-[-0.04em] sm:text-5xl">
-              Take one thing
+            <h2
+              id="next-step-title"
+              className="mx-auto mt-4 max-w-2xl font-heading text-4xl font-medium tracking-[-0.04em] sm:text-5xl"
+            >
+              <ScrollWords>Take one thing</ScrollWords>
               <br />
-              off your list.
+              <ScrollWords>off your list.</ScrollWords>
             </h2>
             <p className="mx-auto mt-5 max-w-md text-muted-foreground">
               Start with the service. We’ll keep the next steps clear.
@@ -331,7 +339,7 @@ export default function HomePage() {
               Find your service
               <ArrowRight aria-hidden="true" />
             </Link>
-          </section>
+          </Card>
         </Reveal>
       </div>
     </MarketingMotion>

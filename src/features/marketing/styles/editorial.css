@@ -163,6 +163,7 @@
     transition: opacity 200ms;
   }
   .faq-card {
+    /* FAQ retains its supported disclosure composition over the photographic layers. */
     position: relative;
     min-height: 460px;
     padding: 0;
@@ -217,6 +218,48 @@
   }
 }
 
+@layer components {
+  .scroll-words {
+    perspective: 700px;
+  }
+  .scroll-word {
+    display: inline-block;
+    transform-origin: center bottom;
+  }
+  /* A single dark editorial stage gives the closing action room and a stable contrast floor. */
+  .coordination-stage {
+    --card: oklch(0.18 0.022 180);
+    --card-foreground: oklch(0.985 0 0);
+    --muted-foreground: oklch(0.85 0.01 180);
+    --brand-ink: var(--primary-foreground);
+    --info-foreground: oklch(0.78 0.105 275);
+    --warning-foreground: oklch(0.82 0.14 75);
+    position: relative;
+    isolation: isolate;
+    align-items: center;
+    background-image:
+      radial-gradient(
+        ellipse at 10% 90%,
+        oklch(0.45 0.1 165 / 22%),
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse at 90% 15%,
+        oklch(0.5 0.1 275 / 20%),
+        transparent 55%
+      );
+  }
+  .coordination-waves {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    mask-image: linear-gradient(90deg, black, transparent 38% 62%, black);
+  }
+}
+
 /* Frost is progressive; no SVG displacement or WebGL runtime is needed for this finish. */
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .image-glass {
@@ -256,7 +299,8 @@
     backdrop-filter: none;
   }
   .glare-surface::after,
-  .spotlight-card::before {
+  .spotlight-card::before,
+  .coordination-waves {
     display: none;
   }
 }
@@ -268,6 +312,13 @@
     --muted-foreground: CanvasText;
     --brand-ink: CanvasText;
     --border: CanvasText;
+  }
+  .coordination-stage {
+    --card: Canvas;
+    --card-foreground: CanvasText;
+    --muted-foreground: CanvasText;
+    --brand-ink: CanvasText;
+    background-image: none;
   }
 }
 

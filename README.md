@@ -274,6 +274,7 @@ See the [deployment runbook](docs/deployment-runbook.md) for configuration and r
 - Responsive shadcn sidebar workspace and token-based light/dark themes.
 - Clear typography hierarchy, frosted navigation/workflow surfaces and image-based FAQ cards.
 - Early scroll reveals, transform-based choreography and native touch/reduced-motion behavior.
+- React Bits-inspired card light, scroll typography and a visibility-paused ambient wave stage.
 - Keyboard-operated menus, selects, disclosures and dialogs with visible focus and retained focus.
 - Text status labels and count summaries; color and chart geometry are supplementary.
 - Server-rendered readable content, reserved image geometry and small interactive boundaries.
@@ -287,6 +288,7 @@ Offline operation, live funds and distributed failover certification are outside
 
 - [Workspace release and hosted acceptance](docs/workspace-release.md)
 - [Dashboard scrolling, animation lifecycle and current release](docs/dashboard-motion.md)
+- [Home materials, React Bits adaptations and animation limits](docs/home-materials.md)
 - [Role, route and API map](docs/route-plan.md)
 - [Session-safe dashboard and technology decisions](docs/workspace-upgrade.md)
 - [Dispatch and execution rules](docs/dispatch-execution-plan.md)
