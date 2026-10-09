@@ -40,3 +40,6 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# deliberate demo recordings (keep credentials and provider sessions out of Git)
+/walkthrough-output/

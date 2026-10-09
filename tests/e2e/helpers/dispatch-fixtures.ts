@@ -150,6 +150,15 @@ export async function createDispatchFixture() {
       technician: technician.user,
       window: { start, end },
       cleanup,
+      // UI-created fixtures are verified as owned before becoming eligible for cleanup.
+      async trackRequest(id: string) {
+        const request = await call(
+          `/requests/${z.uuid().parse(id)}`,
+          requestSchema,
+          customer.accessToken
+        )
+        requestIds.push(request.id)
+      },
       async createRequest(approved = false) {
         const request = await call(
           "/requests",
