@@ -77,9 +77,9 @@ export function MarketingMotion({ children }: { children: ReactNode }) {
             .toArray<HTMLElement>("[data-process-step]")
             .forEach((step) => {
               gsap.from(step, {
+                // Reading contrast stays constant while perspective and translation add depth.
                 y: 48,
                 rotateX: 5,
-                opacity: 0.6,
                 duration: 0.85,
                 ease: "power3.out",
                 scrollTrigger: { trigger: step, start: "top 90%", once: true },

@@ -20,7 +20,7 @@ export function FaqCard({ item }: { item: FaqItem }) {
           src={item.image}
           alt={item.alt}
           fill
-          sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
+          sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) calc(50vw - 42px), (max-width: 1279px) calc(33.333vw - 35px), 392px"
           className="faq-image object-cover"
         />
         <div className="faq-shade" aria-hidden="true" />

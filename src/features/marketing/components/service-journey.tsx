@@ -85,7 +85,7 @@ export function ServiceJourney() {
                       {detail}
                     </p>
                   </div>
-                  <span className="pt-1 text-xs text-muted-foreground/70">
+                  <span className="pt-1 text-xs text-muted-foreground">
                     {label}
                   </span>
                 </li>

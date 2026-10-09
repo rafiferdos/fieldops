@@ -33,8 +33,9 @@ export function Reveal({
           animations.push(
             target.animate(
               [
-                { opacity: 0.65, transform: "translateY(18px)" },
-                { opacity: 1, transform: "translateY(0px)" },
+                // Text remains readable throughout entry, including on tinted surfaces.
+                { transform: "translateY(18px)" },
+                { transform: "translateY(0px)" },
               ],
               {
                 duration: 650,
