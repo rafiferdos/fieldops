@@ -279,6 +279,8 @@ See the [deployment runbook](docs/deployment-runbook.md) for configuration and r
 - Text status labels and count summaries; color and chart geometry are supplementary.
 - Server-rendered readable content, reserved image geometry and small interactive boundaries.
 
+![FieldOps closing action with a readable ambient wave backdrop](docs/images/home-coordination.png)
+
 Automated Chromium/axe checks do not replace testing on actual mobile hardware or Safari.
 Free backend hosting can introduce cold-start latency. Current runtime dependencies passed
 the last audit; development/build-tool advisory paths still need compatible upstream fixes.

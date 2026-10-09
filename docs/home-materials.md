@@ -79,3 +79,22 @@ operational records.
 
 Actual mobile hardware, Safari and lab/field performance scores require separate
 measurement; bounded drawing is an implementation budget, not a measured FPS claim.
+
+## Published source and acceptance
+
+- Application: [FieldOps](https://fieldops-rafiferdos.vercel.app/)
+- Deployed source: `ac019ac9e191de4660f94ef009e6543a195e9d2c`
+- [Successful source CI](https://github.com/rafiferdos/fieldops/actions/runs/37973816720):
+  clean lockfile install, formatting, strict types, lint, all 185 unit tests including
+  Redis session integration, and the default production build.
+- Vercel deployment: `dpl_GZjDf8QNw5gB6yaBKEGgNHYL83Za`, READY with the canonical
+  production alias, Node 24 and the Singapore (`sin1`) region.
+- Hosted acceptance: all **20/20 selected Chromium scenarios passed in 3.8 minutes**
+  against the canonical live origin. The same suite passed locally in 3.4 minutes.
+  It covers both-theme accessibility, three real role workspaces, navigation/history,
+  confirmed logout, text geometry, keyboard disclosures, touch/no-script fallback,
+  local lighting cleanup, rendered wave output and preference transitions.
+- The [README preview](../README.md#design-accessibility-and-performance) is an actual
+  public screenshot captured from this live revision with reduced motion enabled.
+  It contains no private account identity or operational records.
+- The backend remains unchanged at `1faf01a7ce50ddc4a0a7058deb13c28179408409`.
