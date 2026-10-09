@@ -36,7 +36,7 @@ export function ServiceScene() {
         </div>
         <div className="scene-card-depth">
           <Card
-            className="scene-workflow workflow-surface bg-(--workflow-surface)"
+            className="scene-workflow image-glass glare-surface bg-(--image-glass-surface) shadow-2xl"
             data-scene-card=""
           >
             <CardHeader className="border-b">

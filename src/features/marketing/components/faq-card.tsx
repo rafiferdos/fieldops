@@ -24,13 +24,15 @@ export function FaqCard({ item }: { item: FaqItem }) {
           className="faq-image object-cover"
         />
         <div className="faq-shade" aria-hidden="true" />
-        <div className="faq-summary">
-          <p className="text-xs font-medium text-white/80">{item.category}</p>
+        <div className="faq-summary image-glass glare-surface">
+          <p className="text-xs font-medium text-muted-foreground">
+            {item.category}
+          </p>
           <h3 className="mt-3 max-w-64 font-heading text-3xl leading-[1.08] font-medium tracking-[-0.035em]">
             {item.title}
           </h3>
         </div>
-        <CollapsibleContent className="faq-answer">
+        <CollapsibleContent className="faq-answer image-glass">
           <p className="eyebrow">{item.category}</p>
           <h3 className="mt-5 font-heading text-3xl leading-tight font-medium tracking-[-0.035em]">
             {item.question}

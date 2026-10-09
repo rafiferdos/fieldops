@@ -12,10 +12,11 @@ import {
 } from "lucide-react"
 import { ServiceScene } from "@/features/marketing/components/service-scene"
 import { MarketingMotion } from "@/features/marketing/components/marketing-motion"
+import { SpotlightCard } from "@/features/marketing/components/spotlight-card"
 import { FaqCards } from "@/features/marketing/components/faq-cards"
 import { Reveal } from "@/shared/components/reveal"
 import { buttonVariants } from "@/shared/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
+import { CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { Separator } from "@/shared/ui/separator"
 
 export const metadata = publicMetadata(
@@ -211,7 +212,7 @@ export default function HomePage() {
                 icon: FileCheck2,
               },
             ].map(({ number, title, text, icon: Icon }) => (
-              <Card
+              <SpotlightCard
                 key={number}
                 data-process-step=""
                 data-entry-depth=""
@@ -234,13 +235,13 @@ export default function HomePage() {
                 <CardContent className="max-w-lg leading-relaxed text-muted-foreground">
                   {text}
                 </CardContent>
-              </Card>
+              </SpotlightCard>
             ))}
           </div>
         </section>
 
         <Reveal>
-          <Card
+          <SpotlightCard
             aria-labelledby="roles-title"
             role="region"
             className="gap-0 border p-6 shadow-none sm:p-10 lg:p-12"
@@ -283,7 +284,7 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
-          </Card>
+          </SpotlightCard>
         </Reveal>
         <section aria-labelledby="home-faq-title">
           <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-5">
