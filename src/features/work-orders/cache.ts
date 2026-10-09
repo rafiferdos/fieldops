@@ -6,6 +6,7 @@ import { workDetailPath, workListPath } from "./routes"
 // One work change affects dispatch, technician execution and the customer's tracking.
 export function revalidateWork(work: WorkOrder) {
   for (const role of ["CUSTOMER", "TECHNICIAN", "ADMIN"] as const) {
+    revalidatePath(`/${role.toLowerCase()}`)
     revalidatePath(workListPath(role))
     revalidatePath(workDetailPath(role, work.id))
   }

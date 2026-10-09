@@ -3,7 +3,7 @@ import type { RecordRoute } from "@/shared/lib/routes"
 
 export function workListPath(role: Role) {
   if (role === "CUSTOMER") return "/customer/work-orders"
-  if (role === "TECHNICIAN") return "/technician"
+  if (role === "TECHNICIAN") return "/technician/work-orders"
   return "/admin/work-orders"
 }
 export function workDetailPath(role: Role, id: string): RecordRoute {

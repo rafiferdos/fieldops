@@ -1,8 +1,7 @@
 import { PageHeading } from "@/shared/components/page-heading"
 import { requireViewer } from "@/features/auth/session"
-import { getOverview } from "@/features/admin/server"
+import { DashboardServer } from "@/features/workspace/components/dashboard-server"
 import { parseOverviewFilters } from "@/features/admin/schemas"
-import { OverviewDetails } from "@/features/admin/components/overview"
 import { OverviewFilters } from "@/features/admin/components/overview-filters"
 import { firstValue, type SearchValues } from "@/shared/lib/list-query"
 
@@ -15,25 +14,29 @@ export default async function AdminPage({
   await requireViewer("ADMIN", "/admin")
   const values = await searchParams,
     parsed = parseOverviewFilters(values)
-  return (
+  const controls = (
+    <OverviewFilters
+      from={firstValue(values.from) ?? ""}
+      to={firstValue(values.to) ?? ""}
+      error={
+        parsed.success
+          ? undefined
+          : "Provide both valid dates in increasing order, at most 366 days apart."
+      }
+    />
+  )
+  // Invalid URL periods never trigger a report request or show a different period silently.
+  return parsed.success ? (
+    <DashboardServer role="ADMIN" filters={parsed.data}>
+      {controls}
+    </DashboardServer>
+  ) : (
     <>
       <PageHeading
-        eyebrow="Administrator workspace"
         title="Operations overview"
-        description="A clear view of service demand, completed work and provider-verified revenue."
+        description="Choose a valid period to inspect service demand and verified revenue."
       />
-      <OverviewFilters
-        from={firstValue(values.from) ?? ""}
-        to={firstValue(values.to) ?? ""}
-        error={
-          parsed.success
-            ? undefined
-            : "Provide both valid dates in increasing order, at most 366 days apart."
-        }
-      />
-      {parsed.success && (
-        <OverviewDetails overview={await getOverview(parsed.data)} />
-      )}
+      {controls}
     </>
   )
 }

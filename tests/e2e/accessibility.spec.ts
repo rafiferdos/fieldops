@@ -80,8 +80,16 @@ test.describe("authenticated accessibility", () => {
     test.setTimeout(180000)
     if (!baseURL) throw new Error("A browser-test base URL is required")
     for (const [role, routes] of [
-      ["Customer", ["/customer", "/customer/work-orders", "/account"]],
-      ["Technician", ["/technician", "/account"]],
+      [
+        "Customer",
+        [
+          "/customer",
+          "/customer/requests",
+          "/customer/work-orders",
+          "/account",
+        ],
+      ],
+      ["Technician", ["/technician", "/technician/work-orders", "/account"]],
       [
         "Admin",
         [

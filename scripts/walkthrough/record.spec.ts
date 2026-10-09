@@ -1,3 +1,4 @@
+import { confirmSignOut } from "../../tests/e2e/helpers/sign-out"
 import { writeFile } from "node:fs/promises"
 import { expect, test } from "@playwright/test"
 import { createDispatchFixture } from "../../tests/e2e/helpers/dispatch-fixtures"
@@ -33,7 +34,7 @@ test("record an actual request-to-paid-feedback walkthrough", async ({
   }
   async function logout() {
     await page.goto("/account")
-    await page.getByRole("button", { name: "Sign out", exact: true }).click()
+    await confirmSignOut(page)
     await expect(page).toHaveURL(/\/login$/)
   }
   async function customerLogin() {

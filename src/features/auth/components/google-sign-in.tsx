@@ -81,7 +81,8 @@ export function GoogleSignIn({
   }
   return (
     <div className="space-y-3">
-      <div ref={target} />
+      {/* Keep the provider-rendered personalized button centered at every width. */}
+      <div ref={target} className="flex min-h-11 justify-center" />
       <FormMessage message={message} />
       <Script
         src="https://accounts.google.com/gsi/client"

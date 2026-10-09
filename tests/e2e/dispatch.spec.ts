@@ -1,3 +1,4 @@
+import { confirmSignOut } from "./helpers/sign-out"
 import { chooseOption } from "./helpers/choice-select"
 import { expect, test, type Page } from "@playwright/test"
 import { dhakaLocal } from "../../src/features/requests/schemas"
@@ -145,7 +146,7 @@ test("admin review, stale decision, qualified assignment, collision and reschedu
     await page.getByLabel("Search requests").fill(fixture.marker)
     await page.getByRole("button", { name: "Apply filters" }).click()
     await expect(page).toHaveURL(new RegExp(`q=${fixture.marker}`))
-    await page.getByRole("button", { name: "Sign out", exact: true }).click()
+    await confirmSignOut(page)
   } finally {
     await fixture.cleanup()
   }

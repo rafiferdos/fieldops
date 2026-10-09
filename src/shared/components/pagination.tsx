@@ -20,11 +20,11 @@ export function Pagination({
     | "/admin/services"
     | "/admin/users"
     | "/admin/audit-logs"
-    | "/customer"
+    | "/customer/requests"
     | "/admin/requests"
     | "/admin/work-orders"
     | "/customer/work-orders"
-    | "/technician"
+    | "/technician/work-orders"
   query: Record<string, string | number | undefined>
   page: number
   totalPages: number

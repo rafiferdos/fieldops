@@ -21,7 +21,9 @@ export default async function AccountPage() {
           <dd className="mt-1">{profile.role}</dd>
         </div>
       </DetailPanel>
-      <ProfileForm name={profile.name} phone={profile.phone} />
+      <section id="account-settings" aria-label="Account settings">
+        <ProfileForm name={profile.name} phone={profile.phone} />
+      </section>
     </>
   )
 }

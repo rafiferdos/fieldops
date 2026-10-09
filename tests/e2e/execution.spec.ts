@@ -1,3 +1,4 @@
+import { confirmSignOut } from "./helpers/sign-out"
 import { expect, test, type Page } from "@playwright/test"
 import { createDispatchFixture } from "./helpers/dispatch-fixtures"
 import { respectAuthWindow } from "./helpers/auth-window"
@@ -22,7 +23,7 @@ async function demoLogin(
 }
 async function logout(page: Page) {
   await page.goto("/account")
-  await page.getByRole("button", { name: "Sign out", exact: true }).click()
+  await confirmSignOut(page)
   await expect(page).toHaveURL(/\/login$/)
 }
 
@@ -47,7 +48,7 @@ test("technician progress, lost completion response recovery and scoped customer
       assigned = await fixture.assign(request.id)
     await demoLogin(page, "Technician")
     await page.goto(
-      `/technician?status=ASSIGNED&q=${fixture.marker}&sort=scheduled_start_asc`
+      `/technician/work-orders?status=ASSIGNED&q=${fixture.marker}&sort=scheduled_start_asc`
     )
     await expect(
       page.getByRole("link", { name: "View work order" })

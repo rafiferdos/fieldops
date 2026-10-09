@@ -29,6 +29,7 @@ export async function createRequest(input: unknown): Promise<ActionResult> {
       body: parsed.data,
     })
     revalidatePath("/customer")
+    revalidatePath("/customer/requests")
     return {
       ok: true,
       message: "Service request submitted.",
@@ -57,6 +58,7 @@ export async function editRequest(
     })
     revalidatePath(`/customer/requests/${identifier.data}`)
     revalidatePath("/customer")
+    revalidatePath("/customer/requests")
     return { ok: true, message: "Request updated." }
   } catch (error) {
     return actionFailure(error)
@@ -93,11 +95,13 @@ export async function cancelRequest(
         revalidatePath(workDetailPath(role, cancelled.workOrder.id))
     revalidatePath(`/customer/requests/${identifier.data}`)
     revalidatePath("/customer")
+    revalidatePath("/customer/requests")
     revalidatePath(`/admin/requests/${identifier.data}`)
     revalidatePath("/admin/requests")
     revalidatePath("/admin/work-orders")
     revalidatePath("/customer/work-orders")
     revalidatePath("/technician")
+    revalidatePath("/technician/work-orders")
     return { ok: true, message: "Request cancelled." }
   } catch (error) {
     return actionFailure(error)

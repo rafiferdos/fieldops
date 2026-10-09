@@ -15,7 +15,7 @@ export async function listRequests(
   // Admin review shares the queue schema, but never inherits customer-only access.
   const { accessToken } = await requireViewer(
     role,
-    role === "ADMIN" ? "/admin/requests" : "/customer"
+    role === "ADMIN" ? "/admin/requests" : "/customer/requests"
   )
   return (
     await apiRequest(`/requests?${queryString(query)}`, requestPageSchema, {

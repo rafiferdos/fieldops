@@ -30,7 +30,7 @@ export async function RequestList({
   values: SearchValues
   role: "CUSTOMER" | "ADMIN"
 }) {
-  const pathname = role === "ADMIN" ? "/admin/requests" : "/customer"
+  const pathname = role === "ADMIN" ? "/admin/requests" : "/customer/requests"
   const query = parseRequestQuery(values),
     result = await listRequests(query, role)
   return (

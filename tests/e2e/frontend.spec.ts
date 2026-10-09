@@ -1,3 +1,4 @@
+import { confirmSignOut } from "./helpers/sign-out"
 import { chooseOption } from "./helpers/choice-select"
 import { randomUUID } from "node:crypto"
 import { expect, test } from "@playwright/test"
@@ -122,7 +123,7 @@ test.describe("configured demo accounts", () => {
       }
       await page.setViewportSize({ width: 390, height: 844 })
       const navigation = page.getByRole("button", {
-        name: "Open workspace navigation",
+        name: "Toggle workspace sidebar",
       })
       await navigation.click()
       await expect(page.getByRole("dialog")).toBeVisible()
@@ -160,7 +161,7 @@ test.describe("configured demo accounts", () => {
       await expect(
         page.getByRole("heading", { name: "Your account" })
       ).toBeVisible()
-      await page.getByRole("button", { name: "Sign out", exact: true }).click()
+      await confirmSignOut(page)
       await expect(page).toHaveURL(/\/login$/)
       await page.goto("/account")
       await expect(page).toHaveURL(/\/login\?returnTo=/)
@@ -296,11 +297,11 @@ test("real disposable customer registration, request create/edit/cancel and fore
     ).toBeVisible()
     await expect(foreign.getByText(description)).not.toBeVisible()
     await foreign.goto("/account")
-    await foreign.getByRole("button", { name: "Sign out", exact: true }).click()
+    await confirmSignOut(foreign)
     await expect(foreign).toHaveURL(/\/login$/)
   } finally {
     await other.close()
   }
-  await page.getByRole("button", { name: "Sign out", exact: true }).click()
+  await confirmSignOut(page)
   await expect(page).toHaveURL(/\/login$/)
 })

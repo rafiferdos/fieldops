@@ -3,9 +3,9 @@
 import { ButtonLink } from "@/shared/components/button-link"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import { usePathname } from "next/navigation"
-import { ArrowUpRight, Menu } from "lucide-react"
+import { Menu } from "lucide-react"
 import { Button } from "@/shared/ui/button"
 import {
   Sheet,
@@ -32,7 +32,7 @@ const links = [
   { href: "/contact", label: "Contact" },
 ] as const
 
-export function SiteHeader() {
+export function SiteHeader({ accountControl }: { accountControl?: ReactNode }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   return (
@@ -55,10 +55,6 @@ export function SiteHeader() {
                     className="nav-link group/nav"
                   >
                     {link.label}
-                    <ArrowUpRight
-                      aria-hidden="true"
-                      className="nav-link-arrow"
-                    />
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               ))}
@@ -66,17 +62,15 @@ export function SiteHeader() {
           </NavigationMenu>
           <div className="flex items-center gap-1 sm:gap-2">
             <ThemeToggle />
-            <ButtonLink
-              href="/login"
-              variant="secondary"
-              className="nav-sign-in group/nav bg-foreground text-background hover:bg-foreground/85"
-            >
-              Sign in
-              <ArrowUpRight
-                aria-hidden="true"
-                className="size-3.5 transition-transform group-hover/nav:translate-x-0.5 group-hover/nav:-translate-y-0.5"
-              />
-            </ButtonLink>
+            {accountControl ?? (
+              <ButtonLink
+                href="/login"
+                variant="secondary"
+                className="nav-sign-in bg-foreground text-background hover:bg-foreground/85"
+              >
+                Sign in
+              </ButtonLink>
+            )}
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger
                 render={
@@ -111,12 +105,8 @@ export function SiteHeader() {
                       className="justify-between"
                     >
                       {link.label}
-                      <ArrowUpRight aria-hidden="true" />
                     </ButtonLink>
                   ))}
-                  <ButtonLink href="/login" onClick={() => setOpen(false)}>
-                    Sign in
-                  </ButtonLink>
                 </nav>
               </SheetContent>
             </Sheet>

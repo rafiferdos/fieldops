@@ -1,3 +1,4 @@
+import { confirmSignOut } from "./helpers/sign-out"
 import { randomUUID } from "node:crypto"
 import { expect, test, type Page } from "@playwright/test"
 import { respectAuthWindow } from "./helpers/auth-window"
@@ -186,7 +187,7 @@ test("self access change clears the frontend session and requires fresh role log
     await page.getByLabel("Password", { exact: true }).fill(fixture.password)
     await page.getByRole("button", { name: "Sign in", exact: true }).click()
     await expect(page).toHaveURL(/\/customer$/, { timeout: 45000 })
-    await page.getByRole("button", { name: "Sign out", exact: true }).click()
+    await confirmSignOut(page)
   } finally {
     await fixture.cleanup()
   }
@@ -256,7 +257,7 @@ test("administrative filters, history pagination, responsive navigation and wron
       )
     ).toBe(true)
   }
-  await page.getByRole("button", { name: "Sign out", exact: true }).click()
+  await confirmSignOut(page)
   for (const role of ["Customer", "Technician"] as const) {
     await demoLogin(page, role)
     for (const route of ["/admin/users", "/admin/audit-logs"]) {
@@ -266,6 +267,6 @@ test("administrative filters, history pagination, responsive navigation and wron
         0
       )
     }
-    await page.getByRole("button", { name: "Sign out", exact: true }).click()
+    await confirmSignOut(page)
   }
 })

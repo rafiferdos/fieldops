@@ -1,14 +1,24 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
-import { ArrowUpRight } from "lucide-react"
+import { getViewer } from "@/features/auth/session"
+import { AccountMenu } from "@/features/auth/components/account-menu"
 import { SiteHeader } from "@/shared/components/site-header"
 import { Brand } from "@/shared/components/brand"
 import { Separator } from "@/shared/ui/separator"
 
-export default function PublicLayout({ children }: { children: ReactNode }) {
+export default async function PublicLayout({
+  children,
+}: {
+  children: ReactNode
+}) {
+  const viewer = await getViewer()
   return (
     <>
-      <SiteHeader />
+      <SiteHeader
+        accountControl={
+          viewer ? <AccountMenu profile={viewer.profile} /> : undefined
+        }
+      />
       <main
         id="main-content"
         className="mx-auto min-h-[70svh] max-w-7xl px-5 py-12 sm:px-8 sm:py-16"
@@ -43,7 +53,6 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                   className="flex items-center justify-between gap-12 text-muted-foreground hover:text-foreground"
                 >
                   {link.title}
-                  <ArrowUpRight aria-hidden="true" className="size-3.5" />
                 </Link>
               ))}
             </nav>

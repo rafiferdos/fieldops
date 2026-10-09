@@ -30,7 +30,7 @@ test("admin overview uses real bounded aggregates and rejects incomplete periods
     page.getByRole("heading", { name: "Verified revenue" })
   ).toBeVisible()
   await expect(
-    page.getByRole("term").filter({ hasText: /^PENDING$/ })
+    page.getByRole("term").filter({ hasText: /^pending$/ })
   ).toBeVisible()
   await page.getByLabel("From (Dhaka)", { exact: true }).fill("2099-01-01")
   await page.getByRole("button", { name: "Apply period" }).click()
@@ -138,6 +138,12 @@ test("catalog creation, stale edit protection and soft deletion use real records
   } finally {
     // Remove only this test's uniquely named catalog entry, including after an assertion failure.
     await page.goto(`/admin/services?q=${encodeURIComponent(name)}`)
+    // Wait for the streamed catalog before deciding whether this fixture needs removal.
+    await expect(
+      card.or(
+        page.getByRole("heading", { name: "No matching services", exact: true })
+      )
+    ).toBeVisible()
     if (await card.count()) {
       await card
         .getByRole("button", { name: "Remove service", exact: true })

@@ -35,6 +35,10 @@ export function safeReturnPath(value: unknown, role: Role): RecordRoute {
     if (path === "/account") return "/account"
     if (path === root) return `${root}?${url.searchParams.toString()}`
     // Preserve only implemented role-specific queues and validated record IDs.
+    if (role === "CUSTOMER" && path === "/customer/requests")
+      return `/customer/requests?${url.searchParams.toString()}`
+    if (role === "TECHNICIAN" && path === "/technician/work-orders")
+      return `/technician/work-orders?${url.searchParams.toString()}`
     if (role === "CUSTOMER" && path === "/customer/work-orders")
       return `/customer/work-orders?${url.searchParams.toString()}`
     if (role === "ADMIN" && path === "/admin/services")
