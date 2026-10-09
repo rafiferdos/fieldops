@@ -9,7 +9,11 @@ admin reporting, catalog management, confirmed user access changes and read-only
 audit browsing are implemented. Technician skills remain a later slice. The
 gateway browser-return transport now has a narrowly authorized backend exception
 for payment callback/configuration changes and real sandbox verification. Do not
-expand that exception to other backend features or push/deploy without a request.
+expand that exception to other backend features without a request. The user later
+authorized all remaining delivery stages, including the current-skills read gap,
+verified contact channels, Google configuration, QA, Vercel hosting and submission
+artifacts. Keep backend changes limited to skills/payment delivery; preserve existing
+data and use dedicated disposable verification/evaluation accounts.
 
 Read the README's official Assignment 7 links and implemented backend contract
 before changing domain behavior. Exactly three roles: CUSTOMER, TECHNICIAN, ADMIN.

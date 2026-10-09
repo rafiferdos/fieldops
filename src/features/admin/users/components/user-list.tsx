@@ -4,6 +4,7 @@ import { formatDate } from "@/shared/lib/format"
 import type { ManagedUser, ManagedUsersQuery } from "../schemas"
 import { AccessEditor } from "./access-editor"
 import { ButtonLink } from "@/shared/components/button-link"
+import { SkillsEditor } from "../../skills/components/skills-editor"
 
 export function UserList({
   users,
@@ -44,6 +45,9 @@ export function UserList({
               query={query}
               ownAccount={user.id === viewerId}
             />
+            {user.role === "TECHNICIAN" && (
+              <SkillsEditor id={user.id} name={user.name} />
+            )}
             <ButtonLink
               href={`/admin/audit-logs?entityType=USER&entityId=${user.id}&action=USER_ACCESS_UPDATED`}
               variant="ghost"
