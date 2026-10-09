@@ -16,6 +16,8 @@ declare global {
             client_id: string
             callback: (response: unknown) => void
             auto_select: boolean
+            use_fedcm_for_button: boolean
+            button_auto_select: boolean
           }) => void
           renderButton: (
             element: HTMLElement,
@@ -63,6 +65,9 @@ export function GoogleSignIn({
     window.google.accounts.id.initialize({
       client_id: clientId,
       auto_select: false,
+      // Let supported browsers mediate Google consent without automatic account selection.
+      use_fedcm_for_button: true,
+      button_auto_select: false,
       callback: (response) => {
         void complete(response)
       },
