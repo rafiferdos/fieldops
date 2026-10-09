@@ -11,7 +11,7 @@ import { Button } from "@/shared/ui/button"
 import { Label } from "@/shared/ui/label"
 import { Textarea } from "@/shared/ui/textarea"
 import { toast } from "@/shared/ui/toast"
-import { ChoiceSelect } from "@/shared/components/choice-select"
+import { PeekRating } from "@/shared/components/react-bits/peek-rating"
 import { FormMessage } from "@/shared/components/form-message"
 
 // Preserve the customer's explanation after a lost response; inspect instead of replaying.
@@ -85,28 +85,27 @@ export function FeedbackForm({ workOrderId }: { workOrderId: string }) {
           className="space-y-5"
         >
           <div className="max-w-xs space-y-2">
-            <Label htmlFor="feedback-rating">Rating</Label>
+            <p className="text-sm font-medium">Rating</p>
             <Controller
               name="rating"
               control={control}
               render={({ field }) => (
-                <ChoiceSelect
-                  id="feedback-rating"
-                  name={field.name}
-                  ref={field.ref}
-                  value={field.value}
-                  onValueChange={field.onChange}
+                <PeekRating
+                  value={Number(field.value)}
+                  onChange={(rating) => field.onChange(String(rating))}
                   onBlur={field.onBlur}
+                  focusRef={field.ref}
                   disabled={!isReady || isSubmitting || blocked || inspecting}
-                  options={[
-                    { value: "5", label: "5 — Excellent" },
-                    { value: "4", label: "4 — Good" },
-                    { value: "3", label: "3 — Fair" },
-                    { value: "2", label: "2 — Poor" },
-                    { value: "1", label: "1 — Very poor" },
-                  ]}
+                  invalid={!!errors.rating}
+                  {...(errors.rating
+                    ? { describedBy: "feedback-rating-error" }
+                    : {})}
                 />
               )}
+            />
+            <FormMessage
+              id="feedback-rating-error"
+              message={errors.rating?.message}
             />
           </div>
           <div className="space-y-2">

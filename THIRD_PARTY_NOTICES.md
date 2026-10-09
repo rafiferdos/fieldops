@@ -9,9 +9,8 @@ local pointer events, batches paints, and disables movement for reduced motion.
 It does not redistribute React Bits as a component library.
 
 **ScrollFloat** informs a word-based scroll reveal with full text opacity and no
-clipping masks. **Waves** informs the pointer-reactive closing backdrop; FieldOps
-uses its own bounded harmonic curves instead of the upstream noise grid. These
-adaptations share the existing GSAP runtime and native Canvas 2D, respectively.
+clipping masks. The earlier Waves-inspired Canvas 2D closing backdrop has been
+replaced by the requested Strands WebGL effect.
 
 - Author: David Haz
 - Source revision: `d86fccbd477786f94ca7eb891fbe0ec039d3cd3b`
@@ -20,6 +19,36 @@ adaptations share the existing GSAP runtime and native Canvas 2D, respectively.
 - [ScrollFloat source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/TextAnimations/ScrollFloat)
 - [Waves source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Backgrounds/Waves)
 - [Upstream license](https://github.com/DavidHDev/react-bits/blob/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/LICENSE.md)
+
+### Requested interactive components
+
+The application also includes source-reviewed **TechText, CrystalizedBall,
+BranchedMenu, HoldButton, PeekRating, RubberSegment, StrokeText, Strands,
+BorderGlow, StaggeredMenu, GradualBlur and ScrollStack** at the same revision.
+
+Visuals retain the upstream geometry, wave fill, shaders, glow masks and stagger
+patterns where applicable. Colors match FieldOps. Integration fixes preserve native
+hero geometry, use real Next.js links, compose shadcn modal/collapsible primitives,
+validate gesture completion and dispose animations and GPU resources. RubberSegment
+and ScrollStack share the existing GSAP runtime rather than adding Motion/Lenis.
+Lucide supplies existing icons instead of installing another icon library.
+
+- [TechText source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/TextAnimations/TechText)
+- [CrystalizedBall source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Animations/CrystalizedBall)
+- [BranchedMenu source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Micro/BranchedMenu)
+- [HoldButton source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Micro/HoldButton)
+- [PeekRating source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Micro/PeekRating)
+- [RubberSegment source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Micro/RubberSegment)
+- [StrokeText source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/TextAnimations/StrokeText)
+- [Strands source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Animations/Strands)
+- [BorderGlow source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Components/BorderGlow)
+- [StaggeredMenu source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Components/StaggeredMenu)
+- [GradualBlur source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Animations/GradualBlur)
+- [ScrollStack source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Components/ScrollStack)
+
+CodeSlots was reviewed for applicability but is not distributed: FieldOps has no
+email-code verification endpoint or form. The gateway's hosted OTP screen belongs
+to the payment provider.
 
 The upstream license is reproduced below.
 

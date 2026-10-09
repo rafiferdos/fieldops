@@ -22,10 +22,14 @@ The following open-source effects were reviewed at a pinned upstream revision:
 
 | Effect        | FieldOps use and adaptation                                                                      |
 | ------------- | ------------------------------------------------------------------------------------------------ |
-| SpotlightCard | Local cursor-following radial light behind shadcn process and role cards; no moving hit targets. |
+| SpotlightCard | Local cursor-following radial light behind shadcn process cards; no moving hit targets.          |
 | GlareHover    | A subtle diagonal light sweep over photo panels, with keyboard focus support for FAQ controls.   |
 | ScrollFloat   | Whole-word depth reveals on section headings, retaining spaces, full opacity and unclipped text. |
-| Waves         | A single closing backdrop with bounded harmonic curves and complementary theme accents.          |
+| Strands       | The original WebGL closing backdrop with complementary theme accents and a static fallback.      |
+
+The subsequent [React Bits integration](react-bits.md) adds the requested hero,
+navigation, rating, confirmation and GPU effects. It replaces the earlier Waves-inspired
+Canvas 2D backdrop; the unused renderer was removed.
 
 Source links, adaptation details and the upstream MIT + Commons Clause notice are
 in [third-party notices](../THIRD_PARTY_NOTICES.md). The project distributes these
@@ -46,20 +50,24 @@ return and early-reveal checks. They are anecdotal reports, not a performance be
   movement. Leaving the card, preference changes and unmount cancel pending work.
 - Glare uses CSS; informational cards retain their ordinary cursor and hit target.
 - Word transforms resolve between the lower 98% and 82% of the viewport. There are
-  no clipping masks, pinned sections, forced scroll pauses or completion-time rewrites.
-- One Canvas 2D backdrop draws 12 strands with 65 points each, at most 30 times per
-  second, with device-pixel ratio capped at 1.5. Its center mask preserves text contrast.
+  no word clipping masks or completion-time rewrites. ScrollStack separately uses
+  bounded card transforms; its reading-order fallback is documented in the integration guide.
+- Strands and CrystalizedBall retain their original WebGL shaders. The graphics
+  lifecycle, particle budget and device-pixel ratio cap are documented in the integration guide.
 - IntersectionObserver and document visibility pause ambient drawing outside view or
   while hidden. ResizeObserver maintains actual geometry; all resources are disposed.
-- Narrow/touch layouts and reduced-motion settings retain a still drawing. CSS gradients
-  remain available without scripts or Canvas support; ordinary content stays usable.
-- Existing GSAP handles scroll and typography. No new dependency or second scroll
-  controller is installed. Header, dialogs and workspace motion keep their ownership.
+- Reduced motion and unsupported GPU contexts retain CSS decoration. Touch layouts
+  retain native scrolling; ordinary content stays usable without graphics or scripts.
+- Existing GSAP handles scroll and typography, without a second scroll controller.
+  OGL is the sole new graphics runtime; dialogs and workspace motion keep their ownership.
 - Switching between native and smooth mode preserves the reader's position. A guarded
   restoration after GSAP's full media refresh ignores its temporary scroll-range collapse
   and yields to route/hash navigation or unmount.
 
-## Verification
+## Historical material release verification
+
+The following evidence predates the requested component integration. Current
+verification and release evidence belongs in [React Bits integration](react-bits.md).
 
 The first material checkpoint passed strict checks, the default production build,
 179 local unit tests (six Redis checks skipped locally), and 14 public Chromium
@@ -80,7 +88,7 @@ operational records.
 Actual mobile hardware, Safari and lab/field performance scores require separate
 measurement; bounded drawing is an implementation budget, not a measured FPS claim.
 
-## Published source and acceptance
+## Historical published source and acceptance
 
 - Application: [FieldOps](https://fieldops-rafiferdos.vercel.app/)
 - Deployed source: `ac019ac9e191de4660f94ef009e6543a195e9d2c`

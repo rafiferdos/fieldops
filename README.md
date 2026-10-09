@@ -94,14 +94,19 @@ access, scheduling, invoice amounts and settlement.
 | Local UI preference | Zustand 5 for the sidebar preference only                                                |
 | Forms and contracts | React Hook Form and Zod boundary validation                                              |
 | Reporting           | Recharts with shadcn chart primitives, exact money formatting and accessible text counts |
-| Motion              | GSAP, responsive scroll choreography and reduced-motion support                          |
+| Motion              | GSAP, source-reviewed React Bits interactions and reduced-motion support                 |
+| Decorative graphics | OGL WebGL scenes loaded on entry, with static fallbacks and disposed GPU resources       |
 | Sessions            | Server-only authenticated encryption and a dedicated Redis store                         |
 | Quality             | Vitest, Playwright, axe, typed ESLint, Prettier and GitHub Actions                       |
 | Delivery            | Vercel frontend, Render API and Neon PostgreSQL                                          |
 
 The component foundation uses the selected shadcn preset `b2w3Yl9Ygc`. Shared UI primitives
 remain the default for controls, cards, sidebars, menus, selects, dialogs and toast feedback.
-Geist supports operational reading; Outfit establishes the heading hierarchy.
+Geist supports operational reading; Outfit establishes the heading hierarchy. React Bits
+effects retain their source appearance with FieldOps colors: elastic public navigation,
+staggered mobile links, branched workspace navigation and continuous-hold sign-out. The
+[component integration guide](docs/react-bits.md) records all placements, accessibility
+behavior, graphics budgets and verification limits.
 
 ### Architecture
 
@@ -274,7 +279,8 @@ See the [deployment runbook](docs/deployment-runbook.md) for configuration and r
 - Responsive shadcn sidebar workspace and token-based light/dark themes.
 - Clear typography hierarchy, frosted navigation/workflow surfaces and image-based FAQ cards.
 - Early scroll reveals, transform-based choreography and native touch/reduced-motion behavior.
-- React Bits-inspired card light, scroll typography and a visibility-paused ambient wave stage.
+- Source-reviewed React Bits hero text, elastic/staggered navigation, card light,
+  scroll typography, stacking and visibility-managed WebGL decoration.
 - Keyboard-operated menus, selects, disclosures and dialogs with visible focus and retained focus.
 - Text status labels and count summaries; color and chart geometry are supplementary.
 - Server-rendered readable content, reserved image geometry and small interactive boundaries.
@@ -291,6 +297,7 @@ Offline operation, live funds and distributed failover certification are outside
 - [Workspace release and hosted acceptance](docs/workspace-release.md)
 - [Dashboard scrolling, animation lifecycle and current release](docs/dashboard-motion.md)
 - [Home materials, React Bits adaptations and animation limits](docs/home-materials.md)
+- [Requested components, placements, original appearance and verification](docs/react-bits.md)
 - [Role, route and API map](docs/route-plan.md)
 - [Session-safe dashboard and technology decisions](docs/workspace-upgrade.md)
 - [Dispatch and execution rules](docs/dispatch-execution-plan.md)

@@ -1,7 +1,8 @@
-import { expect, test } from "@playwright/test"
+import { expect, test, type Page } from "@playwright/test"
 import { createDispatchFixture } from "./helpers/dispatch-fixtures"
 import { respectAuthWindow } from "./helpers/auth-window"
 import { writeFile } from "node:fs/promises"
+import AxeBuilder from "@axe-core/playwright"
 
 test.skip(
   process.env.E2E_REAL_SANDBOX !== "1" || process.env.E2E_LIVE_WRITES !== "1",
@@ -12,6 +13,24 @@ test.beforeAll(async () => {
   test.setTimeout(70000)
   await respectAuthWindow()
 })
+
+async function openSandboxCheckout(page: Page) {
+  const link = page.getByRole("link", {
+    name: "Open sandbox checkout",
+    exact: true,
+  })
+  await expect(link).toHaveAttribute(
+    "href",
+    /^https:\/\/sandbox\.sslcommerz\.com\//
+  )
+  // Context page events also cover isolated target=_blank tabs without weakening noopener.
+  const [provider] = await Promise.all([
+    page.context().waitForEvent("page", { timeout: 30000 }),
+    link.click({ timeout: 15000 }),
+  ])
+  await provider.waitForLoadState("domcontentloaded", { timeout: 30000 })
+  return provider
+}
 
 // Exercise actual provider UI and the real backend; never manufacture settlement evidence.
 test("sandbox cancellation, explicit retry, settlement and immutable paid feedback", async ({
@@ -43,12 +62,8 @@ test("sandbox cancellation, explicit retry, settlement and immutable paid feedba
       .getByRole("button", { name: "Prepare secure checkout", exact: true })
       .click()
     await expect(page).toHaveURL(/\/payments\/[\da-f-]{36}$/)
-    const popup = page.waitForEvent("popup")
-    await page
-      .getByRole("link", { name: "Open sandbox checkout", exact: true })
-      .click()
-    const provider = await popup
-    await provider.waitForLoadState("domcontentloaded")
+    const provider = await test.step("Open the actual hosted sandbox", () =>
+      openSandboxCheckout(page))
     await expect(
       provider.getByRole("button", { name: /Pay\s+[\d,.]+\s+BDT/i })
     ).toBeVisible()
@@ -92,11 +107,9 @@ test("sandbox cancellation, explicit retry, settlement and immutable paid feedba
     if (!cancelledId || !replacementId)
       throw new Error("Missing actual payment identity")
     expect(replacementId).not.toBe(cancelledId)
-    const secondPopup = provider.waitForEvent("popup")
-    await provider
-      .getByRole("link", { name: "Open sandbox checkout", exact: true })
-      .click()
-    const bank = await secondPopup
+    const bank =
+      await test.step("Open the explicitly prepared replacement", () =>
+        openSandboxCheckout(provider))
     await expect(
       bank.getByPlaceholder("Enter Card Number", { exact: true })
     ).toBeVisible()
@@ -153,6 +166,40 @@ test("sandbox cancellation, explicit retry, settlement and immutable paid feedba
     await expect(
       bank.getByRole("button", { name: "Submit feedback", exact: true })
     ).toBeVisible()
+    // Verify the actual controlled widget before submitting one immutable review.
+    const rating = bank.getByRole("radiogroup", { name: "Rating", exact: true })
+    await expect(rating.getByRole("radio")).toHaveCount(5)
+    const highest = rating.getByRole("radio", {
+      name: "5 of 5, Excellent",
+      exact: true,
+    })
+    await expect(highest).toBeEnabled()
+    expect(
+      (
+        await new AxeBuilder({ page: bank })
+          .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+          .analyze()
+      ).violations
+    ).toEqual([])
+    await highest.focus()
+    await bank.keyboard.press("ArrowLeft")
+    await expect(
+      rating.getByRole("radio", { name: "4 of 5, Good", exact: true })
+    ).toHaveAttribute("aria-checked", "true")
+    await rating
+      .getByRole("radio", { name: "3 of 5, Fair", exact: true })
+      .click()
+    await expect(
+      rating.getByRole("radio", { name: "3 of 5, Fair", exact: true })
+    ).toHaveAttribute("aria-checked", "true")
+    await bank.setViewportSize({ width: 320, height: 900 })
+    expect(
+      await rating.evaluate((node) => node.scrollWidth <= node.clientWidth)
+    ).toBe(true)
+    await highest.focus()
+    await bank.keyboard.press("End")
+    await expect(highest).toHaveAttribute("aria-checked", "true")
+    await bank.setViewportSize({ width: 1280, height: 900 })
     const comment = `Paid sandbox verification ${fixture.marker}`
     await bank.getByLabel("Comment (optional)", { exact: true }).fill(comment)
     let feedbackCalls = 0

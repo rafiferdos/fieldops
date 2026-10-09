@@ -1,0 +1,159 @@
+.rating {
+  --pr-active: var(--warning-foreground);
+  --pr-idle: var(--muted-foreground);
+  --pr-tip: var(--foreground);
+  --pr-tip-text: var(--background);
+  --pr-size: 28px;
+  --pr-gap: 6px;
+  --pr-room: 31px;
+  --pr-rise: 320ms;
+  --pr-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+  display: inline-flex;
+  font-family: inherit;
+  color: inherit;
+}
+
+.rating[aria-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.row {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-end;
+  padding-top: var(--pr-room);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.star {
+  display: grid;
+  place-items: center;
+  width: calc(var(--pr-size) + var(--pr-gap));
+  height: calc(var(--pr-size) + 8px);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  outline: none;
+  touch-action: manipulation;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .star {
+    cursor: pointer;
+  }
+}
+
+@media (pointer: coarse) {
+  .star {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+.star:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--pr-active) 70%, transparent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.lift {
+  display: block;
+  transform: translateY(0) scale(1);
+  transform-origin: 50% 100%;
+  transition: transform var(--pr-rise) var(--pr-ease-out);
+}
+
+.glyph {
+  display: block;
+  width: var(--pr-size);
+  height: var(--pr-size);
+  color: var(--pr-idle);
+  transition: color 160ms ease;
+}
+
+.glyph > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.glyph[data-lit="true"] {
+  color: var(--pr-active);
+}
+
+.tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  height: calc(var(--pr-size) * 0.6);
+  padding: 0 calc(var(--pr-size) * 0.3);
+  border-radius: 999px;
+  background: var(--pr-tip);
+  color: var(--pr-tip-text);
+  font-size: calc(var(--pr-size) * 0.38);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--pr-rise) var(--pr-ease-out),
+    opacity 180ms ease;
+}
+
+.tip[data-show="true"] {
+  opacity: 1;
+}
+
+.rating[data-instant="true"] .lift,
+.rating[data-instant="true"] .glyph,
+.rating[data-instant="true"] .tip {
+  transition-duration: 0ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lift {
+    transition: none;
+  }
+
+  .tip {
+    transition: opacity 180ms ease;
+  }
+}
+
+.rating .star {
+  width: 44px;
+  height: 44px;
+  background: none;
+  padding: 0;
+  flex: none;
+  border-radius: 6px;
+}
+.glyph[data-lift="true"] {
+  transform: translateY(-6px);
+}
+.glyph[data-magnify="true"] {
+  transform: translateY(-6px) scale(1.15);
+}
+.glyph svg {
+  fill: currentColor;
+}
+@media (prefers-reduced-motion: reduce) {
+  .glyph {
+    transform: none !important;
+    transition: none;
+  }
+}
