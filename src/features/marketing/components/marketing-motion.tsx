@@ -3,9 +3,8 @@
 import { useRef, type ReactNode } from "react"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 
-gsap.registerPlugin(useGSAP, ScrollTrigger)
+gsap.registerPlugin(useGSAP)
 
 // Server content owns the markup; this boundary adds scoped, disposable choreography.
 export function MarketingMotion({ children }: { children: ReactNode }) {
@@ -25,6 +24,13 @@ export function MarketingMotion({ children }: { children: ReactNode }) {
           ease: "power3.out",
           clearProps: "transform,opacity",
         })
+        gsap.from("[data-hero-intro]", {
+          y: 18,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power3.out",
+          clearProps: "transform",
+        })
         gsap.from("[data-tool]", {
           rotate: -70,
           scale: 0.75,
@@ -38,55 +44,6 @@ export function MarketingMotion({ children }: { children: ReactNode }) {
           ease: "power3.out",
         })
       })
-      media.add(
-        "(min-width: 900px) and (prefers-reduced-motion: no-preference)",
-        () => {
-          // Native scrolling drives only transforms; there is no pin or scroll hijack.
-          gsap.fromTo(
-            "[data-scene-image]",
-            { scale: 1.04, yPercent: 3 },
-            {
-              scale: 1.16,
-              yPercent: -5,
-              ease: "none",
-              scrollTrigger: {
-                trigger: "[data-service-scene]",
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-              },
-            }
-          )
-          gsap.fromTo(
-            "[data-scene-card]",
-            { rotateY: -12, rotateX: 8, y: 32 },
-            {
-              rotateY: 5,
-              rotateX: -3,
-              y: -24,
-              ease: "none",
-              scrollTrigger: {
-                trigger: "[data-service-scene]",
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-              },
-            }
-          )
-          gsap.utils
-            .toArray<HTMLElement>("[data-process-step]")
-            .forEach((step) => {
-              gsap.from(step, {
-                // Reading contrast stays constant while perspective and translation add depth.
-                y: 48,
-                rotateX: 5,
-                duration: 0.85,
-                ease: "power3.out",
-                scrollTrigger: { trigger: step, start: "top 90%", once: true },
-              })
-            })
-        }
-      )
       // matchMedia reverts animation styles on preference changes and unmount.
       return () => media.revert()
     },

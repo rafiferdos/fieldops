@@ -216,3 +216,64 @@ test("shadcn filter popup supports keyboard selection, dismissal and form submis
       .locator('[data-slot="select-value"]')
   ).toHaveText("Price: low to high")
 })
+
+// Native keyboard scrolling, skip links and route history must survive desktop smoothing.
+test("desktop scroll keeps navigation fixed, content reachable and route history usable", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/")
+  // Wait for actual streamed content and fonts before testing the settled document range.
+  await page.evaluate(() => document.fonts.ready)
+  await expect(
+    page.getByRole("link", { name: "View service", exact: true }).first()
+  ).toBeVisible()
+  const nav = page.locator("header .frosted-nav")
+  const initial = await nav.boundingBox()
+  await page.mouse.wheel(0, 1600)
+  await expect.poll(async () => (await nav.boundingBox())?.y).toBe(initial?.y)
+  await page.keyboard.press("End")
+  await expect
+    .poll(() =>
+      page
+        .getByRole("contentinfo")
+        .evaluate((node) => node.getBoundingClientRect().bottom)
+    )
+    .toBeLessThanOrEqual(901)
+  await page.keyboard.press("Home")
+  await page.getByRole("link", { name: "Skip to main content" }).focus()
+  await page.keyboard.press("Enter")
+  await expect(page).toHaveURL(/#main-content$/)
+  await expect(
+    page.getByRole("heading", { name: "Less chasing. More handled." })
+  ).toBeInViewport()
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("link", { name: "FAQ", exact: true })
+    .click()
+  await expect(
+    page.getByRole("heading", { name: "A little clarity, before you book." })
+  ).toBeVisible()
+  // The streamed heading can precede the router's history commit.
+  await expect(page).toHaveURL(/\/faq$/)
+  await page.goBack()
+  await expect(page).toHaveURL(/\/#main-content$/)
+  await expect(
+    page.getByRole("heading", { name: "Less chasing. More handled." })
+  ).toBeVisible()
+})
+
+// Frost changes its reading surface under contrast preferences, without dimming foreground text.
+test("workflow surfaces use consistent frost and an opaque contrast fallback", async ({
+  page,
+}) => {
+  await page.goto("/login")
+  const surface = page.locator(".workflow-surface")
+  await expect(surface).toHaveCSS("backdrop-filter", "blur(18px) saturate(1.2)")
+  await expect(
+    page.getByText("Illustrated workflow", { exact: true })
+  ).toHaveCount(0)
+  await page.emulateMedia({ contrast: "more" })
+  await expect(surface).toHaveCSS("backdrop-filter", "none")
+  await expect(surface.getByText("A visit, with a clear plan.")).toBeVisible()
+})

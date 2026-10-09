@@ -1,18 +1,15 @@
 import Image from "next/image"
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Check,
-  CircleDot,
-  Wrench,
-} from "lucide-react"
+import { ArrowDownRight, Check, CircleDot, Wrench } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/shared/ui/card"
-import { Badge } from "@/shared/ui/badge"
 
 // Editorial photography and labelled process cards never impersonate live job data.
 export function ServiceScene() {
   return (
-    <figure className="service-scene" data-service-scene="">
+    <figure
+      className="service-scene"
+      data-service-scene=""
+      data-motion-managed=""
+    >
       <div className="scene-image" data-scene-image="">
         <Image
           src="/images/editorial/service-still-life.png"
@@ -38,11 +35,13 @@ export function ServiceScene() {
           Clear path.
         </div>
         <div className="scene-card-depth">
-          <Card className="scene-workflow" data-scene-card="">
+          <Card
+            className="scene-workflow workflow-surface bg-(--workflow-surface)"
+            data-scene-card=""
+          >
             <CardHeader className="border-b">
               <div className="flex items-center justify-between gap-4">
                 <span className="text-xs font-medium">The service journey</span>
-                <ArrowUpRight aria-hidden="true" className="size-4" />
               </div>
             </CardHeader>
             <CardContent>
@@ -89,12 +88,6 @@ export function ServiceScene() {
       </div>
       <figcaption className="scene-footnote">
         <span>Thoughtfully coordinated. Clearly documented.</span>
-        <Badge
-          variant="outline"
-          className="border-white/30 bg-black/30 text-white"
-        >
-          Illustrated workflow
-        </Badge>
       </figcaption>
     </figure>
   )

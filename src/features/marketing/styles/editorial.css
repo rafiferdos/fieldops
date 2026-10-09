@@ -101,7 +101,7 @@
     perspective: 1000px;
   }
   .scene-workflow {
-    @apply border border-white/30 bg-background text-foreground shadow-2xl;
+    @apply border border-white/30 text-foreground shadow-2xl;
   }
   .scene-step-icon {
     @apply flex size-9 shrink-0 items-center justify-center rounded-full border border-primary/15 bg-primary/5 text-brand-ink;

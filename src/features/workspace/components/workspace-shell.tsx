@@ -24,8 +24,10 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/shared/ui/sidebar"
+import { SurfaceMotion } from "@/shared/components/surface-motion"
 import { AccountMenu } from "@/features/auth/components/account-menu"
 import type { Profile } from "@/features/auth/schemas"
+import { useWorkspaceScroll } from "../hooks/use-workspace-scroll"
 import { workspaceLinks, isWorkspaceLinkActive } from "../navigation"
 import { useWorkspacePreference } from "./workspace-provider"
 
@@ -110,6 +112,7 @@ export function WorkspaceShell({
   profile: Profile
   children: ReactNode
 }) {
+  useWorkspaceScroll()
   const open = useWorkspacePreference((state) => state.sidebarOpen)
   const setOpen = useWorkspacePreference((state) => state.setSidebarOpen)
   return (
@@ -136,7 +139,7 @@ export function WorkspaceShell({
             id="main-content"
             className="mx-auto w-full max-w-7xl flex-1 px-5 py-8 sm:px-8 sm:py-10"
           >
-            {children}
+            <SurfaceMotion>{children}</SurfaceMotion>
           </main>
         </SidebarInset>
       </SidebarProvider>

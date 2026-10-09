@@ -4,6 +4,15 @@ import { respectAuthWindow } from "./helpers/auth-window"
 
 async function audit(page: Page) {
   await page.evaluate(() => document.fonts.ready)
+  const profileSave = page.getByRole("button", {
+    name: "Save profile",
+    exact: true,
+  })
+  if (await profileSave.count()) {
+    // Audit the hydrated usable form, after its intentional initial fieldset lock clears.
+    await expect(profileSave).toBeEnabled()
+    await expect(profileSave).toHaveCSS("opacity", "1")
+  }
   const result = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
     .analyze()
@@ -28,7 +37,7 @@ test("public pages have no automated WCAG A/AA violations in both themes", async
   test.setTimeout(180000)
   await page.emulateMedia({ reducedMotion: "reduce" })
   for (const theme of ["light", "dark"] as const) {
-    await page.emulateMedia({ colorScheme: theme })
+    await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" })
     for (const pathname of [
       "/",
       "/about",
@@ -115,7 +124,7 @@ test.describe("authenticated accessibility", () => {
           .click()
         await expect(page).not.toHaveURL(/\/login/)
         for (const colorScheme of ["light", "dark"] as const) {
-          await page.emulateMedia({ colorScheme })
+          await page.emulateMedia({ colorScheme, reducedMotion: "reduce" })
           for (const route of routes) {
             await page.goto(route)
             await audit(page)

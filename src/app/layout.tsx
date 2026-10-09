@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import type { ReactNode } from "react"
 import { Toaster } from "@/shared/ui/toast"
 import { Geist, Geist_Mono, Outfit } from "next/font/google"
@@ -42,12 +43,13 @@ export default function RootLayout({
       )}
     >
       <body>
-        <a
+        {/* Router-aware fragment navigation preserves the page tree during Back/Forward. */}
+        <Link
           href="#main-content"
           className="sr-only z-50 rounded-xl bg-background p-3 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
         >
           Skip to main content
-        </a>
+        </Link>
         <ThemeProvider>
           {children}
           <Toaster />

@@ -10,7 +10,12 @@ import { workPageSchema } from "@/features/work-orders/schemas"
 import { workStatusSchema } from "@/features/work-orders/status"
 import type { getViewer } from "@/features/auth/session"
 import { queryString } from "@/shared/lib/list-query"
-import { dashboardSchema, type DashboardFilters } from "./schemas"
+import {
+  dashboardSchema,
+  workCountsSchema,
+  requestCountsSchema,
+  type DashboardFilters,
+} from "./schemas"
 
 type Viewer = NonNullable<Awaited<ReturnType<typeof getViewer>>>
 
@@ -30,9 +35,7 @@ async function workSummary(accessToken: string, signal?: AbortSignal) {
     ),
   ])
   // Keep status identity attached to each count instead of depending on enum ordering.
-  const byStatus = dashboardSchema.options[1].shape.work.shape.byStatus.parse(
-    Object.fromEntries(counts)
-  )
+  const byStatus = workCountsSchema.parse(Object.fromEntries(counts))
   return {
     total: page.data.pagination.total,
     recent: page.data.items,
@@ -55,10 +58,7 @@ async function requestSummary(accessToken: string, signal?: AbortSignal) {
       })
     ),
   ])
-  const byStatus =
-    dashboardSchema.options[0].shape.requests.shape.byStatus.parse(
-      Object.fromEntries(counts)
-    )
+  const byStatus = requestCountsSchema.parse(Object.fromEntries(counts))
   return {
     total: page.data.pagination.total,
     recent: page.data.items,

@@ -187,13 +187,6 @@
   .nav-link {
     @apply flex items-center gap-1 rounded-full px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted aria-[current=page]:bg-muted;
   }
-  .nav-link-arrow {
-    @apply size-3.5 text-muted-foreground;
-    transition: transform 220ms ease;
-  }
-  .nav-link:hover .nav-link-arrow {
-    transform: translate(2px, -2px);
-  }
   .nav-sign-in {
     @apply inline-flex min-h-10 items-center gap-2 rounded-full bg-foreground px-4 text-sm font-medium text-background transition-opacity hover:opacity-85;
   }
@@ -203,8 +196,22 @@
   .text-link {
     @apply inline-flex items-center gap-2 text-sm font-medium text-brand-ink underline-offset-4 hover:underline;
   }
-  .journey-line {
+  .journey-steps::before {
+    content: "";
+    position: absolute;
+    inset: 1rem auto 1rem 15px;
+    width: 1px;
     background: linear-gradient(to bottom, var(--primary), var(--border));
+  }
+  .workflow-surface {
+    --workflow-surface: var(--card);
+  }
+  .workspace-header {
+    background: var(--background);
+  }
+  .public-scroll-content {
+    width: 100%;
+    overflow: visible;
   }
 }
 
@@ -241,7 +248,18 @@
   }
 }
 
+/* Workflow cards share a restrained frost; their foreground remains fully opaque. */
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .workflow-surface {
+    --workflow-surface: color-mix(in oklch, var(--card) 88%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    backdrop-filter: blur(18px) saturate(1.2);
+  }
+  .workspace-header {
+    background: color-mix(in oklch, var(--background) 94%, transparent);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
   .frosted-nav {
     --navigation-surface: color-mix(
       in oklch,
@@ -257,6 +275,17 @@
 @media (prefers-reduced-transparency: reduce),
   (prefers-contrast: more),
   (forced-colors: active) {
+  .workflow-surface {
+    --workflow-surface: var(--card);
+  }
+  .workspace-header {
+    background: var(--background);
+  }
+  .workflow-surface,
+  .workspace-header {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
   .frosted-nav {
     --navigation-surface: var(--background);
     -webkit-backdrop-filter: none;

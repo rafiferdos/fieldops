@@ -55,6 +55,13 @@ test.describe("live dashboard and account navigation", () => {
       await expect(
         page.getByRole("button", { name: "Refresh dashboard" })
       ).toBeEnabled()
+      if (role === "Admin" && process.env.E2E_VISUAL_PROOF === "1") {
+        // Optional documentation proof captures only the dedicated demo's aggregate overview.
+        await page.setViewportSize({ width: 1440, height: 960 })
+        await page.screenshot({
+          path: test.info().outputPath("workspace-overview.png"),
+        })
+      }
       if (role === "Customer") {
         await page
           .locator('[data-metric="Awaiting review"]')
@@ -65,6 +72,15 @@ test.describe("live dashboard and account navigation", () => {
           "PENDING"
         )
       }
+      await page.keyboard.press("End")
+      await page
+        .getByRole("navigation", { name: "Workspace navigation" })
+        .getByRole("link", {
+          name: role === "Technician" ? "Assigned visits" : "Work orders",
+          exact: true,
+        })
+        .click()
+      await expect(page.getByRole("heading", { level: 1 })).toBeInViewport()
       await page.goto("/")
       await expect(
         page.getByRole("link", { name: "Sign in", exact: true })

@@ -5,7 +5,6 @@ import { PageSkeleton } from "@/shared/components/page-skeleton"
 import { FeaturedServices } from "@/features/marketing/components/featured-services"
 import {
   ArrowRight,
-  ArrowUpRight,
   CalendarCheck2,
   ClipboardList,
   FileCheck2,
@@ -31,8 +30,15 @@ export default function HomePage() {
   return (
     <MarketingMotion>
       <div className="space-y-24 sm:space-y-32">
-        <section className="hero-editorial" aria-labelledby="hero-title">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <section
+          data-motion-managed=""
+          className="hero-editorial"
+          aria-labelledby="hero-title"
+        >
+          <div
+            data-hero-intro=""
+            className="flex flex-wrap items-center justify-between gap-3"
+          >
             <p className="eyebrow flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-primary" /> Service,
               with a clear next step
@@ -66,7 +72,7 @@ export default function HomePage() {
             </span>
           </h1>
           <div className="hero-rule" data-hero-rule="" />
-          <div className="hero-bottom">
+          <div className="hero-bottom" data-hero-intro="">
             <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
               A simpler way to get things fixed. Find the right service, plan a
               visit, and follow every step to completion.
@@ -80,9 +86,9 @@ export default function HomePage() {
                 })}
               >
                 Explore services
-                <ArrowUpRight
+                <ArrowRight
                   aria-hidden="true"
-                  className="transition-transform group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5"
+                  className="transition-transform group-hover/cta:translate-x-0.5"
                 />
               </Link>
               <Link
@@ -97,7 +103,9 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-          <ServiceScene />
+          <Reveal>
+            <ServiceScene />
+          </Reveal>
         </section>
 
         <Reveal>
@@ -152,7 +160,7 @@ export default function HomePage() {
             </div>
             <Link href="/services" className="text-link">
               View all services
-              <ArrowUpRight aria-hidden="true" className="size-4" />
+              <ArrowRight aria-hidden="true" className="size-4" />
             </Link>
           </Reveal>
           <Suspense fallback={<PageSkeleton />}>
@@ -164,7 +172,7 @@ export default function HomePage() {
           aria-labelledby="process-title"
           className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20"
         >
-          <div className="self-start lg:sticky lg:top-28">
+          <Reveal className="self-start">
             <p className="eyebrow">From request to resolution</p>
             <h2
               id="process-title"
@@ -181,7 +189,7 @@ export default function HomePage() {
               Get to know the process
               <ArrowRight aria-hidden="true" className="size-4" />
             </Link>
-          </div>
+          </Reveal>
           <div className="space-y-5 [perspective:1000px]">
             {[
               {
@@ -206,6 +214,7 @@ export default function HomePage() {
               <Card
                 key={number}
                 data-process-step=""
+                data-entry-depth=""
                 className="process-card border bg-muted/20 shadow-none sm:p-2"
               >
                 <CardHeader>
@@ -291,7 +300,7 @@ export default function HomePage() {
             </div>
             <Link href="/faq" className="text-link">
               All your questions
-              <ArrowUpRight aria-hidden="true" className="size-4" />
+              <ArrowRight aria-hidden="true" className="size-4" />
             </Link>
           </Reveal>
           <FaqCards preview />

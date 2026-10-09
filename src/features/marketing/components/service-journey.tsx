@@ -1,5 +1,4 @@
 import {
-  ArrowUpRight,
   CalendarCheck2,
   Check,
   ClipboardList,
@@ -8,7 +7,6 @@ import {
 } from "lucide-react"
 import { Reveal } from "@/shared/components/reveal"
 import { Card, CardContent, CardHeader } from "@/shared/ui/card"
-import { Badge } from "@/shared/ui/badge"
 
 // This illustration explains the workflow; it never impersonates a live customer record.
 export function ServiceJourney() {
@@ -23,17 +21,13 @@ export function ServiceJourney() {
         className="absolute inset-6 -z-10 rounded-full border border-primary/10 sm:inset-0"
       />
       <Reveal>
-        <Card className="relative mx-2 border border-border/70 shadow-xl shadow-foreground/5 sm:mx-8">
+        <Card className="workflow-surface relative mx-2 border border-border/70 bg-(--workflow-surface) shadow-xl shadow-foreground/5 sm:mx-8">
           <CardHeader className="border-b">
             <div className="flex items-center justify-between gap-3">
               <span className="flex items-center gap-2 text-sm font-medium">
                 <span className="size-2 rounded-full bg-primary" />
                 The service journey
               </span>
-              <ArrowUpRight
-                aria-hidden="true"
-                className="size-4 text-muted-foreground"
-              />
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -50,11 +44,7 @@ export function ServiceJourney() {
                 </p>
               </div>
             </div>
-            <ol className="relative space-y-6">
-              <span
-                aria-hidden="true"
-                className="journey-line absolute top-4 bottom-4 left-[15px] w-px"
-              />
+            <ol className="journey-steps relative space-y-6">
               {[
                 {
                   icon: ClipboardList,
@@ -98,14 +88,6 @@ export function ServiceJourney() {
           </CardContent>
         </Card>
       </Reveal>
-      <div className="relative mx-auto -mt-2 w-fit">
-        <Badge
-          variant="outline"
-          className="bg-background px-3 py-1.5 font-normal"
-        >
-          Illustrated workflow
-        </Badge>
-      </div>
     </div>
   )
 }

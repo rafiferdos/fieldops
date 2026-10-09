@@ -8,14 +8,16 @@ import { workOrderSchema } from "@/features/work-orders/schemas"
 import { workStatusSchema } from "@/features/work-orders/status"
 
 const count = z.number().int().nonnegative()
+export const workCountsSchema = z.record(workStatusSchema, count)
+export const requestCountsSchema = z.record(requestStatusSchema, count)
 const workSummary = z.object({
   total: count,
-  byStatus: z.record(workStatusSchema, count),
+  byStatus: workCountsSchema,
   recent: z.array(workOrderSchema).max(5),
 })
 const requestSummary = z.object({
   total: count,
-  byStatus: z.record(requestStatusSchema, count),
+  byStatus: requestCountsSchema,
   recent: z.array(requestSchema).max(5),
 })
 const common = {
