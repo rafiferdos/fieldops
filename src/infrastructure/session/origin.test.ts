@@ -29,10 +29,17 @@ it("accepts only the configured exact browser origin for mutations", async () =>
 it("rejects insecure remote session infrastructure and undersized encryption keys", () => {
   const config = {
     APP_ORIGIN: "https://fieldops.example",
-    SESSION_REDIS_URL: "rediss://sessions.example:6379",
+    SESSION_REDIS_URL:
+      "rediss://default:synthetic-test-password@sessions.example:6379",
     SESSION_ENCRYPTION_KEY: randomBytes(32).toString("base64"),
   }
   expect(authEnvSchema.safeParse(config).success).toBe(true)
+  expect(
+    authEnvSchema.safeParse({
+      ...config,
+      SESSION_REDIS_URL: "rediss://sessions.example:6379",
+    }).success
+  ).toBe(false)
   expect(
     authEnvSchema.safeParse({
       ...config,

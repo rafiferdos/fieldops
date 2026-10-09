@@ -13,7 +13,8 @@ const originSchema = z.url().refine((value) => {
 const redisUrlSchema = z.url().refine((value) => {
   const url = new URL(value)
   return (
-    url.protocol === "rediss:" ||
+    // Remote session storage requires authentication as well as transport encryption.
+    (url.protocol === "rediss:" && url.password.length > 0) ||
     (url.protocol === "redis:" && localHosts.has(url.hostname))
   )
 })
