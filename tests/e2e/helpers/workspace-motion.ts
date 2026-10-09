@@ -1,0 +1,84 @@
+import { expect, type Page } from "@playwright/test"
+
+// Verify native scrolling and transformed content, rather than a configuration flag alone.
+export async function verifyWorkspaceMotion(page: Page, responsive: boolean) {
+  const wrapper = page.locator("[data-workspace-scroll]")
+  const content = page.locator(".workspace-scroll-content")
+  const header = page.locator(".workspace-header")
+  await expect(wrapper).toHaveAttribute("data-scroll-mode", "smooth")
+  await expect(wrapper).toHaveCSS("position", "fixed")
+  const initial = await header.boundingBox()
+  if (!initial) throw new Error("The workspace header must be visible")
+  await page.mouse.wheel(0, 480)
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY))
+    .toBeGreaterThan(100)
+  await expect
+    .poll(() =>
+      content.evaluate((node) =>
+        Math.abs(
+          new DOMMatrixReadOnly(getComputedStyle(node).transform).m42 +
+            window.scrollY
+        )
+      )
+    )
+    .toBeLessThan(2)
+  await expect.poll(async () => (await header.boundingBox())?.y).toBe(initial.y)
+  await page.keyboard.press("End")
+  await expect(
+    page.getByRole("link", { name: "All visits", exact: true })
+  ).toBeInViewport()
+  await page.getByRole("button", { name: "Toggle workspace sidebar" }).click()
+  await expect
+    .poll(async () => (await header.boundingBox())?.x)
+    .toBeLessThan(initial.x)
+  await page.getByRole("button", { name: "Toggle workspace sidebar" }).click()
+  await expect.poll(async () => (await header.boundingBox())?.x).toBe(initial.x)
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth
+      )
+    )
+    .toBe(true)
+
+  if (responsive) {
+    // Preference changes dispose transforms immediately and restore the native layout.
+    await page.emulateMedia({ reducedMotion: "reduce" })
+    await expect(wrapper).not.toHaveAttribute("data-scroll-mode", "smooth")
+    await expect(content).toHaveCSS("transform", "none")
+    await page.emulateMedia({ reducedMotion: "no-preference" })
+    await expect(wrapper).toHaveAttribute("data-scroll-mode", "smooth")
+    await page.setViewportSize({ width: 390, height: 844 })
+    await expect(wrapper).not.toHaveAttribute("data-scroll-mode", "smooth")
+    await expect(content).toHaveCSS("transform", "none")
+    await page.getByRole("button", { name: "Toggle workspace sidebar" }).click()
+    await expect(
+      page.getByRole("dialog", { name: "Sidebar", exact: true })
+    ).toBeVisible()
+    await page.keyboard.press("Escape")
+    await expect(
+      page.getByRole("dialog", { name: "Sidebar", exact: true })
+    ).not.toBeVisible()
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await expect(wrapper).toHaveAttribute("data-scroll-mode", "smooth")
+  }
+  await page.keyboard.press("Home")
+  await expect(page.getByRole("heading", { level: 1 })).toBeInViewport()
+}
+
+// Portalled confirmations keep the native page locked and stay outside the transformed surface.
+export async function verifyWorkspaceDialogLock(page: Page) {
+  const dialog = page.getByRole("alertdialog", {
+    name: "Sign out of FieldOps?",
+  })
+  await expect(dialog).toBeInViewport()
+  expect(
+    await dialog.evaluate(
+      (node) => node.closest("[data-workspace-scroll]") === null
+    )
+  ).toBe(true)
+  const before = await page.evaluate(() => window.scrollY)
+  await page.mouse.wheel(0, 400)
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(before)
+}

@@ -3,6 +3,10 @@ import { z } from "zod"
 import { dashboardSchema } from "../../src/features/workspace/schemas"
 import { respectAuthWindow } from "./helpers/auth-window"
 import { confirmSignOut } from "./helpers/sign-out"
+import {
+  verifyWorkspaceMotion,
+  verifyWorkspaceDialogLock,
+} from "./helpers/workspace-motion"
 
 test.describe("live dashboard and account navigation", () => {
   test.skip(
@@ -18,6 +22,9 @@ test.describe("live dashboard and account navigation", () => {
       page,
     }) => {
       test.setTimeout(120000)
+      await page.setViewportSize({ width: 1440, height: 900 })
+      const errors: string[] = []
+      page.on("pageerror", (error) => errors.push(error.message))
       await page.goto("/login")
       await page
         .getByRole("button", { name: `${role} demo`, exact: true })
@@ -62,6 +69,7 @@ test.describe("live dashboard and account navigation", () => {
           path: test.info().outputPath("workspace-overview.png"),
         })
       }
+      await verifyWorkspaceMotion(page, role === "Admin")
       if (role === "Customer") {
         await page
           .locator('[data-metric="Awaiting review"]')
@@ -73,6 +81,10 @@ test.describe("live dashboard and account navigation", () => {
         )
       }
       await page.keyboard.press("End")
+      if (role === "Admin")
+        await expect(
+          page.getByRole("link", { name: "All visits", exact: true })
+        ).toBeInViewport()
       await page
         .getByRole("navigation", { name: "Workspace navigation" })
         .getByRole("link", {
@@ -81,6 +93,17 @@ test.describe("live dashboard and account navigation", () => {
         })
         .click()
       await expect(page.getByRole("heading", { level: 1 })).toBeInViewport()
+      if (role === "Admin") {
+        // Back restores the previous dashboard position; Forward restores the queue's own position.
+        await page.goBack()
+        await expect(page).toHaveURL(/\/admin$/)
+        await expect(
+          page.getByRole("link", { name: "All visits", exact: true })
+        ).toBeInViewport()
+        await page.goForward()
+        await expect(page).toHaveURL(/\/admin\/work-orders$/)
+        await expect(page.getByRole("heading", { level: 1 })).toBeInViewport()
+      }
       await page.goto("/")
       await expect(
         page.getByRole("link", { name: "Sign in", exact: true })
@@ -94,6 +117,7 @@ test.describe("live dashboard and account navigation", () => {
       await page
         .getByRole("menuitem", { name: "Sign out", exact: true })
         .click()
+      await verifyWorkspaceDialogLock(page)
       await page.getByRole("button", { name: "Stay signed in" }).click()
       await expect(
         page.getByRole("button", { name: "Open account menu" })
@@ -101,6 +125,7 @@ test.describe("live dashboard and account navigation", () => {
       await confirmSignOut(page)
       await page.goto("/account")
       await expect(page).toHaveURL(/\/login\?returnTo=/)
+      expect(errors).toEqual([])
     })
   }
 })

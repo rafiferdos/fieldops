@@ -24,12 +24,12 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/shared/ui/sidebar"
-import { SurfaceMotion } from "@/shared/components/surface-motion"
 import { AccountMenu } from "@/features/auth/components/account-menu"
 import type { Profile } from "@/features/auth/schemas"
 import { useWorkspaceScroll } from "../hooks/use-workspace-scroll"
 import { workspaceLinks, isWorkspaceLinkActive } from "../navigation"
 import { useWorkspacePreference } from "./workspace-provider"
+import { WorkspaceMotion } from "./workspace-motion"
 
 function WorkspaceSidebar({ profile }: { profile: Profile }) {
   const pathname = usePathname()
@@ -117,30 +117,36 @@ export function WorkspaceShell({
   const setOpen = useWorkspacePreference((state) => state.setSidebarOpen)
   return (
     <TooltipProvider delay={250}>
-      <SidebarProvider open={open} onOpenChange={setOpen}>
+      <SidebarProvider
+        open={open}
+        onOpenChange={setOpen}
+        className="workspace-shell"
+      >
         <WorkspaceSidebar profile={profile} />
+        <header className="workspace-header z-30 flex h-18 shrink-0 items-center justify-between gap-3 border-b px-5 sm:px-8">
+          <div className="flex min-w-0 items-center gap-3">
+            <SidebarTrigger aria-label="Toggle workspace sidebar" />
+            <span className="hidden text-sm font-medium sm:block">
+              Your workspace
+            </span>
+            <Badge variant="outline" className="capitalize">
+              {profile.role.toLowerCase()}
+            </Badge>
+          </div>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <AccountMenu profile={profile} />
+          </div>
+        </header>
         <SidebarInset className="min-w-0 bg-background">
-          <header className="workspace-header sticky top-0 z-30 flex h-18 shrink-0 items-center justify-between gap-3 border-b px-5 sm:px-8">
-            <div className="flex min-w-0 items-center gap-3">
-              <SidebarTrigger aria-label="Toggle workspace sidebar" />
-              <span className="hidden text-sm font-medium sm:block">
-                Your workspace
-              </span>
-              <Badge variant="outline" className="capitalize">
-                {profile.role.toLowerCase()}
-              </Badge>
+          <WorkspaceMotion>
+            <div
+              id="main-content"
+              className="mx-auto w-full max-w-7xl px-5 pt-26 pb-8 sm:px-8 sm:pt-28 sm:pb-10"
+            >
+              {children}
             </div>
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              <AccountMenu profile={profile} />
-            </div>
-          </header>
-          <main
-            id="main-content"
-            className="mx-auto w-full max-w-7xl flex-1 px-5 py-8 sm:px-8 sm:py-10"
-          >
-            <SurfaceMotion>{children}</SurfaceMotion>
-          </main>
+          </WorkspaceMotion>
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
