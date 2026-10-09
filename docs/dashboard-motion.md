@@ -18,6 +18,32 @@ No additional scrolling or animation dependency is installed.
 - GSAP contexts own plugin/timeline disposal. Observers and listeners are removed on
   unmount or media-preference changes; native content styles are restored.
 
+## Continuous reading surface
+
+The shadcn `SidebarInset` remains the main landmark and layout sibling of the sidebar.
+While smoothing is active, the fixed viewport leaves this outer inset only one viewport
+tall. Painting its shadow there produces a false page-ending edge while records continue
+below it.
+
+The full-height reading skin now belongs to `.workspace-scroll-surface` inside the moved
+content. Only the outer inset's background and shadow are suppressed in smooth mode.
+Its supported native styling returns automatically on narrow, touch or reduced-motion
+layouts. Rounded corners appear at the actual content boundary; the header/sidebar and
+portalled controls remain stationary.
+
+## Navigation and semantic accents
+
+All workspace and footer links use the supported shadcn `SidebarMenuButton`. Hover and
+keyboard focus animate the icon and label inside an unchanged hit target. Background,
+focus-ring and active-rail transitions share short timings; motion preferences disable
+movement. The selected route retains `aria-current`, weight and a visible rail.
+
+Emerald remains the brand/success accent. Theme-aware indigo marks informational metrics,
+active work and navigation; amber marks review/departure waiting states. Cancellation
+uses a neutral historical tone, while rejection remains adverse. Metric icon surfaces,
+status badges and chart bars use these same meanings in both themes. Typed metric tones
+supplement exact labels and values; colors never provide the only status information.
+
 ## Visual behavior
 
 Metrics and chart cards enter in short groups. Recent-record cards and their semantic
@@ -44,11 +70,11 @@ Public presentation and both-theme role accessibility scenarios guard the shared
 These checks use dedicated backend accounts, reads and session operations. They do not
 create product records or certify performance on actual Safari/mobile hardware.
 
-The local production baseline passed 13/14 scenarios. The failing administrator history
-check led to explicit per-route restoration; its follow-up also waits for the End scroll
-to settle before leaving the dashboard. All three role scenarios have passing follow-up
-results. Strict checks and the default production build pass. Hosted acceptance is recorded
-below for the exact CI-verified revision.
+The refined local production preview passed **14/14 scenarios in 3.1 minutes**. Strict
+checks and the default production build pass using Node 24. The local unit run passed 179
+tests and skipped six Redis coordination checks; release CI provisions Redis for those
+checks. Browser assertions cover the reading skin beyond the viewport, its coverage of
+the last visit link and stationary link hit targets during actual hover/focus feedback.
 
 ## Published release and hosted acceptance
 
@@ -56,9 +82,9 @@ Verified October 9, 2026.
 
 | Artifact        | Verified evidence                                                                                                                                         |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Frontend source | `fede1418ebac27c581b6cc9b2bba3b7a0622d958`                                                                                                                |
-| CI              | [Passing release checks](https://github.com/rafiferdos/fieldops/actions/runs/37952043872): 185 tests, strict type/lint/format checks and production build |
-| Deployment      | Vercel `dpl_5ReJDbNxGnxoHM7E65nJU4eQWbL5`, READY, exact source revision, Node 24, Singapore functions                                                     |
+| Frontend source | `5a755d196f913d184794af109d164ddfd88a3b40`                                                                                                                |
+| CI              | [Passing release checks](https://github.com/rafiferdos/fieldops/actions/runs/37958076116): 185 tests, strict type/lint/format checks and production build |
+| Deployment      | Vercel `dpl_HkgxmvmNGDyVABs8f3xcGPnsBFRg`, READY, exact source revision, Node 24, Singapore functions                                                     |
 | Application     | [fieldops-rafiferdos.vercel.app](https://fieldops-rafiferdos.vercel.app)                                                                                  |
 
 The canonical production application passed **14/14 Chromium scenarios in 3.5 minutes**,
@@ -67,6 +93,8 @@ both-theme WCAG A/AA accessibility and all three real role workspaces.
 
 - Wheel input updates the native scroll position and the smoothed surface settles to it.
 - Fixed-header geometry, expanded/collapsed sidebar spacing and lower-page controls remain usable.
+- The reading surface extends below the viewport and covers the last visit link without a false inset shadow.
+- Sidebar hover/focus animates within stable hit targets; reduced motion removes icon movement.
 - Reduced-motion changes and narrow layouts remove smooth transforms; the mobile shadcn Sheet works.
 - New queue routes show their headings; administrator Back/Forward restores the prior route position.
 - Portalled sign-out dialogs stay outside the transformed content and lock native scrolling.
@@ -75,5 +103,6 @@ both-theme WCAG A/AA accessibility and all three real role workspaces.
 
 Only an optional dedicated-demo aggregate screenshot is captured; traces and video remain
 disabled. These scenarios use reads and session operations, creating no product records.
+The README image is refreshed from this release's actual live administrator demo overview.
 The backend repository remains unchanged. Documentation-only follow-ups do not alter the
 deployed application source. The hardware and performance limits described above still apply.
