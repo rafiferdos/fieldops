@@ -119,6 +119,14 @@ export async function requireViewer(role?: Role, returnTo?: string) {
 
 export async function clearSession() {
   const id = await sessionId()
-  ;(await cookies()).delete(cookieName())
+  // Browsers reject __Host- expiration headers without Secure and Path=/.
+  const jar = await cookies()
+  jar.set(cookieName(), "", {
+    httpOnly: true,
+    secure: getAuthEnv().APP_ORIGIN.startsWith("https:"),
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  })
   if (id) await deleteStoredSession(id)
 }

@@ -101,6 +101,7 @@ test.describe("configured demo accounts", () => {
     test(`${role} login, role protection, cookie and logout`, async ({
       page,
       context,
+      baseURL,
     }) => {
       await page.goto("/login")
       await page
@@ -138,10 +139,17 @@ test.describe("configured demo accounts", () => {
         .getByRole("button", { name: "Toggle light and dark theme" })
         .click()
       await expect(page.locator("html")).not.toHaveClass(/dark/)
+      // The hosted origin requires the stricter host-only cookie contract.
+      const secure =
+        new URL(baseURL ?? "http://localhost:3001").protocol === "https:"
       const cookie = (await context.cookies()).find(
-        (value) => value.name === "fieldops-session"
+        (value) =>
+          value.name ===
+          (secure ? "__Host-fieldops-session" : "fieldops-session")
       )
       expect(cookie?.httpOnly).toBe(true)
+      expect(cookie?.secure).toBe(secure)
+      expect(cookie?.path).toBe("/")
       expect(cookie?.sameSite).toBe("Lax")
       expect(cookie?.value).toMatch(/^[A-Za-z0-9_-]{43}$/)
       await page.goto(role === "Admin" ? "/customer" : "/admin")

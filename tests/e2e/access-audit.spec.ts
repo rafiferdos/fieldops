@@ -175,7 +175,9 @@ test("self access change clears the frontend session and requires fresh role log
     await expect(page).toHaveURL(/\/login$/, { timeout: 45000 })
     expect(
       (await page.context().cookies()).some(
-        (cookie) => cookie.name === "fieldops-session"
+        // Revocation must remove the local and HTTPS host-only session variants.
+        (cookie) =>
+          ["fieldops-session", "__Host-fieldops-session"].includes(cookie.name)
       )
     ).toBe(false)
     await page.goto("/admin/users")
