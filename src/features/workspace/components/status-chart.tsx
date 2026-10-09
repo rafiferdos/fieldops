@@ -23,6 +23,18 @@ const config = {
   count: { label: "Records", color: "var(--chart-3)" },
 } satisfies ChartConfig
 
+// Stable semantic colors preserve status meaning across both request and visit charts.
+const statusColors: Readonly<Record<string, string>> = {
+  PENDING: "var(--warning-foreground)",
+  ASSIGNED: "var(--warning-foreground)",
+  EN_ROUTE: "var(--info-foreground)",
+  IN_PROGRESS: "var(--info-foreground)",
+  APPROVED: "var(--chart-3)",
+  COMPLETED: "var(--chart-3)",
+  REJECTED: "var(--destructive)",
+  CANCELLED: "var(--muted-foreground)",
+}
+
 gsap.registerPlugin(useGSAP)
 
 export function StatusChart({
@@ -39,6 +51,7 @@ export function StatusChart({
   const rows = Object.entries(counts).map(([status, count]) => ({
     status: status.replaceAll("_", " ").toLowerCase(),
     count,
+    fill: statusColors[status] ?? "var(--muted-foreground)",
   }))
   const hasRecords = rows.some((row) => row.count > 0)
   const signature = rows.map((row) => `${row.status}:${row.count}`).join("|")
@@ -137,7 +150,12 @@ export function StatusChart({
         <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-3 border-t pt-4">
           {rows.map((row) => (
             <div key={row.status}>
-              <dt className="text-xs text-muted-foreground capitalize">
+              <dt className="flex items-center gap-2 text-xs text-muted-foreground capitalize">
+                <span
+                  aria-hidden="true"
+                  className="size-2.5 rounded-full"
+                  style={{ backgroundColor: row.fill }}
+                />
                 {row.status}
               </dt>
               <dd className="mt-1 font-medium tabular-nums">{row.count}</dd>

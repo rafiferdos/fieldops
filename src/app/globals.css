@@ -22,6 +22,11 @@
   --muted-foreground: oklch(0.52 0.016 285.938);
   --accent: oklch(0.967 0.001 286.375);
   --accent-foreground: oklch(0.21 0.006 285.885);
+  /* Complementary accents communicate information and pending work without replacing the brand. */
+  --info-foreground: oklch(0.47 0.18 275);
+  --info-surface: oklch(0.95 0.024 275);
+  --warning-foreground: oklch(0.51 0.11 70);
+  --warning-surface: oklch(0.96 0.035 80);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.92 0.004 286.32);
   --input: oklch(0.92 0.004 286.32);
@@ -58,6 +63,10 @@
   --muted-foreground: oklch(0.705 0.015 286.067);
   --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
+  --info-foreground: oklch(0.78 0.105 275);
+  --info-surface: oklch(0.28 0.04 275);
+  --warning-foreground: oklch(0.82 0.14 75);
+  --warning-surface: oklch(0.29 0.04 75);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
@@ -100,6 +109,10 @@
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-surface: var(--info-surface);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-surface: var(--warning-surface);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -221,6 +234,46 @@
   .workspace-scroll-surface {
     min-height: calc(100svh - var(--workspace-edge) * 2);
   }
+  /* Link-local tokens also reach the mobile sidebar's supported portal. */
+  .workspace-link {
+    --sidebar-accent: var(--info-surface);
+    --sidebar-accent-foreground: var(--info-foreground);
+    --sidebar-ring: var(--info-foreground);
+    position: relative;
+  }
+  .workspace-link::before {
+    content: "";
+    position: absolute;
+    inset-block: 0.75rem;
+    inset-inline-start: 0;
+    width: 3px;
+    border-radius: 999px;
+    background: var(--info-foreground);
+    opacity: 0;
+    transform: scaleY(0.2);
+    pointer-events: none;
+  }
+  .workspace-link[data-active]::before {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  .stat-card {
+    --metric-ink: var(--muted-foreground);
+  }
+  .stat-card[data-tone="positive"] {
+    --metric-ink: var(--brand-ink);
+  }
+  .stat-card[data-tone="info"] {
+    --metric-ink: var(--info-foreground);
+  }
+  .stat-card[data-tone="warning"] {
+    --metric-ink: var(--warning-foreground);
+  }
+  .stat-card-icon {
+    color: var(--metric-ink);
+    background: color-mix(in oklch, var(--metric-ink) 10%, var(--card));
+    border: 1px solid color-mix(in oklch, var(--metric-ink) 18%, var(--card));
+  }
   [data-workspace-scroll][data-scroll-mode="smooth"] .workspace-scroll-surface {
     @apply rounded-2xl bg-background shadow-sm;
   }
@@ -266,8 +319,27 @@
   }
 }
 
+/* Animate icon/label feedback without moving link hit targets or changing the layout. */
+@media (prefers-reduced-motion: no-preference) {
+  .workspace-link::before {
+    transition:
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 180ms;
+  }
+  .workspace-link > svg,
+  .workspace-link > span {
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
 /* Pointer feedback never shifts layout or runs on touch-only devices. */
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .workspace-link:is(:hover, :focus-visible) > svg {
+    transform: translateX(1px) rotate(-6deg) scale(1.08);
+  }
+  .workspace-link:is(:hover, :focus-visible) > span {
+    transform: translateX(3px);
+  }
   .interactive-card {
     transition:
       transform 250ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -368,21 +440,20 @@
   .status-badge:is([data-status="APPROVED"], [data-status="COMPLETED"]) {
     @apply border-primary/20 bg-primary/8 text-brand-ink;
   }
-  .status-badge:is(
-    [data-status="EN_ROUTE"],
-    [data-status="IN_PROGRESS"],
-    [data-status="ASSIGNED"]
-  ) {
-    @apply border-primary/15 bg-primary/5 text-foreground;
+  .status-badge:is([data-status="EN_ROUTE"], [data-status="IN_PROGRESS"]) {
+    @apply border-info-foreground/20 bg-info-surface text-info-foreground;
   }
-  .status-badge:is([data-status="REJECTED"], [data-status="CANCELLED"]) {
+  .status-badge:is([data-status="PENDING"], [data-status="ASSIGNED"]) {
+    @apply border-warning-foreground/20 bg-warning-surface text-warning-foreground;
+  }
+  .status-badge[data-status="REJECTED"] {
     @apply border-destructive/15 bg-destructive/5 text-foreground;
   }
-  .status-badge:is(
-      [data-status="REJECTED"],
-      [data-status="CANCELLED"]
-    )::before {
+  .status-badge[data-status="REJECTED"]::before {
     @apply bg-destructive;
+  }
+  .status-badge[data-status="CANCELLED"] {
+    @apply border-border bg-muted/50 text-muted-foreground;
   }
 }
 

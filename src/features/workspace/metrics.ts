@@ -24,6 +24,7 @@ export function dashboardMetrics(data: Dashboard): StatCardProps[] {
       value: data.work.total,
       detail: "All work orders you can access",
       icon: CalendarDays,
+      tone: "info",
       href: workPath,
     },
     {
@@ -31,6 +32,7 @@ export function dashboardMetrics(data: Dashboard): StatCardProps[] {
       value: work.ASSIGNED,
       detail: "Assigned visits awaiting departure",
       icon: Clock3,
+      tone: "warning",
       href: `${workPath}?status=ASSIGNED`,
     },
     {
@@ -38,6 +40,7 @@ export function dashboardMetrics(data: Dashboard): StatCardProps[] {
       value: work.EN_ROUTE,
       detail: "Travel to the service location has started",
       icon: Truck,
+      tone: "info",
       href: `${workPath}?status=EN_ROUTE`,
     },
     {
@@ -45,6 +48,7 @@ export function dashboardMetrics(data: Dashboard): StatCardProps[] {
       value: work.IN_PROGRESS,
       detail: "Service work currently underway",
       icon: Wrench,
+      tone: "info",
       href: `${workPath}?status=IN_PROGRESS`,
     },
     {
@@ -52,6 +56,7 @@ export function dashboardMetrics(data: Dashboard): StatCardProps[] {
       value: work.COMPLETED,
       detail: "Completed work with a recorded report",
       icon: CheckCheck,
+      tone: "positive",
       href: `${workPath}?status=COMPLETED`,
     },
     {
@@ -72,6 +77,7 @@ export function dashboardMetrics(data: Dashboard): StatCardProps[] {
         value: data.requests.total,
         detail: "All requests submitted by your account",
         icon: ClipboardList,
+        tone: "info",
         href: requestsPath,
       },
       {
@@ -79,6 +85,7 @@ export function dashboardMetrics(data: Dashboard): StatCardProps[] {
         value: data.requests.byStatus.PENDING,
         detail: "Waiting for an administrator's decision",
         icon: Clock3,
+        tone: "warning",
         href: `${requestsPath}?status=PENDING`,
       },
       ...common,
@@ -90,42 +97,49 @@ export function dashboardMetrics(data: Dashboard): StatCardProps[] {
       value: formatRevenue(overview.invoices.verifiedRevenueMinor),
       detail: "Provider-verified settlements in the selected period",
       icon: Receipt,
+      tone: "positive",
     },
     {
       label: "Paid invoices",
       value: overview.invoices.paidCount,
       detail: "Settled in the selected period; counted once",
       icon: CheckCheck,
+      tone: "positive",
     },
     {
       label: "Period requests",
       value: overview.requests.total,
       detail: "Requests created in the selected period",
       icon: ClipboardList,
+      tone: "info",
     },
     {
       label: "Period work orders",
       value: overview.workOrders.total,
       detail: "Work created in the selected period",
       icon: CalendarDays,
+      tone: "info",
     },
     {
       label: "Period completions",
       value: overview.workOrders.completed,
       detail: "Completed work from that creation cohort",
       icon: CheckCheck,
+      tone: "positive",
     },
     {
       label: "Completion rate",
       value: `${overview.workOrders.completionRate}%`,
       detail: "Completed / all work created in the period",
       icon: Percent,
+      tone: "positive",
     },
     {
       label: "Active technicians",
       value: overview.technicians.active,
       detail: `Current accounts out of ${overview.technicians.total} technicians`,
       icon: Users,
+      tone: "info",
       href: "/admin/users?role=TECHNICIAN",
     },
     {
@@ -133,6 +147,7 @@ export function dashboardMetrics(data: Dashboard): StatCardProps[] {
       value: data.requests.byStatus.PENDING,
       detail: "Current pending requests across all time",
       icon: Clock3,
+      tone: "warning",
       href: "/admin/requests?status=PENDING",
     },
   ]

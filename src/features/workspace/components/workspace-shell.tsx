@@ -31,6 +31,10 @@ import { workspaceLinks, isWorkspaceLinkActive } from "../navigation"
 import { useWorkspacePreference } from "./workspace-provider"
 import { WorkspaceMotion } from "./workspace-motion"
 
+// Supported shadcn links retain their width/padding transitions alongside pointer feedback.
+const sidebarLinkMotion =
+  "workspace-link transition-[width,height,padding,background-color,color,box-shadow]"
+
 function WorkspaceSidebar({ profile }: { profile: Profile }) {
   const pathname = usePathname()
   const { setOpenMobile } = useSidebar()
@@ -59,6 +63,7 @@ function WorkspaceSidebar({ profile }: { profile: Profile }) {
                   return (
                     <SidebarMenuItem key={link.href}>
                       <SidebarMenuButton
+                        className={sidebarLinkMotion}
                         render={<Link href={link.href} />}
                         size="lg"
                         tooltip={link.label}
@@ -81,6 +86,7 @@ function WorkspaceSidebar({ profile }: { profile: Profile }) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
+              className={sidebarLinkMotion}
               render={<Link href="/services" />}
               tooltip="Service catalog"
               size="lg"
@@ -91,6 +97,7 @@ function WorkspaceSidebar({ profile }: { profile: Profile }) {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
+              className={sidebarLinkMotion}
               render={<Link href="/contact" />}
               tooltip="Contact support"
               size="lg"

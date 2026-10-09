@@ -9,6 +9,7 @@ export interface StatCardProps {
   detail: string
   icon: LucideIcon
   href?: Route
+  tone?: "neutral" | "positive" | "info" | "warning"
 }
 
 // Every metric carries its meaning and optional drill-down instead of invented growth.
@@ -18,15 +19,20 @@ export function StatCard({
   detail,
   icon: Icon,
   href,
+  tone = "neutral",
 }: StatCardProps) {
   return (
     <Card
       className="stat-card min-w-0 gap-4 border shadow-none"
       data-metric={label}
+      data-tone={tone}
     >
       <CardHeader className="flex flex-row items-center justify-between gap-3">
         <h2 className="text-sm font-medium text-muted-foreground">{label}</h2>
-        <Icon aria-hidden="true" className="size-5 shrink-0 text-brand-ink" />
+        {/* A decorative accent supplements the explicit metric label and exact value. */}
+        <span className="stat-card-icon inline-flex size-10 shrink-0 items-center justify-center rounded-xl">
+          <Icon aria-hidden="true" className="size-5" />
+        </span>
       </CardHeader>
       <CardContent className="space-y-3">
         <p
