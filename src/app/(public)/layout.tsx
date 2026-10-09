@@ -34,6 +34,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                   { href: "/services", title: "Services" },
                   { href: "/about", title: "How it works" },
                   { href: "/faq", title: "FAQ" },
+                  { href: "/contact", title: "Contact" },
                 ] as const
               ).map((link) => (
                 <Link

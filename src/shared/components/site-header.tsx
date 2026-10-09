@@ -29,6 +29,7 @@ const links = [
   { href: "/services", label: "Services" },
   { href: "/about", label: "How it works" },
   { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
 ] as const
 
 export function SiteHeader() {
