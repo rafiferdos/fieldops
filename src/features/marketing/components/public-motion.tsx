@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { SurfaceMotion } from "@/shared/components/surface-motion"
 import {
   createScrollSmoothing,
+  preserveScrollOnMediaChange,
   smoothScrollMedia,
 } from "@/shared/lib/scroll-smoothing"
 
@@ -23,6 +24,7 @@ export function PublicMotion({ children }: { children: ReactNode }) {
       const viewport = wrapper.current
       const page = content.current
       if (!viewport || !page) return
+      const disposePosition = preserveScrollOnMediaChange(viewport)
       const media = gsap.matchMedia()
       media.add(smoothScrollMedia, () => {
         // Fixed navigation and portalled dialogs stay outside the transformed content.
@@ -66,7 +68,10 @@ export function PublicMotion({ children }: { children: ReactNode }) {
         }
         return scroll.dispose
       })
-      return () => media.revert()
+      return () => {
+        disposePosition()
+        media.revert()
+      }
     },
     { scope: wrapper, dependencies: [pathname], revertOnUpdate: true }
   )

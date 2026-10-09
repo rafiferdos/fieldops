@@ -5,6 +5,7 @@ import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import {
   createScrollSmoothing,
+  preserveScrollOnMediaChange,
   smoothScrollMedia,
 } from "@/shared/lib/scroll-smoothing"
 import { SurfaceMotion } from "@/shared/components/surface-motion"
@@ -20,6 +21,7 @@ export function WorkspaceMotion({ children }: { children: ReactNode }) {
       const viewport = wrapper.current
       const page = content.current
       if (!viewport || !page) return
+      const disposePosition = preserveScrollOnMediaChange(viewport)
       const media = gsap.matchMedia()
       media.add(smoothScrollMedia, () => {
         const scroll = createScrollSmoothing(viewport, page, {
@@ -28,7 +30,10 @@ export function WorkspaceMotion({ children }: { children: ReactNode }) {
         })
         return scroll.dispose
       })
-      return () => media.revert()
+      return () => {
+        disposePosition()
+        media.revert()
+      }
     },
     { scope: wrapper }
   )
