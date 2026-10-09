@@ -3,6 +3,9 @@
 Programming Hero B7A7 frontend for Field Service Management (student ID ending in 7).
 Next.js App Router with strict TypeScript and the exact shadcn preset `b2w3Yl9Ygc`.
 
+Live website: [FieldOps](https://fieldops-rafiferdos.vercel.app).
+See [hosted release evidence](docs/hosted-release.md) for source revisions and checks.
+
 Implemented: responsive public pages and real service browsing, secure server-owned
 sessions, registration/login/account management, and customer request list, wizard,
 detail, edit and cancellation; admin review, qualified dispatch and rescheduling;
@@ -33,7 +36,7 @@ authorized skills/payment delivery extension; its models and migrations are unch
 Twenty-nine route templates exist, including verified support and two payment-return
 pages that read actual owned payment/invoice state. The route plan maps 39 backend
 domain APIs, two health endpoints and the browser-return transport. Hosting and
-submission evidence remain delivery gates; route count alone does not establish
+submission results are recorded separately; route count alone does not establish
 assignment completion.
 
 ## Run locally
@@ -98,8 +101,8 @@ SESSION_TEST_REDIS_URL=redis://127.0.0.1:6397 npm test
 
 CI installs from the lockfile and provisions a pinned Redis image for all 170 tests,
 checks and build. Official GitHub actions use immutable revisions. CI does not
-deploy. The current release revision must pass hosted CI before deployment. Backend revision
-f6e9670 has passed its GitHub CI. Inspect the selected frontend revision in
+deploy. Every release revision must pass hosted CI before deployment. The deployed
+frontend and backend revisions have passed their exact-source CI. Inspect
 [Frontend CI](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml)
 before release.
 
@@ -140,26 +143,28 @@ The test uses only the sandbox checkout and official synthetic card/OTP. It veri
 cancellation, explicit replacement, server-verified settlement, paid feedback after
 a lost response, reauthentication and old-attempt safety. New local test settings
 do not replace `.env.local`; gateway secrets remain in backend configuration.
-Loopback browser returns are verified; provider server IPN and deployed HTTPS
-returns need a separate deployment check.
+Loopback and hosted HTTPS browser returns are verified. See the hosted release
+record for separate provider IPN evidence.
 
 The frontend suite contains 170 checks and the current Chromium source has 34
-scenarios. The full 33-scenario checkpoint passed 32; metadata detected a mismatched
-build/runtime test origin. The final build passes all 15 design/accessibility checks plus the corrected
-metadata check in a focused rerun. No single passing 34-scenario run is claimed. Actual
+scenarios. Hosted baseline testing passed 33 of 34 and exposed a HTTPS cookie
+expiration bug. After its correction, self-revocation and all three role/cookie
+scenarios pass in a focused four-test run. All current scenarios have passing
+results across the baseline and focused checks; no single passing full run is claimed. Actual
 skills, access, scheduling, completion, checkout recovery and sandbox payment flows
 use real disposable backend records. Automated WCAG scans cover both themes, including normal scroll motion.
 Final local Lighthouse lab scores are mobile 92/100/100/100 and desktop
 99/100/100/100; both report CLS 0. These are lab samples, not field guarantees.
 See [current verification](docs/implementation-status.md) for exact results/limits.
 
-Real Google OAuth passes locally with the existing backend client. Production
-origin is saved but hosted sign-in awaits deployment. Redis coordination tests use
+Real Google OAuth passes locally with the existing backend client. The owner also
+verified hosted sign-in after enabling Google's supported FedCM button flow, with
+explicit account selection. Redis coordination tests use
 real Redis with a stubbed HTTP rotation response. Actual Safari/mobile hardware,
-distributed failover and hosted HTTPS/IPN are separate checks.
+distributed failover remain separate checks.
 
-The intended Vercel project is `fieldops-rafiferdos` in Singapore. Its verified
-assigned domain is not yet a deployed website. `vercel.json` disables automatic Git
+The live Vercel project is `fieldops-rafiferdos`, with Singapore functions and a
+dedicated Free Upstash session store. `vercel.json` disables automatic Git
 deployments so manual release follows CI and protected configuration. APP_ORIGIN
 must match at build and runtime; rebuild when changing it.
 

@@ -1,7 +1,7 @@
 # FieldOps release runbook
 
-This is a release procedure, not evidence that a deployment occurred. Reviewed
-October 9, 2026. Do not reset/reseed existing production storage or deploy an
+Reviewed October 9, 2026. Both applications are now live; executed proof is in
+[hosted release evidence](hosted-release.md). Do not reset/reseed existing production storage or deploy an
 unverified revision. Free hosting has resource/cold-start limits.
 
 ## Destinations and isolation
@@ -9,14 +9,15 @@ unverified revision. Free hosting has resource/cold-start limits.
 | Concern            | Destination                                     | Configuration                                            |
 | ------------------ | ----------------------------------------------- | -------------------------------------------------------- |
 | Frontend           | Vercel project `fieldops-rafiferdos`            | Node 24, Next.js, npm ci, npm run build, Singapore sin1  |
-| Canonical frontend | `https://fieldops-rafiferdos.vercel.app`        | Assigned domain verified; first deployment pending       |
+| Canonical frontend | `https://fieldops-rafiferdos.vercel.app`        | Live production alias                                    |
 | API                | `https://fieldops-api-xu3s.onrender.com/api/v1` | Existing Render service and database                     |
 | Sessions           | Dedicated authenticated TLS Redis               | Keep separate from backend public-catalog cache          |
 | Google             | Existing FieldOps Web client                    | Existing localhost origins retained; Vercel origin saved |
 | Payment            | Existing SSLCommerz sandbox                     | Gateway credentials remain backend-only                  |
 
 Frontend `vercel.json` disables automatic Git deployments; a push triggers CI,
-not an application release. Production deployment is an explicit CLI operation.
+not an application release. Production is released manually from an exact CI-passed
+Git SHA through Vercel's deployment API; this avoids uploading ignored local files.
 
 ## Production environment
 
@@ -43,9 +44,12 @@ commands. Review persistence/eviction and free-plan capacity before connecting.
 Storage failure denies sessions. An encryption-key change invalidates saved sessions
 and checkout intents; it is not a routine release step.
 
-The integration's legally binding acceptance and protected-secret upload each await
-specific owner consent. Do not accept a paid plan, enable billing or create a
-recurring charge under the free-hosting request.
+The owner specifically approved Free Marketplace Terms and the dedicated production
+secret upload. The Free Singapore Upstash database is provisioned with eviction off.
+Only its native TLS URL is stored as a sensitive Vercel production variable; the
+unused integration environment connection was removed. The database remains intact.
+Four actual native Redis coordination tests pass. No paid plan or recurring charge
+was accepted. Do not change billing under this free-hosting authorization.
 
 ## Release order
 
@@ -54,13 +58,10 @@ recurring charge under the free-hosting request.
 2. Push the reviewable source and wait for successful GitHub CI on that exact SHA.
 3. Configure approved protected production values. Build for the canonical origin;
    rebuilding is required after changing APP_ORIGIN.
-4. Deploy manually from the verified clean frontend revision:
-
-   ```bash
-   npx vercel@63.1.0 deploy --prod
-   ```
-
-   Inspect the resulting deployment/alias, public content and HTTPS behavior.
+4. Deploy manually using Vercel's official deployment API with the verified project,
+   production target and Git source SHA. Keep the authentication token out of command
+   arguments and logs. Record the returned deployment identity before another write;
+   inspect readiness and the canonical alias instead of blindly repeating creation.
 
 5. The existing Render FRONTEND_ORIGIN is saved as the exact Vercel origin. Once the
    frontend is ready, manually deploy the CI-verified backend revision containing

@@ -32,7 +32,8 @@ invoices, paid reviews and audits remain in the isolated test database.
 The provider card and OTP are official synthetic sandbox inputs. Merchant keys,
 backend tokens, Redis credentials and account passwords never enter captions. The
 recording uses a local production frontend and a separate `fieldops_payment_test`
-database. The loopback browser return is real; hosted HTTPS/IPN are separate gates.
+database. The loopback browser return is real; later hosted HTTPS/IPN evidence is
+recorded separately in [the release record](hosted-release.md).
 
 ## Reproduce deliberately
 

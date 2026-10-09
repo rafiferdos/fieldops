@@ -3,8 +3,9 @@
 Reviewed October 9, 2026. Product slices now include safe technician skills and
 owner-verified Contact channels. The owner authorized the remaining delivery stages,
 including limited backend skills/payment changes, QA, publishing and submission
-artifacts. Backend revision f6e9670 is pushed and its GitHub CI passed; the hosted
-backend still awaits rollout. Protected frontend hosting configuration is pending owner approval.
+artifacts. Both applications are live on their CI-verified revisions. Dedicated
+session storage, protected production settings and evaluation accounts are configured
+with specific owner approval. See [hosted release evidence](hosted-release.md).
 Use [Frontend CI](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml)
 to inspect the exact source revision before release.
 
@@ -36,8 +37,9 @@ There are 29 route templates, including two authenticated payment returns, and 3
 domain API operations bound in production code. The backend has 39 domain APIs,
 two health endpoints and one additional browser-return route template. This count
 excludes framework utility routes and does not establish delivery completion.
-Hosted HTTPS returns/IPN, production Redis/configuration and delivery artifacts
-remain release gates. Local real Google OAuth now passes with the existing client.
+Hosted HTTPS returns and production Redis/configuration are verified. Provider IPN
+evidence is tracked in the hosted release record. Real Google OAuth passes locally;
+the owner confirmed hosted sign-in after the supported FedCM button update.
 
 ## Session design
 
@@ -215,11 +217,12 @@ Public FAQ uses original editorial image cards with accessible in-card disclosur
 - The real provider sandbox cancellation/replacement/settlement/paid-feedback
   scenario passes in that full run. Synthetic card/OTP data is used, with no live
   funds. One cancelled and one successful attempt retain matching frozen money and
-  one settlement/invoice-paid result. Browser returns are loopback; provider server
-  IPN and production HTTPS remain separate checks after deployment.
+  one settlement/invoice-paid result. That local checkpoint used loopback browser
+  returns; newer HTTPS/IPN results are recorded in the hosted release evidence.
 - Actual Google Identity Services sign-in passes on localhost:3001 with the existing
   backend audience. The owner-approved Vercel origin is saved and survives reload.
-  Production Google sign-in awaits the deployed frontend.
+  The owner subsequently confirmed production Google sign-in on the final hosted
+  frontend with explicit FedCM account consent.
 - Axe scans use WCAG A/AA tags, both themes and no rule exclusions. Reduced-motion
   public pages and all three role workspaces pass. Normal-motion contrast receives
   its own regression check. These scans complement keyboard/layout tests; they do
@@ -239,5 +242,21 @@ Public FAQ uses original editorial image cards with accessible in-card disclosur
 See [skills, support and delivery](skills-support-delivery.md) for current contracts,
 metadata/contrast decisions and release gates. The actual 6:19 walkthrough is recorded, with 23 English-captioned scenes and
 verified paid feedback. Its output is a local artifact outside Git. Hosted deployment,
-protected session configuration and HTTPS/IPN evidence remain pending specific
-hosting approvals. No external video upload or portal submission is claimed.
+protected session configuration and the newer acceptance results are documented in
+the release record. No external video upload or portal submission is claimed.
+
+## Hosted acceptance checkpoint
+
+The hosted baseline passed 33/34 scenarios in 14.3 minutes, with retries disabled.
+The new HTTPS cookie assertion detected that a generic deletion omitted the Secure
+attribute required by the __Host- prefix. Server-side revocation already denied
+access; the fix additionally expires the browser cookie with Secure and Path=/.
+The final deployed frontend passes self-access revocation and all three demo-role
+cookie/logout scenarios (4/4, 2.5 minutes). Earlier local results above retain their
+original provenance; no single all-passing full 34-scenario run is claimed.
+
+Four native Upstash coordination tests pass on the dedicated authenticated TLS store.
+They verify the actual Lua/lease behavior with stubbed backend refresh HTTP, not a
+real token-expiry journey. Hosted Lighthouse 13.5 scores are mobile 87/100/100/100
+and desktop 100/100/100/100. Mobile LCP is 3.7s, TBT 90ms and CLS 0; desktop LCP
+is 0.5s, TBT 0ms and CLS 0. These are individual warm-host lab runs.
