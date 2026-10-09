@@ -11,10 +11,16 @@ import {
   managedUserPageSchema,
   managedUserSchema,
 } from "../../../src/features/admin/users/schemas"
+import {
+  technicianSkillsSchema,
+  skillsUpdatedSchema,
+  skillsUpdateSchema,
+} from "../../../src/features/admin/skills/schemas"
+import { servicePageSchema } from "../../../src/features/services/schemas"
 
 // All access writes are pinned to this newly registered account, never a shared demo user.
 export async function createManagedUserFixture() {
-  process.loadEnvFile(".env.local")
+  process.loadEnvFile(process.env.E2E_ENV_FILE ?? ".env.local")
   const { API_BASE_URL: base } = serverEnvSchema.parse(process.env),
     local = z
       .object({
@@ -113,6 +119,35 @@ export async function createManagedUserFixture() {
     password,
     getUser,
     setAccess,
+    async getSkills() {
+      return call(
+        `/technicians/${user.id}/skills`,
+        technicianSkillsSchema,
+        "GET",
+        admin.accessToken
+      )
+    },
+    async setSkills(serviceIds: string[], expectedServiceIds: string[]) {
+      return call(
+        `/technicians/${user.id}/skills`,
+        skillsUpdatedSchema,
+        "PUT",
+        admin.accessToken,
+        skillsUpdateSchema.parse({ serviceIds, expectedServiceIds })
+      )
+    },
+    async firstService() {
+      const page = await call(
+        "/services?limit=1&sort=name_asc",
+        servicePageSchema
+      )
+      const service = page.items.at(0)
+      if (!service)
+        throw new Error(
+          "A real active service is required for skill verification"
+        )
+      return service
+    },
     async freshLogin() {
       const auth = await login(email, password)
       latest = auth.accessToken
