@@ -9,13 +9,14 @@ import {
 import { Badge } from "@/shared/ui/badge"
 import { ButtonLink } from "@/shared/components/button-link"
 import { EmptyState } from "@/shared/components/empty-state"
+import { Reveal } from "@/shared/components/reveal"
 import { formatDate } from "@/shared/lib/format"
 import { workDetailPath, workListPath } from "@/features/work-orders/routes"
 import type { Dashboard } from "../schemas"
 
 export function RecentRecords({ data }: { data: Dashboard }) {
   return (
-    <div className="grid gap-6 xl:grid-cols-2">
+    <Reveal stagger className="grid gap-6 xl:grid-cols-2">
       {data.role !== "TECHNICIAN" && (
         <Card className="min-w-0 border shadow-none">
           <CardHeader>
@@ -27,8 +28,9 @@ export function RecentRecords({ data }: { data: Dashboard }) {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {/* Semantic lists stagger real rows without changing their data or focus order. */}
             {data.requests.recent.length ? (
-              <ul className="divide-y">
+              <Reveal as="ul" stagger className="divide-y">
                 {data.requests.recent.map((request) => (
                   <li
                     key={request.id}
@@ -63,7 +65,7 @@ export function RecentRecords({ data }: { data: Dashboard }) {
                     </ButtonLink>
                   </li>
                 ))}
-              </ul>
+              </Reveal>
             ) : (
               <EmptyState title="No requests yet">
                 {data.role === "CUSTOMER" ? (
@@ -99,7 +101,7 @@ export function RecentRecords({ data }: { data: Dashboard }) {
         </CardHeader>
         <CardContent>
           {data.work.recent.length ? (
-            <ul className="divide-y">
+            <Reveal as="ul" stagger className="divide-y">
               {data.work.recent.map((work) => (
                 <li
                   key={work.id}
@@ -137,7 +139,7 @@ export function RecentRecords({ data }: { data: Dashboard }) {
                   </ButtonLink>
                 </li>
               ))}
-            </ul>
+            </Reveal>
           ) : (
             <EmptyState title="No assigned visits yet">
               Confirmed service schedules will appear here.
@@ -178,6 +180,6 @@ export function RecentRecords({ data }: { data: Dashboard }) {
           </CardContent>
         </Card>
       )}
-    </div>
+    </Reveal>
   )
 }

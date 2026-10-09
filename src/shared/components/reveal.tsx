@@ -9,19 +9,27 @@ export function Reveal({
   children,
   className,
   stagger = false,
+  as: Element = "div",
 }: {
   children: ReactNode
   className?: string
   stagger?: boolean
+  as?: "div" | "ul" | "ol"
 }) {
-  const scope = useRef<HTMLDivElement>(null)
+  const scope = useRef<HTMLElement>(null)
   useEffect(() => {
     if (scope.current)
       return observeEntryMotion(scope.current, stagger ? "group" : "self")
-  }, [stagger])
+  }, [stagger, Element])
   return (
-    <div ref={scope} className={cn(className)} data-reveal="">
+    <Element
+      ref={(node: HTMLElement | null) => {
+        scope.current = node
+      }}
+      className={cn(className)}
+      data-reveal=""
+    >
       {children}
-    </div>
+    </Element>
   )
 }

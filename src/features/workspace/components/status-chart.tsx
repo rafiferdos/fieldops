@@ -1,5 +1,8 @@
 "use client"
 
+import { useRef } from "react"
+import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
   Card,
@@ -20,6 +23,8 @@ const config = {
   count: { label: "Records", color: "var(--chart-3)" },
 } satisfies ChartConfig
 
+gsap.registerPlugin(useGSAP)
+
 export function StatusChart({
   title,
   description,
@@ -36,8 +41,56 @@ export function StatusChart({
     count,
   }))
   const hasRecords = rows.some((row) => row.count > 0)
+  const signature = rows.map((row) => `${row.status}:${row.count}`).join("|")
+  const scope = useRef<HTMLDivElement>(null)
+  useGSAP(
+    () => {
+      const chart = scope.current
+      if (!chart || !hasRecords) return
+      const media = gsap.matchMedia()
+      media.add("(prefers-reduced-motion: no-preference)", (context) => {
+        let observed = false
+        const entry = new IntersectionObserver(
+          (entries) => {
+            for (const item of entries) {
+              if (!item.isIntersecting) continue
+              entry.unobserve(item.target)
+              // Only geometry grows; exact counts and accessible labels remain authoritative.
+              context.add(() => {
+                gsap.from(item.target, {
+                  scaleY: 0.35,
+                  transformOrigin: "50% 100%",
+                  duration: 0.65,
+                  ease: "power2.out",
+                  clearProps: "transform",
+                })
+              })
+            }
+          },
+          { threshold: 0, rootMargin: "0px 0px -2% 0px" }
+        )
+        const watch = () => {
+          if (observed) return
+          const bars = chart.querySelector(".workspace-chart-bars")
+          if (!bars) return
+          observed = true
+          entry.observe(bars)
+        }
+        // ResponsiveContainer mounts SVG after measuring the shadcn chart surface.
+        const updates = new MutationObserver(watch)
+        updates.observe(chart, { childList: true, subtree: true })
+        watch()
+        return () => {
+          entry.disconnect()
+          updates.disconnect()
+        }
+      })
+      return () => media.revert()
+    },
+    { scope, dependencies: [hasRecords, signature], revertOnUpdate: true }
+  )
   return (
-    <Card className="min-w-0 border shadow-none">
+    <Card ref={scope} className="min-w-0 border shadow-none">
       <CardHeader>
         <CardTitle className="font-heading text-xl">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
@@ -67,6 +120,7 @@ export function StatusChart({
               />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Bar
+                className="workspace-chart-bars"
                 dataKey="count"
                 fill="var(--color-count)"
                 radius={[6, 6, 0, 0]}

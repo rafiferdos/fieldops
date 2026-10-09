@@ -170,9 +170,7 @@ export function DashboardView({
           counts={data.work.byStatus}
         />
       </Reveal>
-      <Reveal>
-        <RecentRecords data={data} />
-      </Reveal>
+      <RecentRecords data={data} />
     </>
   )
 }

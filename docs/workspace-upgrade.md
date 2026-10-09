@@ -54,7 +54,8 @@ References: [TanStack SSR](https://tanstack.com/query/latest/docs/framework/reac
 
 ## Implemented motion and navigation
 
-The public layout owns one GSAP ScrollSmoother on wide, fine-pointer screens. Fixed
+Public and protected workspace layouts each own one GSAP ScrollSmoother while active
+on wide, fine-pointer screens. The workspace instance survives nested route changes. Fixed
 navigation and portalled shadcn dialogs stay outside its transformed content. Streamed
 catalog content and font readiness refresh the scroll range; observers, timelines and
 animation contexts are disposed when routes or preferences change. Touch and reduced
@@ -65,8 +66,10 @@ and content sections. It starts near the viewport edge, never hides server-rende
 content before JavaScript, keeps full text opacity and avoids nested/duplicate animations.
 Workflow cards use theme-token frost with opaque contrast/transparency fallbacks.
 
-New workspace routes reset to their heading while Back/Forward restoration and settings
-anchors remain available. The root skip link uses Next.js Link, preserving router history
+New workspace routes reset to their heading; visited positions are kept in account-scoped
+workspace memory for Back/Forward, without modifying Next.js history state. Settings
+anchors remain available. See [dashboard motion](dashboard-motion.md). The root skip link
+uses Next.js Link, preserving router history
 for fragment navigation. The API has no avatar URL field: account initials are the supported
 identity representation rather than an invented profile-photo upload.
 
