@@ -82,6 +82,13 @@ describe("payment evidence and recovery boundaries", () => {
       canStartNewAttempt(failed, { ...invoice, status: "PAID", paidAt: at })
     ).toBe(false)
   })
+  it("explains a cancelled attempt whose invoice was paid by a replacement without declaring the old attempt successful", () => {
+    const old = { ...payment, status: "CANCELLED" as const, verifiedAt: at },
+      paid = { ...invoice, status: "PAID" as const, paidAt: at }
+    expect(paymentOutcome(old, paid).kind).toBe("paid-elsewhere")
+    expect(canStartNewAttempt(old, paid)).toBe(false)
+    expect(safeCheckoutUrl(old, paid)).toBeNull()
+  })
   it.each([
     "https://sandbox.sslcommerz.com.evil.example/checkout",
     "https://evil.example/checkout",

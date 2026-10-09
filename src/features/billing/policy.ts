@@ -2,7 +2,13 @@ import type { Invoice, Payment } from "./schemas"
 
 type PaymentOutcome = {
   kind:
-    "inspection" | "review" | "verified" | "cancelled" | "failed" | "pending"
+    | "inspection"
+    | "review"
+    | "verified"
+    | "paid-elsewhere"
+    | "cancelled"
+    | "failed"
+    | "pending"
   title: string
   description: string
 }
@@ -42,6 +48,19 @@ export function paymentOutcome(
       title: "Payment verified",
       description:
         "The provider-verified payment has settled and the invoice is paid.",
+    }
+  // A replacement may pay the invoice without changing this earlier terminal attempt.
+  if (
+    (payment.status === "FAILED" || payment.status === "CANCELLED") &&
+    payment.verifiedAt &&
+    invoice.status === "PAID" &&
+    invoice.paidAt
+  )
+    return {
+      kind: "paid-elsewhere",
+      title: "Invoice already paid",
+      description:
+        "This earlier attempt did not settle the invoice. The invoice is now paid; another checkout is unavailable.",
     }
   if (
     (payment.status === "FAILED" || payment.status === "CANCELLED") &&

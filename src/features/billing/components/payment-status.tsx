@@ -55,9 +55,9 @@ export async function PaymentStatus({ paymentId }: { paymentId: string }) {
               Open {payment.mode === "SANDBOX" ? "sandbox" : "secure"} checkout
             </a>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Checkout opens in another tab. After completing or cancelling it,
-              the provider returns you to FieldOps. The displayed result comes
-              from your verified payment record, not the return URL.
+              Checkout opens in another tab. Keep this page open to check the
+              latest status after completing or cancelling checkout. A return
+              URL alone does not confirm payment.
             </p>
           </>
         )}
