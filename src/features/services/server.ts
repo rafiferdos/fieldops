@@ -1,5 +1,6 @@
 import "server-only"
 import { notFound } from "next/navigation"
+import { cache } from "react"
 import { z } from "zod"
 import { apiRequest } from "@/infrastructure/api/server"
 import { ApiError } from "@/infrastructure/api/error"
@@ -15,7 +16,8 @@ export async function listServices(
   ).data
 }
 
-export async function getService(id: string) {
+// Metadata and page composition share one validated read within the same render.
+export const getService = cache(async (id: string) => {
   if (!z.uuid().safeParse(id).success) notFound()
   try {
     return (await apiRequest(`/services/${id}`, serviceSchema)).data
@@ -23,4 +25,4 @@ export async function getService(id: string) {
     if (error instanceof ApiError && error.status === 404) notFound()
     throw error
   }
-}
+})

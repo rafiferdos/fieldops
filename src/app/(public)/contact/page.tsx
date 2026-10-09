@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import { publicMetadata } from "@/infrastructure/seo/metadata"
 import {
   ArrowUpRight,
   Mail,
@@ -20,13 +20,11 @@ import {
 } from "@/shared/ui/card"
 import { Badge } from "@/shared/ui/badge"
 
-const description =
-  "Contact FieldOps for help with service requests, scheduled visits, invoices and payment follow-up."
-export const metadata: Metadata = {
-  title: "Contact",
-  description,
-  openGraph: { title: "Contact FieldOps", description, type: "website" },
-}
+export const metadata = publicMetadata(
+  "Contact",
+  "Contact FieldOps for help with service requests, scheduled visits, invoices and payment follow-up.",
+  "/contact"
+)
 
 export default function ContactPage() {
   return (

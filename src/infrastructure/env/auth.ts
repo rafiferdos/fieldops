@@ -25,6 +25,12 @@ export const authEnvSchema = z.object({
     .refine((value) => Buffer.from(value, "base64").length === 32),
 })
 
+export function getAppOrigin() {
+  const result = originSchema.safeParse(process.env.APP_ORIGIN)
+  if (!result.success) throw new Error("Invalid APP_ORIGIN. See .env.example.")
+  return result.data
+}
+
 export function getAuthEnv() {
   const result = authEnvSchema.safeParse(process.env)
   if (!result.success)

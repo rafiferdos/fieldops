@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/infrastructure/seo/metadata"
 import Link from "next/link"
 import { Suspense } from "react"
 import { PageSkeleton } from "@/shared/components/page-skeleton"
@@ -17,6 +18,12 @@ import { Reveal } from "@/shared/components/reveal"
 import { buttonVariants } from "@/shared/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { Separator } from "@/shared/ui/separator"
+
+export const metadata = publicMetadata(
+  "Home",
+  "Find a service, plan a visit and follow the work through completion with FieldOps.",
+  "/"
+)
 
 export const dynamic = "force-dynamic"
 
@@ -203,7 +210,7 @@ export default function HomePage() {
               >
                 <CardHeader>
                   <div className="mb-5 flex items-center justify-between">
-                    <span className="font-heading text-5xl font-light tracking-tighter text-muted-foreground/50">
+                    <span className="font-heading text-5xl font-light tracking-tighter text-muted-foreground">
                       {number}
                     </span>
                     <Icon

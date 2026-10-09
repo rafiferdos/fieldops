@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/infrastructure/seo/metadata"
 import Link from "next/link"
 import {
   ArrowRight,
@@ -10,7 +11,11 @@ import { Reveal } from "@/shared/components/reveal"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { buttonVariants } from "@/shared/ui/button"
 
-export const metadata = { title: "How it works" }
+export const metadata = publicMetadata(
+  "How it works",
+  "See how customers, administrators and technicians coordinate a service visit from request to resolution.",
+  "/about"
+)
 export default function AboutPage() {
   return (
     <>
@@ -43,7 +48,7 @@ export default function AboutPage() {
           <Card key={number} className="border shadow-none">
             <CardHeader>
               <div className="mb-8 flex items-center justify-between">
-                <span className="font-heading text-4xl text-muted-foreground/40">
+                <span className="font-heading text-4xl text-muted-foreground">
                   {number}
                 </span>
                 <Icon aria-hidden="true" className="size-6 text-brand-ink" />

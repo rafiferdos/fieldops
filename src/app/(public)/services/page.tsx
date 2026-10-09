@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/infrastructure/seo/metadata"
 import Link from "next/link"
 import { listServices } from "@/features/services/server"
 import { parseServiceQuery } from "@/features/services/schemas"
@@ -9,7 +10,11 @@ import { EmptyState } from "@/shared/components/empty-state"
 import { Pagination } from "@/shared/components/pagination"
 import { ServiceFilters } from "@/features/services/components/service-filters"
 
-export const metadata = { title: "Services" }
+export const metadata = publicMetadata(
+  "Services",
+  "Explore available FieldOps services, compare base prices and plan your next service visit.",
+  "/services"
+)
 export default async function ServicesPage({
   searchParams,
 }: {

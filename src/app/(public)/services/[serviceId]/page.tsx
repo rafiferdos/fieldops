@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/infrastructure/seo/metadata"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -13,12 +14,18 @@ import { formatMoney } from "@/shared/lib/format"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { buttonVariants } from "@/shared/ui/button"
 
-export const metadata = { title: "Service details" }
-export default async function ServicePage({
-  params,
-}: {
-  params: Promise<{ serviceId: string }>
-}) {
+type ServicePageProps = { params: Promise<{ serviceId: string }> }
+
+export async function generateMetadata({ params }: ServicePageProps) {
+  const { serviceId } = await params
+  const service = await getService(serviceId)
+  return publicMetadata(
+    service.name,
+    service.description,
+    `/services/${service.id}`
+  )
+}
+export default async function ServicePage({ params }: ServicePageProps) {
   const { serviceId } = await params
   const service = await getService(serviceId)
   return (

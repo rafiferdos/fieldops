@@ -19,6 +19,7 @@ jobs:
     env:
       NEXT_TELEMETRY_DISABLED: 1
       API_BASE_URL: http://localhost:3000/api/v1
+      APP_ORIGIN: http://localhost:3001
       SESSION_TEST_REDIS_URL: redis://localhost:6379
     services:
       session-redis:

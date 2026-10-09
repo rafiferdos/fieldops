@@ -1,9 +1,14 @@
+import { publicMetadata } from "@/infrastructure/seo/metadata"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { FaqCards } from "@/features/marketing/components/faq-cards"
 import { PageHeading } from "@/shared/components/page-heading"
 
-export const metadata = { title: "Frequently asked questions" }
+export const metadata = publicMetadata(
+  "Frequently asked questions",
+  "Answers about service requests, confirmed schedules, cancellations, invoices and verified payments.",
+  "/faq"
+)
 
 export default function FaqPage() {
   return (

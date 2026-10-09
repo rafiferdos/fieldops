@@ -6,6 +6,7 @@ import { Geist, Geist_Mono, Outfit } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/shared/providers/theme-provider"
 import { cn } from "@/shared/lib/utils"
+import { getAppOrigin } from "@/infrastructure/env/auth"
 
 const outfitHeading = Outfit({ subsets: ["latin"], variable: "--font-heading" })
 
@@ -17,6 +18,7 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getAppOrigin()),
   title: { default: "FieldOps", template: "%s | FieldOps" },
   description:
     "Field service management for customers, technicians and administrators.",
