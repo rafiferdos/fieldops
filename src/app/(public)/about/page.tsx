@@ -6,6 +6,7 @@ import {
   ClipboardList,
   FileCheck2,
 } from "lucide-react"
+import { StrokeText } from "@/shared/components/react-bits/stroke-text"
 import { PageHeading } from "@/shared/components/page-heading"
 import { Reveal } from "@/shared/components/reveal"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
@@ -65,7 +66,13 @@ export default function AboutPage() {
         <div>
           <p className="eyebrow">Good to know</p>
           <h2 className="mt-4 font-heading text-3xl font-medium tracking-tight">
-            A preference becomes
+            <StrokeText
+              text="A preference becomes"
+              trigger="scroll"
+              fontWeight={500}
+              fontSize={72}
+              letterSpacing={-2}
+            />
             <br />a confirmed plan.
           </h2>
         </div>

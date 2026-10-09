@@ -1,0 +1,108 @@
+.sheet {
+  width: 100%;
+  max-width: none;
+  gap: 0;
+  overflow-x: hidden;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transition: opacity 150ms ease;
+}
+.sheet[data-starting-style],
+.sheet[data-ending-style] {
+  translate: none;
+}
+.panel {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex: 1;
+  min-height: 100%;
+}
+.layers {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.layers span {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklch, var(--primary) 24%, var(--background));
+}
+.layers span:first-child {
+  background: color-mix(
+    in oklch,
+    var(--info-foreground) 24%,
+    var(--background)
+  );
+}
+.surface {
+  position: relative;
+  flex: 1;
+  padding: 6em 2em 2em;
+  background: var(--popover);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.itemWrap {
+  position: relative;
+  overflow: hidden;
+  line-height: 1;
+}
+.item {
+  position: relative;
+  display: inline-block;
+  padding-right: 1.4em;
+  color: var(--foreground);
+  font-weight: 600;
+  font-size: 4rem;
+  line-height: 1;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 250ms ease;
+}
+.item > [data-menu-label] {
+  display: inline-block;
+  transform-origin: 50% 100%;
+}
+.item:hover,
+.item[aria-current="page"] {
+  color: var(--brand-ink);
+}
+.item:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.number {
+  position: absolute;
+  top: 0.1em;
+  right: 3.2em;
+  color: var(--brand-ink);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0;
+  pointer-events: none;
+}
+/* Keep the original large type within narrow phone widths. */
+@media (max-width: 390px) {
+  .item {
+    font-size: 3rem;
+  }
+  .number {
+    font-size: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .sheet {
+    transition: none;
+  }
+}

@@ -1,0 +1,26 @@
+/* The original canvas renderer overlays native typography without changing word geometry. */
+.tech-text {
+  position: relative;
+  display: inline-block;
+  touch-action: pan-y;
+}
+.tech-text-canvas {
+  position: absolute;
+  left: -16px;
+  top: -24px;
+  width: calc(100% + 32px);
+  height: calc(100% + 48px);
+}
+.tech-text[data-tech-ready] .tech-text-native {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce),
+  (prefers-contrast: more),
+  (forced-colors: active) {
+  .tech-text-canvas {
+    display: none;
+  }
+  .tech-text[data-tech-ready] .tech-text-native {
+    opacity: 1;
+  }
+}

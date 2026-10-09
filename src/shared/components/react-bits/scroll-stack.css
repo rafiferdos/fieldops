@@ -1,0 +1,19 @@
+.scroll-stack {
+  position: relative;
+  width: 100%;
+}
+.scroll-stack-card-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+}
+.scroll-stack-card-wrapper > [data-slot="card"] {
+  transform-origin: top center;
+  backface-visibility: hidden;
+}
+.scroll-stack[data-stacking] .scroll-stack-card-wrapper > [data-slot="card"] {
+  will-change: transform;
+}
+.scroll-stack-end {
+  height: 1px;
+  width: 100%;
+}

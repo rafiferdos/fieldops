@@ -1,0 +1,26 @@
+.gradual-blur-page {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  pointer-events: none;
+  transition: opacity 0.3s ease-out;
+}
+.gradual-blur-page > div {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.gradual-blur-page[data-at-end],
+body:has(:focus-visible) .gradual-blur-page {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce),
+  (prefers-reduced-transparency: reduce),
+  (prefers-contrast: more),
+  (forced-colors: active) {
+  .gradual-blur-page {
+    display: none;
+  }
+}

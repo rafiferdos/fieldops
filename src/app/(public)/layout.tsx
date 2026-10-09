@@ -5,6 +5,7 @@ import { PublicMotion } from "@/features/marketing/components/public-motion"
 import { AccountMenu } from "@/features/auth/components/account-menu"
 import { SiteHeader } from "@/shared/components/site-header"
 import { Brand } from "@/shared/components/brand"
+import { GradualBlur } from "@/shared/components/react-bits/gradual-blur"
 import { Separator } from "@/shared/ui/separator"
 
 export default async function PublicLayout({
@@ -66,6 +67,7 @@ export default async function PublicLayout({
           </div>
         </footer>
       </PublicMotion>
+      <GradualBlur />
     </>
   )
 }

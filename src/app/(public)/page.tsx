@@ -13,8 +13,14 @@ import {
 import { ServiceScene } from "@/features/marketing/components/service-scene"
 import { MarketingMotion } from "@/features/marketing/components/marketing-motion"
 import { SpotlightCard } from "@/features/marketing/components/spotlight-card"
-import { CoordinationWaves } from "@/features/marketing/components/coordination-waves"
+import { AnimatedArtwork } from "@/shared/components/react-bits/animated-artwork"
+import { BorderGlow } from "@/shared/components/react-bits/border-glow"
+import {
+  ScrollStack,
+  ScrollStackItem,
+} from "@/shared/components/react-bits/scroll-stack"
 import { ScrollWords } from "@/features/marketing/components/scroll-words"
+import { TechText } from "@/shared/components/react-bits/tech-text"
 import { FaqCards } from "@/features/marketing/components/faq-cards"
 import { Reveal } from "@/shared/components/reveal"
 import { buttonVariants } from "@/shared/ui/button"
@@ -69,7 +75,7 @@ export default function HomePage() {
                   More
                 </span>{" "}
                 <span className="hero-word text-brand-ink" data-hero-word="">
-                  handled.
+                  <TechText text="handled." />
                 </span>
               </span>
             </span>
@@ -195,7 +201,7 @@ export default function HomePage() {
               <ArrowRight aria-hidden="true" className="size-4" />
             </Link>
           </Reveal>
-          <div className="space-y-5 [perspective:1000px]">
+          <ScrollStack>
             {[
               {
                 number: "01",
@@ -216,79 +222,85 @@ export default function HomePage() {
                 icon: FileCheck2,
               },
             ].map(({ number, title, text, icon: Icon }) => (
-              <SpotlightCard
-                key={number}
-                data-process-step=""
-                data-entry-depth=""
-                className="process-card border bg-muted/20 shadow-none sm:p-2"
-              >
-                <CardHeader>
-                  <div className="mb-5 flex items-center justify-between">
-                    <span className="font-heading text-5xl font-light tracking-tighter text-muted-foreground">
-                      {number}
-                    </span>
-                    <Icon
-                      aria-hidden="true"
-                      className="size-5 text-brand-ink"
-                    />
-                  </div>
-                  <CardTitle className="text-2xl tracking-tight">
-                    {title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="max-w-lg leading-relaxed text-muted-foreground">
-                  {text}
-                </CardContent>
-              </SpotlightCard>
+              <ScrollStackItem key={number}>
+                <SpotlightCard className="process-card border bg-card shadow-none sm:p-2">
+                  <CardHeader>
+                    <div className="mb-5 flex items-center justify-between">
+                      <span className="font-heading text-5xl font-light tracking-tighter text-muted-foreground">
+                        {number}
+                      </span>
+                      <Icon
+                        aria-hidden="true"
+                        className="size-5 text-brand-ink"
+                      />
+                    </div>
+                    <CardTitle className="text-2xl tracking-tight">
+                      {title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="max-w-lg leading-relaxed text-muted-foreground">
+                    {text}
+                  </CardContent>
+                </SpotlightCard>
+              </ScrollStackItem>
             ))}
-          </div>
+          </ScrollStack>
         </section>
 
         <Reveal>
-          <SpotlightCard
-            aria-labelledby="roles-title"
-            role="region"
-            className="gap-0 border p-6 shadow-none sm:p-10 lg:p-12"
-          >
-            <p className="eyebrow">Connected by design</p>
-            <h2
-              id="roles-title"
-              className="mt-4 max-w-xl font-heading text-3xl font-medium tracking-tight sm:text-4xl"
+          <BorderGlow>
+            <Card
+              aria-labelledby="roles-title"
+              role="region"
+              className="gap-0 border-0 bg-transparent p-6 shadow-none sm:p-10 lg:p-12"
             >
-              Three roles. One shared picture.
-            </h2>
-            <Separator className="my-8" />
-            <div className="grid gap-8 md:grid-cols-3">
-              {[
-                {
-                  icon: ClipboardList,
-                  title: "For customers",
-                  text: "Request a service, follow your visit and keep the records close.",
-                },
-                {
-                  icon: Wrench,
-                  title: "For technicians",
-                  text: "Find your assigned visits, record progress and document the result.",
-                },
-                {
-                  icon: CalendarCheck2,
-                  title: "For administrators",
-                  text: "Review the details, coordinate availability and keep visits moving.",
-                },
-              ].map(({ icon: Icon, title, text }) => (
-                <div key={title}>
-                  <Icon
-                    aria-hidden="true"
-                    className="mb-4 size-5 text-brand-ink"
-                  />
-                  <h3 className="font-heading text-xl font-medium">{title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {text}
-                  </p>
+              <div className="grid items-center gap-6 md:grid-cols-[1fr_0.7fr]">
+                <div>
+                  <p className="eyebrow">Connected by design</p>
+                  <h2
+                    id="roles-title"
+                    className="mt-4 max-w-xl font-heading text-3xl font-medium tracking-tight sm:text-4xl"
+                  >
+                    Three roles. One shared picture.
+                  </h2>
                 </div>
-              ))}
-            </div>
-          </SpotlightCard>
+                <AnimatedArtwork kind="crystal" />
+              </div>
+              <Separator className="my-8" />
+              <div className="grid gap-8 md:grid-cols-3">
+                {[
+                  {
+                    icon: ClipboardList,
+                    title: "For customers",
+                    text: "Request a service, follow your visit and keep the records close.",
+                  },
+                  {
+                    icon: Wrench,
+                    title: "For technicians",
+                    text: "Find your assigned visits, record progress and document the result.",
+                  },
+                  {
+                    icon: CalendarCheck2,
+                    title: "For administrators",
+                    text: "Review the details, coordinate availability and keep visits moving.",
+                  },
+                ].map(({ icon: Icon, title, text }) => (
+                  <div key={title}>
+                    <Icon
+                      aria-hidden="true"
+                      className="mb-4 size-5 text-brand-ink"
+                    />
+                    <h3 className="font-heading text-xl font-medium">
+                      {title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                      {text}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </BorderGlow>
         </Reveal>
         <section aria-labelledby="home-faq-title">
           <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-5">
@@ -316,7 +328,7 @@ export default function HomePage() {
             role="region"
             aria-labelledby="next-step-title"
           >
-            <CoordinationWaves />
+            <AnimatedArtwork kind="strands" />
             <p className="eyebrow">Your next step</p>
             <h2
               id="next-step-title"

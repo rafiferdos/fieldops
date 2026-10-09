@@ -1,0 +1,63 @@
+.track {
+  position: relative;
+  isolation: isolate;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--muted);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.navigation {
+  display: block;
+  max-width: none;
+}
+.item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  min-width: 44px;
+  padding: 0 14px;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--foreground);
+  opacity: 0.7;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition: opacity 160ms ease;
+}
+.item:hover,
+.item:focus,
+.item[data-active] {
+  background: transparent;
+  opacity: 0.9;
+}
+.item:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.thumb {
+  position: absolute;
+  inset: 3px;
+  display: grid;
+  grid-template-columns: repeat(var(--rs-count), minmax(0, 1fr));
+  background: var(--card);
+  pointer-events: none;
+}
+.thumb[hidden] {
+  display: none;
+}
+.copy {
+  color: var(--brand-ink);
+  opacity: 1;
+}
+@media (forced-colors: active) {
+  .thumb {
+    background: Highlight;
+  }
+  .copy {
+    color: HighlightText;
+  }
+}

@@ -82,10 +82,19 @@ test("home light effects follow the pointer without moving cards and dispose on 
   )
   const card = page.locator("[data-spotlight]").first()
   await scrollWithWheel(page, card)
-  // Let entry and scroll settling finish before measuring the pointer's stable hit surface.
+  // ScrollStack owns this transform; settle the document before testing pointer-only geometry.
   await expect
-    .poll(() => card.evaluate((node) => getComputedStyle(node).transform))
-    .toBe("none")
+    .poll(() =>
+      page
+        .locator(".public-scroll-content")
+        .evaluate((node) =>
+          Math.abs(
+            new DOMMatrixReadOnly(getComputedStyle(node).transform).m42 +
+              window.scrollY
+          )
+        )
+    )
+    .toBeLessThan(2)
   await card.hover({ position: { x: 80, y: 100 } })
   await expect(card).toHaveAttribute("data-spotlight-active", "")
   const bounds = await card.boundingBox()
@@ -208,69 +217,45 @@ test("scroll typography resolves early and restores native words for reduced mot
   }
 })
 
-test("ambient waves render only while visible and restore a still motion fallback", async ({
+test("WebGL scenes render on entry and release resources for reduced motion and route changes", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
+  const errors: string[] = []
+  page.on("pageerror", (error) => errors.push(error.message))
   await page.goto("/")
-  const stage = page.locator(".coordination-stage")
-  await expect(page.locator("[data-public-scroll]")).toHaveAttribute(
-    "data-scroll-mode",
-    "smooth"
-  )
-  const waves = page.locator("canvas.coordination-waves")
-  const pixels = () =>
-    waves.evaluate((node) => {
-      if (!(node instanceof HTMLCanvasElement))
-        throw new Error("Missing wave canvas")
-      const context = node.getContext("2d")
-      if (!context)
-        throw new Error("Canvas 2D is unavailable in the test browser")
-      const { data } = context.getImageData(0, 0, node.width, node.height)
-      let hash = 0
-      for (const byte of data) hash = (Math.imul(hash, 31) + byte) | 0
-      return hash
-    })
-  await scrollWithWheel(page, stage)
-  const initial = await pixels()
-  await expect.poll(pixels).not.toBe(initial)
-  await page.emulateMedia({ reducedMotion: "reduce" })
-  await expect(
-    page.locator("#next-step-title [data-scroll-word]").first()
-  ).toHaveCSS("transform", "none")
-  await expect(stage).toBeInViewport()
-  const still = await pixels()
-  // Sample elapsed frames to verify actual rendered output stops, not just a CSS label.
-  await page.waitForTimeout(250)
-  expect(await pixels()).toBe(still)
-  await page.emulateMedia({ reducedMotion: "no-preference" })
-  await expect(page.locator("[data-public-scroll]")).toHaveAttribute(
-    "data-scroll-mode",
-    "smooth"
-  )
-  await expect(stage).toBeInViewport()
-  await expect.poll(pixels).not.toBe(still)
+  const crystal = page.locator('[data-artwork="crystal"]'),
+    strands = page.locator('[data-artwork="strands"]')
+  for (const artwork of [crystal, strands]) {
+    await scrollWithWheel(page, artwork)
+    const canvas = artwork.locator("canvas")
+    await expect(canvas).toBeVisible()
+    expect(
+      await canvas.evaluate((node) => {
+        if (!(node instanceof HTMLCanvasElement))
+          throw Error("Missing artwork canvas")
+        const gl = node.getContext("webgl2")
+        return (
+          !!gl &&
+          node.width > 1 &&
+          node.height > 1 &&
+          gl.getError() === gl.NO_ERROR
+        )
+      })
+    ).toBe(true)
+    await page.emulateMedia({ reducedMotion: "reduce" })
+    await expect(canvas).toHaveCount(0)
+    await page.emulateMedia({ reducedMotion: "no-preference" })
+    await expect(canvas).toBeVisible()
+  }
   await page.keyboard.press("Home")
-  await expect(stage).not.toBeInViewport()
-  await page.waitForTimeout(250)
-  const outside = await pixels()
-  await page.waitForTimeout(250)
-  expect(await pixels()).toBe(outside)
+  await expect(strands.locator("canvas")).toHaveCount(0)
   await page
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "FAQ", exact: true })
     .click()
   await expect(page).toHaveURL(/\/faq$/)
-  await page.goBack()
-  await scrollWithWheel(page, stage)
-  const returned = await pixels()
-  await expect.poll(pixels).not.toBe(returned)
-  await page.setViewportSize({ width: 390, height: 844 })
-  await scrollWithWheel(page, stage)
-  await page.waitForTimeout(250)
-  const narrow = await pixels()
-  await page.waitForTimeout(250)
-  expect(await pixels()).toBe(narrow)
+  expect(errors).toEqual([])
 })
 
 test("capture home material proof when explicitly enabled", async ({
