@@ -94,4 +94,4 @@ identity representation rather than an invented profile-photo upload.
 The full baseline and focused follow-ups are separate evidence; no single all-passing
 39-case run is claimed. Unchanged real-provider settlement, IPN and Google consent retain
 their earlier [hosted evidence](hosted-release.md). Updated hosted acceptance is recorded
-separately after release.
+in the [workspace release](workspace-release.md): all 14 selected hosted scenarios pass.

@@ -285,6 +285,7 @@ Offline operation, live funds and distributed failover certification are outside
 
 ## Further documentation
 
+- [Current workspace release and hosted acceptance](docs/workspace-release.md)
 - [Role, route and API map](docs/route-plan.md)
 - [Session-safe dashboard and technology decisions](docs/workspace-upgrade.md)
 - [Dispatch and execution rules](docs/dispatch-execution-plan.md)

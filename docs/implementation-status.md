@@ -3,8 +3,8 @@
 Reviewed October 9, 2026. Product slices now include safe technician skills and
 owner-verified Contact channels. The owner authorized the remaining delivery stages,
 including limited backend skills/payment changes, QA, publishing and submission
-artifacts. Both applications have live CI-verified baseline releases; the workspace
-upgrade below has a separate verification/release record. Dedicated
+artifacts. Both applications have live CI-verified releases. The newer workspace
+upgrade has a separate [verified release record](workspace-release.md). Dedicated
 session storage, protected production settings and evaluation accounts are configured
 with specific owner approval. See [hosted release evidence](hosted-release.md).
 Use [Frontend CI](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml)
