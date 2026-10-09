@@ -6,7 +6,7 @@ explicitly requested. Public browsing, authentication and customer requests are 
 The user has now authorized admin review/dispatch and technician execution/customer
 work tracking. Invoice details, checkout/payment inspection, customer feedback,
 admin reporting, catalog management, confirmed user access changes and read-only
-audit browsing are implemented. Technician skills remain a later slice. The
+audit browsing are implemented. Technician skills and verified Contact channels are implemented. The
 gateway browser-return transport now has a narrowly authorized backend exception
 for payment callback/configuration changes and real sandbox verification. Do not
 expand that exception to other backend features without a request. The user later

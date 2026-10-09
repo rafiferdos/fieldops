@@ -1,6 +1,6 @@
 # Route, role and API plan
 
-Reviewed October 8, 2026. This is the first planning checkpoint after initialization.
+Reviewed October 9, 2026. This plan includes the authorized skills and Contact delivery slices.
 The tables specify the target implementation; they do not imply every page is shipped.
 See [implementation status](implementation-status.md) for completed slices and limits.
 
@@ -14,15 +14,15 @@ See [implementation status](implementation-status.md) for completed slices and l
 - [Implemented backend contract](https://app.notion.com/p/3f34ab5df14481afa4acc3e9a092b940)
   defines the actual supported operations. Local backend controllers, schemas,
   services and the Postman collection were inspected read-only to resolve details.
-- The inventory covers **26 core route templates and 2 payment-return
-  templates**, and all **38 domain APIs plus 2 health endpoints**. A route template
+- The inventory covers **27 core route templates and 2 payment-return
+  templates**, and all **39 domain APIs plus 2 health endpoints**. A route template
   counts once regardless of its record count. Planned pages do not count toward
   submission until functional and verified. Informational pages require useful,
   accurate content; no empty pages will be added to inflate the count.
 
 The later [payment-return checkpoint](payment-return-plan.md) adds a dedicated
-provider browser transport while retaining the 38 domain API inventory below.
-It is locally sandbox-verified and awaits a separately authorized hosted update.
+provider browser transport while retaining JSON/IPN routes. The current-skills extension adds E39 below.
+It is locally sandbox-verified and awaits the authorized hosted rollout and HTTPS verification.
 
 See [screen flows](screen-flows.md) for interaction, layout and acceptance rules.
 
@@ -61,7 +61,7 @@ backend endpoints. All dynamic IDs must be parsed before a backend call.
 | P03 | `/services`                             | Public                  | Search, sort and paginate active services                                                 | E08                                      |
 | P04 | `/services/[serviceId]`                 | Public                  | Read service details and base price; customer request CTA                                 | E09                                      |
 | P05 | `/faq`                                  | Public                  | Explain scheduling, cancellation, invoice and payment rules                               | None; contract-based content             |
-| P06 | `/contact`                              | Public                  | Publish verified support channels and help navigation                                     | None; verified contact content required  |
+| P06 | `/contact`                              | Public                  | Publish verified support channels and help navigation                                     | None; owner-approved email and phone     |
 | A01 | `/login`                                | Public                  | Email/password, verified Google login and three demo account buttons                      | E02, E03                                 |
 | A02 | `/register`                             | Public                  | Customer registration; then explicit login                                                | E01                                      |
 | S01 | `/account`                              | All three roles         | Read own account; edit name/phone; sign out                                               | E05, E06, E07                            |
@@ -79,7 +79,7 @@ backend endpoints. All dynamic IDs must be parsed before a backend call.
 | D04 | `/admin/requests/[requestId]`           | ADMIN                   | Review, reject, cancel; find qualified available technician and assign                    | E15, E17, E18, E20, E21                  |
 | D05 | `/admin/work-orders`                    | ADMIN                   | Global work list and dispatch follow-up                                                   | E22                                      |
 | D06 | `/admin/work-orders/[workOrderId]`      | ADMIN                   | Work timeline; eligible reschedule; invoice read and payment link when ID is known        | E23, E24, E27                            |
-| D07 | `/admin/users`                          | ADMIN                   | Filter users; change role/status; conditional complete skill replacement                  | E35, E38, E19                            |
+| D07 | `/admin/users`                          | ADMIN                   | Filter users; change role/status; read and confirmed complete skill replacement           | E35, E38, E39, E19                       |
 | D08 | `/admin/audit-logs`                     | ADMIN                   | Paginated audit inspection with supported filters                                         | E36                                      |
 | M01 | `/payments/[paymentId]`                 | CUSTOMER owner or ADMIN | Read verified attempt state; return to invoice/work context                               | E29, E27                                 |
 | M02 | `/payment/success`                      | CUSTOMER owner or ADMIN | Resolve known attempt and show verified/pending/review state                              | E29, E27; verified 303 browser transport |
@@ -90,7 +90,7 @@ availability editor, password reset, user creation or deleted-service browser is
 present in the current backend. Do not invent these screens, writes or totals.
 Payment history cannot be fabricated from a missing list API. M01 needs a known
 payment ID, captured from checkout or a supported response; it is not a history page.
-The setup home page will be replaced when P01 is implemented.
+Public process and catalog preview are implemented.
 
 ## Endpoint coverage
 
@@ -121,7 +121,7 @@ browser must never post callbacks to manufacture a payment outcome.
 | E16 | PATCH  | `/requests/:id`                 | CUSTOMER owner; PENDING; latest request version                               |
 | E17 | PATCH  | `/requests/:id/review`          | ADMIN; PENDING; version, APPROVE/REJECT and required rejection reason         |
 | E18 | POST   | `/requests/:id/cancel`          | CUSTOMER owner / ADMIN; request version and reason; unstarted work only       |
-| E19 | PUT    | `/technicians/:id/skills`       | ADMIN; replace entire serviceIds set; current-skill read gap                  |
+| E19 | PUT    | `/technicians/:id/skills`       | ADMIN; complete replacement; inspected expectedServiceIds precondition        |
 | E20 | GET    | `/technicians`                  | ADMIN; active, qualified, available technicians for a visit window            |
 | E21 | POST   | `/requests/:id/assignment`      | ADMIN; approved, unassigned request; technicianId/start/end; no version input |
 | E22 | GET    | `/work-orders`                  | All roles; backend scopes own / assigned / all                                |
@@ -141,6 +141,8 @@ browser must never post callbacks to manufacture a payment outcome.
 | E36 | GET    | `/admin/audit-logs`             | ADMIN; paginated filtered audit trail                                         |
 | E37 | GET    | `/admin/overview`               | ADMIN; period aggregates, current technician counts                           |
 | E38 | PATCH  | `/admin/users/:id`              | ADMIN; role/status; backend protects last active admin and active assignments |
+
+| E39 | GET | `/technicians/:id/skills` | ADMIN; consistent current set and retained retired-service identities |
 
 ## URL and data boundaries
 
@@ -203,8 +205,8 @@ Do not create empty module trees or a generic endpoint/CRUD framework now.
 5. Implement admin review, qualified dispatch and conflict recovery.
 6. Implement technician progress/completion and customer work tracking.
 7. Resolve payment-return transport; implement invoice, checkout/recovery and feedback.
-8. Implement admin reporting, catalog/user management and audit inspection; resolve skills read gap before a prefilled skill editor.
-9. Complete meaningful browser/integration tests, responsive/accessibility checks and deployment readiness; deploy only on request.
+8. Implement admin reporting, catalog/user management and audit inspection; inspect actual skills before a confirmed replacement.
+9. Complete meaningful browser/integration tests, responsive/accessibility checks and deployment readiness; use the authorized, CI-gated release process.
 10. Prepare actual demo credentials, documentation and 5–10 minute walkthrough; maintain at least 20 meaningful frontend commits without padding history.
 
 Each implemented slice must pass checks/build and include its real API and failure

@@ -1,19 +1,22 @@
 # Implementation status
 
-Reviewed October 9, 2026. This checkpoint implements roadmap steps 2–6 and five
-billing/administration slices from steps 7–8, followed by user access and audit browsing.
-Automatic browser return and real sandbox cancellation/retry/settlement/paid-feedback
-verification are now implemented under the explicitly authorized payment-only backend
-exception. The hosted API has not been updated. No push or deployment was performed. Verification creates
-only disposable accounts and requests, cancels eligible unstarted requests, and
-retains rejected/completed records and unpaid invoices because no deletion API exists.
-Demo credentials remain local-only and were used with explicit permission.
+Reviewed October 9, 2026. Product slices now include safe technician skills and
+owner-verified Contact channels. The owner authorized the remaining delivery stages,
+including limited backend skills/payment changes, QA, publishing and submission
+artifacts. Backend revision f6e9670 is pushed and its GitHub CI passed; the hosted
+backend still awaits rollout. Protected frontend hosting configuration is pending owner approval.
+Use [Frontend CI](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml)
+to inspect the exact source revision before release.
+
+Verification uses dedicated disposable accounts and work. Eligible unstarted test
+requests are cancelled; completed work, invoices and audit records remain. Secrets
+stay in ignored local files or approved protected host configuration.
 
 ## Delivered routes and workflows
 
 | Area           | Routes                                                                  | Implemented behavior                                                                              |
 | -------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Public         | `/`, `/about`, `/faq`                                                   | Responsive preset shell, real catalog preview, process/FAQ, theme and accessible mobile Sheet     |
+| Public         | `/`, `/about`, `/faq`, `/contact`                                       | Responsive shell, real catalog preview, process/FAQ, verified support and mobile Sheet            |
 | Catalog        | `/services`, `/services/[serviceId]`                                    | Real search/sort/pagination URL state, empty/error/missing states and validated request entry     |
 | Authentication | `/login`, `/register`                                                   | Customer registration, password/demo login, role destinations and configurable Google integration |
 | Account        | `/account`                                                              | Current backend-verified profile, own name/phone update and logout                                |
@@ -29,12 +32,12 @@ Demo credentials remain local-only and were used with explicit permission.
 | User access    | `/admin/users`                                                          | Safe directory filters, confirmed role/status edits, stale/uncertain blocking and self sign-out   |
 | Audit history  | `/admin/audit-logs`                                                     | Exact filters, paired Dhaka period, newest-first pagination and safe metadata disclosure          |
 
-There are 28 route templates, including two authenticated payment returns, and 33 domain API
-operations bound in production code. Route count is not a claim of full assignment
-compliance: technician skills, contact content and delivery remain incomplete.
-Hosted HTTPS payment return/IPN verification remains part of delivery. Google login is
-configuration-dependent. Refresh concurrency tests use real Redis with a stubbed
-HTTP rotation response, not live Google or backend replay validation.
+There are 29 route templates, including two authenticated payment returns, and 35
+domain API operations bound in production code. The backend has 39 domain APIs,
+two health endpoints and one additional browser-return route template. This count
+excludes framework utility routes and does not establish delivery completion.
+Hosted HTTPS returns/IPN, production Redis/configuration and delivery artifacts
+remain release gates. Local real Google OAuth now passes with the existing client.
 
 ## Session design
 
@@ -190,90 +193,51 @@ Public FAQ uses original editorial image cards with accessible in-card disclosur
 
 ## Verification and remaining limits
 
-- `npm run check`: formatting, typed lint, generated route types, TypeScript and
-  161 ordinary tests. Six real-Redis tests require SESSION_TEST_REDIS_URL.
-- All 167 checks pass with the dedicated frontend Redis. They cover session concurrency/integrity,
-  role return paths, scheduling bounds, strict write schemas, legal transitions,
-  timezone conversion, cancellation, encrypted intent reservation, payment evidence,
-  feedback eligibility, report periods, exact BDT arithmetic, access schemas and safe audit projection.
-- `npm run build -- --webpack`: production build passes. Default Turbopack was
-  previously blocked by this execution environment's port restriction; its default
-  command is preserved. Hosted CI has not run because no push occurred.
-- The Chromium suite has sixteen real-API workflows, six design scenarios and six
-  presentation/component scenarios. Coverage includes no-JavaScript homepage/process,
-  reduced motion and cleanup, keyboard FAQ, password visibility, 320–1440px
-  public/auth layouts, theme contrast, stable animated word geometry, CSS frost and
-  styled Select keyboard/form behavior. Demo queues verify readable status labels in both themes.
-- At the earlier billing/catalog checkpoint, the full Chromium run passed 23 scenarios. The overview
-  scenario then passed separately after its alert locator was scoped to main content
-  instead of also matching Next.js's route announcer. All 24 scenarios have passing
-  results; production application code was identical across those runs. The three
-  access/audit scenarios are verified separately against the expanded production build.
-  All three pass: self-change in the initial run, the other two in a focused rerun
-  after test-only locator/URL assertion corrections. Application code was unchanged.
-  Retries are disabled; no single 28-scenario run is implied. The new real sandbox
-  scenario and existing checkout-recovery regression each pass in focused runs
-  against the updated local production frontend/backend.
-- Operational coverage against the hosted API and production frontend includes:
-  catalog/mobile/auth/customer flows, plus stale review, qualified dispatch,
-  competing-slot rejection, price-preserving reschedule, progress, stale technician
-  recovery, completion, customer tracking and foreign-record privacy.
-- One browser scenario deliberately drops a real completion response after the
-  backend commits. It confirms the report is retained, only one completion call was
-  made, and explicit inspection discovers the actual invoice. A separate intentional
-  identical API replay returns that same invoice. Business data is not mocked.
-- A real checkout response is deliberately lost after initiation. Reload restores
-  encrypted billing and explicit recovery returns the same payment ID. The real
-  sandbox page opens; a fabricated success query cannot change its pending state.
-  Another customer receives 404 for both invoice and payment. This regression passes
-  again against the updated local backend. A separate actual provider UI scenario
-  cancels checkout, explicitly creates a different attempt, uses the official dummy
-  card/OTP to settle it, and submits feedback on the freshly paid work. It drops only
-  the real feedback response, blocks replay, discovers the saved review through
-  inspection and verifies reload. Signed-out return preserves payment identity, an
-  injected status cannot alter verified state, old-attempt navigation cannot reopen
-  checkout, and the payment screen fits 320px. Business data/provider I/O are real.
-- These sandbox checks use the production frontend on localhost:3002 and an updated
-  local Nest backend with a separate fieldops_payment_test database, synthetic
-  accounts/billing and real sandbox credentials retained only in backend settings.
-  Stored proof independently confirms two attempts (CANCELLED/SUCCEEDED), one safe
-  receipt, one settlement/invoice-paid event and one feedback/audit, with matching
-  frozen amounts and settlement timestamps. No live charge or existing work mutation.
-- The actual cancellation shape is merchant CANCELLED plus session FAILED without
-  currency. Closing requires stored merchant/session identity, equal gross/original
-  amounts and BDT original currency; a supplied settlement currency must also be BDT.
-  Merchant cancellation alone cannot close an open session. Seven additional adapter
-  checks cover this shape and incomplete/mismatched evidence. Backend strict checks,
-  build, 129 unit tests, 89 payment/feedback database tests and offline API docs pass.
-  Gateway HTTP is replaced only in those database tests, not the browser scenario.
-- The new browser transport was not deployed. Loopback cannot receive server IPN;
-  hosted HTTPS return/IPN, real fail/risk UI and live-mode funds are not claimed
-  verified by this checkpoint. Already-created hosted sessions keep their JSON returns.
-- Catalog verification creates only a unique disposable service, edits its exact
-  decimal price, rejects a stale second tab even after reopening its Sheet, and
-  confirms soft deletion removes its public detail. It does not mutate existing services.
-- Access checks lose one real suspension response, verify original access/refresh
-  revocation and rejected login, block a stale second tab, then reactivate and verify
-  fresh login. A role change revokes that fresh session. The resulting real audit
-  events, metadata and pagination are inspected. A separate disposable self-demotion
-  clears the frontend cookie and requires a new customer login. Shared demo access
-  is unchanged and fixtures restore their own accounts to ACTIVE CUSTOMER.
-- Administrative read checks cover invalid criteria, preserved incomplete periods,
-  empty future audit history, filter/page URL state, wrong-role redirects and
-  320–1440px layout fit in light/dark presentation. The backend last-admin/active-work
-  guards are retained, not tested by changing existing operational users.
-- Opted-in browser groups wait for a fresh authentication window to respect the
-  backend's ten-logins-per-minute limit; throttling is not disabled or bypassed.
-- The hosted connection can time out. Test writes have no automatic retries; inspect
-  uncertain outcomes. Tests do not progress or complete pre-existing work fixtures.
-- Real Google OAuth still needs configured authorized origins/client ID and a human
-  account. Refresh HTTP behavior is stubbed in focused Redis tests; browsers do not
-  wait 15 minutes to exercise actual backend refresh replay or distributed failover.
-- Firefox public presentation, keyboard/control and responsive smoke checks pass.
-  WebKit cannot launch because host system libraries are missing. Production HTTPS
-  cookies, actual Safari/mobile hardware and a complete accessibility audit remain
-  deployment/review verification. No claim of these checks is made.
+- Frontend strict checks pass: formatting, typed lint, generated route types,
+  TypeScript and 170 tests (164 ordinary plus six real-Redis checks). Redis refresh
+  coordination uses a stubbed HTTP rotation response; it is not live backend replay.
+- Both default Turbopack and webpack production builds pass locally.
+- Backend checks, build, API docs, 129 unit tests and 472 database integration tests
+  pass. Current pushed revision f6e9670 also passed [GitHub CI](https://github.com/rafiferdos/fieldops-api/actions/runs/37898892822).
+- The current Chromium source contains 34 scenarios, including three axe scenarios,
+  actual skills replacement and metadata verification. A complete 33-scenario run
+  passed 32; its metadata check detected different build/runtime test origins.
+  The final build passed the 15 design/accessibility checks and the corrected
+  metadata check separately (all 16 passing). Normal-motion text contrast passes
+  in both themes. The metadata test also waits for actual detail navigation before
+  reading its identity. No new application change was required for that test race.
+  Retries remain disabled; no passing 34-scenario full run is claimed.
+- Real browser flows cover catalog, registration, roles, ownership, request edits,
+  dispatch collisions, stale review, reschedule, completion, immutable invoices,
+  encrypted checkout recovery, feedback, administrative access/audit and skill CAS.
+  Losing committed completion/checkout/feedback/access/skills responses blocks
+  automatic replay and requires inspection. These writes use actual backend data.
+- The real provider sandbox cancellation/replacement/settlement/paid-feedback
+  scenario passes in that full run. Synthetic card/OTP data is used, with no live
+  funds. One cancelled and one successful attempt retain matching frozen money and
+  one settlement/invoice-paid result. Browser returns are loopback; provider server
+  IPN and production HTTPS remain separate checks after deployment.
+- Actual Google Identity Services sign-in passes on localhost:3001 with the existing
+  backend audience. The owner-approved Vercel origin is saved and survives reload.
+  Production Google sign-in awaits the deployed frontend.
+- Axe scans use WCAG A/AA tags, both themes and no rule exclusions. Reduced-motion
+  public pages and all three role workspaces pass. Normal-motion contrast receives
+  its own regression check. These scans complement keyboard/layout tests; they do
+  not replace human screen-reader and device review.
+- Lighthouse 13.5 local webpack production-build lab measurements: mobile 92/100/100/100 and desktop
+  99/100/100/100 (performance/accessibility/best practices/SEO). Mobile LCP is 3.3s,
+  TBT 40ms and CLS 0; desktop LCP 0.9s, TBT 0ms and CLS 0. Removing opacity from
+  unentered process text fixed the measured desktop contrast finding. Accurate
+  image candidates removed the desktop image-delivery warning. These are individual
+  lab runs on the production build, not field evidence or hardware guarantees.
+- Firefox public/control smoke checks previously pass. WebKit cannot launch because
+  host libraries are missing. Actual Safari/mobile hardware, live-mode money,
+  distributed failover and long-running token-expiry replay are not claimed.
+- Runtime dependency audit reports zero findings. Nine development/build findings
+  through braces have no compatible patched release; no forced downgrade is applied.
 
-The current-skill read gap remains. Payment return transport is implemented and
-locally sandbox-verified; deployed HTTPS verification waits for deployment authorization.
-No unsupported contact channel, technician earnings or operational report was invented.
+See [skills, support and delivery](skills-support-delivery.md) for current contracts,
+metadata/contrast decisions and release gates. The actual 6:19 walkthrough is recorded, with 23 English-captioned scenes and
+verified paid feedback. Its output is a local artifact outside Git. Hosted deployment,
+protected session configuration and HTTPS/IPN evidence remain pending specific
+hosting approvals. No external video upload or portal submission is claimed.

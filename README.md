@@ -9,8 +9,9 @@ detail, edit and cancellation; admin review, qualified dispatch and rescheduling
 technician progress/completion and role-scoped work tracking; immutable invoices,
 durable checkout recovery, verified payment inspection, eligible customer feedback,
 period reporting, administrative service catalog management, confirmed user access
-changes and filtered audit-history inspection.
-The backend is a separate repository and has not been modified.
+changes, filtered audit-history inspection, safe complete technician-skill editing
+and owner-verified Contact channels. The separate backend has a limited, explicitly
+authorized skills/payment delivery extension; its models and migrations are unchanged.
 
 ## Project guide
 
@@ -24,12 +25,16 @@ The backend is a separate repository and has not been modified.
 - [Billing, reporting and catalog boundaries](docs/billing-admin-plan.md)
 - [User access, session revocation and audit boundaries](docs/access-audit-plan.md)
 - [Payment return transport and sandbox verification](docs/payment-return-plan.md)
+- [Skills, support, accessibility and release gates](docs/skills-support-delivery.md)
+- [Manual deployment and protected configuration](docs/deployment-runbook.md)
+- [Actual 6:19 walkthrough recording](docs/walkthrough-recording.md)
+- [Submission pack and delivery status](docs/submission-pack.md)
 
-Twenty-eight route templates exist, including two payment-return pages that read
-actual owned payment/invoice state. The narrowly authorized backend browser-return
-transport is implemented; the hosted API still needs a separately authorized update.
-Route count alone does not establish assignment completion. Technician skills, verified contact content and delivery
-remain incomplete. The route plan maps all 38 backend domain APIs and two health endpoints.
+Twenty-nine route templates exist, including verified support and two payment-return
+pages that read actual owned payment/invoice state. The route plan maps 39 backend
+domain APIs, two health endpoints and the browser-return transport. Hosting and
+submission evidence remain delivery gates; route count alone does not establish
+assignment completion.
 
 ## Run locally
 
@@ -84,21 +89,23 @@ npm run start
 ```
 
 `check` runs Prettier, typed ESLint, generated route types, TypeScript and Vitest.
-The ordinary suite has 156 tests. Enable six additional real-Redis concurrency
+The ordinary suite has 164 tests. Enable six additional real-Redis concurrency
 checks using the dedicated local store:
 
 ```bash
 SESSION_TEST_REDIS_URL=redis://127.0.0.1:6397 npm test
 ```
 
-CI installs from the lockfile and provisions a pinned Redis image for all 167 tests,
+CI installs from the lockfile and provisions a pinned Redis image for all 170 tests,
 checks and build. Official GitHub actions use immutable revisions. CI does not
-deploy. A hosted CI run has not occurred because this repository has not been pushed.
+deploy. The current release revision must pass hosted CI before deployment. Backend revision
+f6e9670 has passed its GitHub CI. Inspect the selected frontend revision in
+[Frontend CI](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml)
+before release.
 
-The supported `npm run build -- --webpack` production build passes locally.
-Default Turbopack was blocked by this execution environment's port restriction;
-the default build command is preserved. For the same restricted environment, use
-`npm run dev -- --webpack` for development.
+Both the default `npm run build` (Turbopack) and `npm run build -- --webpack`
+production builds pass locally. Earlier sandbox port restrictions required the
+webpack fallback; the final default build also passes with permitted loopback access.
 
 Browser tests require a running frontend and real backend, plus matching Chromium:
 
@@ -136,26 +143,25 @@ do not replace `.env.local`; gateway secrets remain in backend configuration.
 Loopback browser returns are verified; provider server IPN and deployed HTTPS
 returns need a separate deployment check.
 
-The unit/integration suite contains 167 checks. The Chromium suite contains 28 scenarios:
-sixteen real-API workflows, six design scenarios and six presentation/component scenarios. It covers
-no-JavaScript public content, reduced motion and cleanup, keyboard disclosures,
-password visibility, 320–1440px layouts, theme contrast, stable animated word geometry,
-CSS frost and styled Select submission. Dispatch coverage includes stale review, competing
-assignment and price-preserving reschedule. Execution commits a real completion,
-deliberately loses its browser response, preserves the report and explicitly reads
-the result without automatic replay. A separate identical backend completion replay
-returns the same invoice. The earlier 24-scenario checkpoint passed (23 in the full run
-and the corrected read-only overview scenario in a focused rerun). Three additional
-scenarios cover newly created disposable users, actual revocation/reactivation,
-stale and lost access responses, self-change sign-out and real audit inspection. See
-[current verification](docs/implementation-status.md) and the
-[design checkpoint](docs/design-refinement.md).
+The frontend suite contains 170 checks and the current Chromium source has 34
+scenarios. The full 33-scenario checkpoint passed 32; metadata detected a mismatched
+build/runtime test origin. The final build passes all 15 design/accessibility checks plus the corrected
+metadata check in a focused rerun. No single passing 34-scenario run is claimed. Actual
+skills, access, scheduling, completion, checkout recovery and sandbox payment flows
+use real disposable backend records. Automated WCAG scans cover both themes, including normal scroll motion.
+Final local Lighthouse lab scores are mobile 92/100/100/100 and desktop
+99/100/100/100; both report CLS 0. These are lab samples, not field guarantees.
+See [current verification](docs/implementation-status.md) for exact results/limits.
 
-Real Redis is used for refresh coordination; its backend HTTP rotation response is
-stubbed. Firefox public presentation/control smoke checks pass. WebKit cannot launch
-on this host because required system libraries are missing. Real Google OAuth,
-backend replay after token expiry, distributed failover, actual Safari/mobile
-hardware and deployment HTTPS behavior are not claimed as verified.
+Real Google OAuth passes locally with the existing backend client. Production
+origin is saved but hosted sign-in awaits deployment. Redis coordination tests use
+real Redis with a stubbed HTTP rotation response. Actual Safari/mobile hardware,
+distributed failover and hosted HTTPS/IPN are separate checks.
+
+The intended Vercel project is `fieldops-rafiferdos` in Singapore. Its verified
+assigned domain is not yet a deployed website. `vercel.json` disables automatic Git
+deployments so manual release follows CI and protected configuration. APP_ORIGIN
+must match at build and runtime; rebuild when changing it.
 
 ## Architecture and engineering rules
 
@@ -175,7 +181,8 @@ src/
     work-orders/               # Scoped queues, tracking, progress, completion and recovery
     billing/                   # Frozen invoices, encrypted checkout intents and verified payment state
     feedback/                  # One-time eligible reviews and explicit outcome inspection
-    admin/                     # Overview/reporting, managed access and read-only audit history
+    admin/                     # Reporting, managed access/skills and read-only audit
+    support/                   # Owner-verified support channels
   shared/
     ui/                        # Official shadcn primitives
     components/                # Reused presentation and layout pieces
@@ -184,6 +191,7 @@ src/
   infrastructure/
     api/                       # Server-only fetch, validated envelopes and safe errors
     env/                       # Lazy, server-only configuration validation
+    seo/                       # Shared public metadata policy
     session/                   # Redis coordination, authenticated encryption and origin checks
 ```
 
@@ -194,7 +202,7 @@ client boundaries handle interactive forms, navigation and dialogs. React Hook F
 and Zod validate client input again at the explicit server boundary. External data
 is parsed; there is no any, unsafe cast, ignored type error or unrestricted API proxy.
 
-Preserve the exact preset: Base UI Rhea, zinc/emerald semantic tokens, Outfit headings,
+Preserve the preset structure (secondary-text lightness is adjusted for WCAG contrast): Base UI Rhea, zinc/emerald semantic tokens, Outfit headings,
 Geist body and supported light/dark themes. Use installed shadcn controls, including
 Select, Card, Collapsible, NavigationMenu, Empty, Pagination, Separator, Sheet,
 AlertDialog and Toast. Navigation uses shadcn button variants with native link semantics. Do not use browser alert/confirm. Add a
@@ -254,15 +262,15 @@ Exactly CUSTOMER, TECHNICIAN and ADMIN are supported. The explicit 18-page rule
 takes precedence over the conflicting 15-page heading. Delivery also requires real
 APIs, three demo logins, validated forms, supported test-mode payments, at least 20
 meaningful frontend commits, live URL/demo credentials and a 5–10 minute walkthrough.
-Those delivery requirements remain incomplete.
+Hosted verification and delivery artifacts are still being completed.
 
 The backend retains JSON/IPN callbacks and adds a no-store 303 browser transport.
 An expired frontend session preserves the attempt through login. Invalid or forged
 return queries cannot establish payment success. See the payment-return plan for
 verification and deployment limits.
-There is no current-skill read API, so do not silently overwrite unknown skills with
-an empty prefilled editor. No contact channel, public review feed, earnings report
-or unsupported write endpoint has been invented.
+The authorized current-skill read and atomic expected-set comparison prevent silent
+overwrite. Contact uses only owner-approved channels. No public review feed, earnings
+report or unsupported write endpoint has been invented.
 
 The [previously reviewed resume assessment](https://app.notion.com/p/3f14ab5df14481b9bdccd1349fd83a18)
 lists React/Next.js, TypeScript, Docker and CI/CD as existing skills. RHF/Zod,
