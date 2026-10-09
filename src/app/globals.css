@@ -218,8 +218,11 @@
     --workspace-left: 0px;
     --workspace-edge: 0px;
   }
-  .workspace-scroll-content {
+  .workspace-scroll-surface {
     min-height: calc(100svh - var(--workspace-edge) * 2);
+  }
+  [data-workspace-scroll][data-scroll-mode="smooth"] .workspace-scroll-surface {
+    @apply rounded-2xl bg-background shadow-sm;
   }
   /* The global smooth viewport reserves the same space as the supported sidebar layout. */
   [data-workspace-scroll][data-scroll-mode="smooth"] .workspace-scroll-content {
@@ -231,6 +234,15 @@
   .public-scroll-content {
     width: 100%;
     overflow: visible;
+  }
+}
+
+@layer utilities {
+  /* Override the inset utilities only while its smoother leaves the parent one viewport tall. */
+  .workspace-shell:has([data-workspace-scroll][data-scroll-mode="smooth"])
+    > [data-slot="sidebar-inset"] {
+    background: transparent;
+    box-shadow: none;
   }
 }
 

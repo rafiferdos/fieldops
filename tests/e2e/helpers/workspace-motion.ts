@@ -7,6 +7,20 @@ export async function verifyWorkspaceMotion(page: Page, responsive: boolean) {
   const header = page.locator(".workspace-header")
   await expect(wrapper).toHaveAttribute("data-scroll-mode", "smooth")
   await expect(wrapper).toHaveCSS("position", "fixed")
+  const surface = page.locator(".workspace-scroll-surface")
+  // The reading surface must extend below the viewport, without a false panel-ending shadow.
+  await expect(page.locator('[data-slot="sidebar-inset"]')).toHaveCSS(
+    "box-shadow",
+    "none"
+  )
+  await expect
+    .poll(async () => {
+      const bounds = await surface.boundingBox()
+      return bounds
+        ? bounds.height - (await page.evaluate(() => window.innerHeight))
+        : 0
+    })
+    .toBeGreaterThan(100)
   const initial = await header.boundingBox()
   if (!initial) throw new Error("The workspace header must be visible")
   await page.mouse.wheel(0, 480)
@@ -28,6 +42,17 @@ export async function verifyWorkspaceMotion(page: Page, responsive: boolean) {
   await expect(
     page.getByRole("link", { name: "All visits", exact: true })
   ).toBeInViewport()
+  await expect
+    .poll(async () => {
+      const panel = await surface.boundingBox()
+      const lastLink = await page
+        .getByRole("link", { name: "All visits", exact: true })
+        .boundingBox()
+      return panel && lastLink
+        ? panel.y + panel.height - lastLink.y - lastLink.height
+        : -1
+    })
+    .toBeGreaterThanOrEqual(0)
   await page.getByRole("button", { name: "Toggle workspace sidebar" }).click()
   await expect
     .poll(async () => (await header.boundingBox())?.x)

@@ -35,7 +35,10 @@ export function WorkspaceMotion({ children }: { children: ReactNode }) {
   return (
     <div ref={wrapper} data-workspace-scroll="">
       <div ref={content} className="workspace-scroll-content">
-        <SurfaceMotion>{children}</SurfaceMotion>
+        {/* The inset skin follows actual content height, never the fixed scroll viewport. */}
+        <div className="workspace-scroll-surface">
+          <SurfaceMotion>{children}</SurfaceMotion>
+        </div>
       </div>
     </div>
   )
