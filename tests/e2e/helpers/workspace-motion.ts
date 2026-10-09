@@ -110,7 +110,7 @@ export async function verifyWorkspaceMotion(page: Page, responsive: boolean) {
 
 // Portalled confirmations keep the native page locked and stay outside the transformed surface.
 export async function verifyWorkspaceDialogLock(page: Page) {
-  const dialog = page.getByRole("alertdialog", {
+  const dialog = page.getByRole("dialog", {
     name: "Sign out of FieldOps?",
   })
   await expect(dialog).toBeInViewport()

@@ -1,18 +1,18 @@
 "use client"
 
-import { useState, type RefObject } from "react"
-import { LogOut } from "lucide-react"
+import { useRef, useState, type RefObject } from "react"
+import { LogOut, X } from "lucide-react"
 import { Button } from "@/shared/ui/button"
+import { HoldButton } from "@/shared/components/react-bits/hold-button"
 import { FormMessage } from "@/shared/components/form-message"
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-} from "@/shared/ui/alert-dialog"
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/shared/ui/dialog"
 import { signOut } from "../actions"
 
 export function SignOutDialog({
@@ -26,6 +26,7 @@ export function SignOutDialog({
 }) {
   const [pending, setPending] = useState(false)
   const [message, setMessage] = useState<string>()
+  const cancel = useRef<HTMLButtonElement>(null)
   async function submit() {
     if (pending) return
     setPending(true)
@@ -44,7 +45,7 @@ export function SignOutDialog({
     }
   }
   return (
-    <AlertDialog
+    <Dialog
       open={open}
       onOpenChange={(value) => {
         if (!pending) {
@@ -53,30 +54,49 @@ export function SignOutDialog({
         }
       }}
     >
-      <AlertDialogContent finalFocus={returnFocus}>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Sign out of FieldOps?</AlertDialogTitle>
-          <AlertDialogDescription>
+      <DialogContent
+        finalFocus={returnFocus}
+        initialFocus={cancel}
+        showCloseButton={false}
+      >
+        {/* The close control is the safe initial focus; hold is always an explicit gesture. */}
+        <DialogClose
+          disabled={pending}
+          render={
+            <Button
+              ref={cancel}
+              variant="ghost"
+              size="icon"
+              className="absolute top-3 right-3 size-11"
+              aria-label="Cancel sign out"
+            />
+          }
+        >
+          <X aria-hidden="true" />
+        </DialogClose>
+        <DialogHeader className="pr-9">
+          <DialogTitle>Sign out of FieldOps?</DialogTitle>
+          <DialogDescription>
             Your saved requests and visits will remain in your account. You will
             need to sign in again to access your workspace.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+          </DialogDescription>
+        </DialogHeader>
         <FormMessage message={message} />
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>
-            Stay signed in
-          </AlertDialogCancel>
-          <Button
+        <div className="space-y-3">
+          <HoldButton
+            ariaLabel={pending ? "Signing out…" : "Hold to logout"}
             disabled={pending}
-            onClick={() => {
+            onHold={() => {
               void submit()
             }}
           >
-            <LogOut aria-hidden="true" />
-            {pending ? "Signing out…" : "Confirm sign out"}
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+            <span className="hold-button__icon">
+              <LogOut aria-hidden="true" className="size-4" />
+            </span>
+            {pending ? "Signing out…" : "Hold to logout"}
+          </HoldButton>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }

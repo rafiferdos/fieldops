@@ -118,7 +118,30 @@ test.describe("live dashboard and account navigation", () => {
         .getByRole("menuitem", { name: "Sign out", exact: true })
         .click()
       await verifyWorkspaceDialogLock(page)
-      await page.getByRole("button", { name: "Stay signed in" }).click()
+      const hold = page.getByRole("button", {
+        name: "Hold to logout",
+        exact: true,
+      })
+      // A click and an interrupted key hold must never invoke the logout action.
+      await hold.click()
+      await expect(hold).toHaveAttribute("data-phase", "idle")
+      await hold.focus()
+      await page.keyboard.down("Space")
+      await expect(hold).toHaveAttribute("data-phase", "holding")
+      await page.keyboard.up("Space")
+      await expect(hold).toHaveAttribute("data-phase", "idle")
+      await expect(page).toHaveURL(new RegExp(`/${role.toLowerCase()}$`))
+      await expect(page.locator(".gradual-blur-page")).toHaveCount(0)
+      await page.getByRole("button", { name: "Cancel sign out" }).click()
+      const navigation = page.getByRole("navigation", {
+        name: "Workspace navigation",
+      })
+      const workLink = navigation.getByRole("link", {
+        name: role === "Technician" ? "Assigned visits" : "Work orders",
+        exact: true,
+      })
+      await expect(workLink).toHaveCSS("background-color", "rgba(0, 0, 0, 0)")
+      await expect(workLink).toHaveAttribute("href", /work-orders$/)
       await expect(
         page.getByRole("button", { name: "Open account menu" })
       ).toBeFocused()

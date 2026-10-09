@@ -7,10 +7,12 @@ export async function confirmSignOut(page: Page) {
     .click()
   await page.getByRole("menuitem", { name: "Sign out", exact: true }).click()
   await expect(
-    page.getByRole("alertdialog", { name: "Sign out of FieldOps?" })
+    page.getByRole("dialog", { name: "Sign out of FieldOps?" })
   ).toBeVisible()
-  await page
-    .getByRole("button", { name: "Confirm sign out", exact: true })
-    .click()
+  const hold = page.getByRole("button", { name: "Hold to logout", exact: true })
+  await hold.focus()
+  await page.keyboard.down("Space")
+  // Observe the resulting navigation while the real continuous key gesture completes.
   await expect(page).toHaveURL(/\/login$/)
+  await page.keyboard.up("Space")
 }

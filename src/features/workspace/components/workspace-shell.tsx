@@ -1,11 +1,16 @@
 "use client"
 
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { ReactNode } from "react"
-import { LifeBuoy, BookOpen } from "lucide-react"
+import { LifeBuoy, BookOpen, Menu } from "lucide-react"
 import { Brand } from "@/shared/components/brand"
 import { ThemeToggle } from "@/shared/components/theme-toggle"
+import { Button } from "@/shared/ui/button"
+import {
+  BranchedMenu,
+  type BranchLink,
+  type BranchGroup,
+} from "@/shared/components/react-bits/branched-menu"
 import { Badge } from "@/shared/ui/badge"
 import { TooltipProvider } from "@/shared/ui/tooltip"
 import {
@@ -13,13 +18,7 @@ import {
   Sidebar,
   SidebarHeader,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
   SidebarInset,
   SidebarTrigger,
   useSidebar,
@@ -31,13 +30,41 @@ import { workspaceLinks, isWorkspaceLinkActive } from "../navigation"
 import { useWorkspacePreference } from "./workspace-provider"
 import { WorkspaceMotion } from "./workspace-motion"
 
-// Supported shadcn links retain their width/padding transitions alongside pointer feedback.
-const sidebarLinkMotion =
-  "workspace-link transition-[width,height,padding,background-color,color,box-shadow]"
-
 function WorkspaceSidebar({ profile }: { profile: Profile }) {
   const pathname = usePathname()
-  const { setOpenMobile } = useSidebar()
+  const { setOpenMobile, setOpen } = useSidebar()
+  const links: BranchLink[] = workspaceLinks(profile.role).map((link) => ({
+    href: link.href,
+    label: link.label,
+    icon: <link.icon aria-hidden="true" />,
+    active: isWorkspaceLinkActive(pathname, link.href, profile.role),
+  }))
+  const home = links[0]
+  if (!home) throw new Error("Every workspace needs a home route")
+  const groups: BranchGroup[] = [
+    {
+      label: "Operations",
+      items: links.filter((link) => link !== home && link.href !== "/account"),
+    },
+    {
+      label: "Account & help",
+      items: [
+        ...links.filter((link) => link.href === "/account"),
+        {
+          href: "/services",
+          label: "Service catalog",
+          icon: <BookOpen aria-hidden="true" />,
+          active: false,
+        },
+        {
+          href: "/contact",
+          label: "Contact support",
+          icon: <LifeBuoy aria-hidden="true" />,
+          active: false,
+        },
+      ],
+    },
+  ]
   return (
     <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader className="px-4 py-5 group-data-[collapsible=icon]:px-2">
@@ -49,65 +76,25 @@ function WorkspaceSidebar({ profile }: { profile: Profile }) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Workspace</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <nav aria-label="Workspace navigation">
-              <SidebarMenu>
-                {workspaceLinks(profile.role).map((link) => {
-                  const active = isWorkspaceLinkActive(
-                    pathname,
-                    link.href,
-                    profile.role
-                  )
-                  return (
-                    <SidebarMenuItem key={link.href}>
-                      <SidebarMenuButton
-                        className={sidebarLinkMotion}
-                        render={<Link href={link.href} />}
-                        size="lg"
-                        tooltip={link.label}
-                        isActive={active}
-                        aria-current={active ? "page" : undefined}
-                        onClick={() => setOpenMobile(false)}
-                      >
-                        <link.icon aria-hidden="true" />
-                        <span>{link.label}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                })}
-              </SidebarMenu>
-            </nav>
-          </SidebarGroupContent>
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <BranchedMenu
+            home={home}
+            groups={groups}
+            pathname={pathname}
+            onNavigate={() => setOpenMobile(false)}
+          />
         </SidebarGroup>
+        {/* The compact rail reopens the full tree instead of duplicating its navigation. */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="mx-auto hidden size-11 group-data-[collapsible=icon]:flex"
+          aria-label="Expand workspace navigation"
+          onClick={() => setOpen(true)}
+        >
+          <Menu aria-hidden="true" />
+        </Button>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              className={sidebarLinkMotion}
-              render={<Link href="/services" />}
-              tooltip="Service catalog"
-              size="lg"
-            >
-              <BookOpen aria-hidden="true" />
-              <span>Service catalog</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              className={sidebarLinkMotion}
-              render={<Link href="/contact" />}
-              tooltip="Contact support"
-              size="lg"
-            >
-              <LifeBuoy aria-hidden="true" />
-              <span>Contact support</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   )
 }
