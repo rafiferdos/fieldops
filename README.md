@@ -1,87 +1,204 @@
-# FieldOps Frontend
+# FieldOps
 
-Programming Hero B7A7 frontend for Field Service Management (student ID ending in 7).
-Next.js App Router with strict TypeScript and the exact shadcn preset `b2w3Yl9Ygc`.
+**Less chasing. More handled.**
 
-Live website: [FieldOps](https://fieldops-rafiferdos.vercel.app).
-See [hosted release evidence](docs/hosted-release.md) for source revisions and checks.
+FieldOps is a field service management application that connects customers, technicians
+and administrators from request to resolution. Customers can follow a visit without
+chasing updates; technicians have an assigned-work queue; administrators can coordinate
+qualified availability and inspect the operational and financial record.
 
-Implemented: responsive public pages and real service browsing, secure server-owned
-sessions, registration/login/account management, and customer request list, wizard,
-detail, edit and cancellation; admin review, qualified dispatch and rescheduling;
-technician progress/completion and role-scoped work tracking; immutable invoices,
-durable checkout recovery, verified payment inspection, eligible customer feedback,
-period reporting, administrative service catalog management, confirmed user access
-changes, filtered audit-history inspection, safe complete technician-skill editing
-and owner-verified Contact channels. The separate backend has a limited, explicitly
-authorized skills/payment delivery extension; its models and migrations are unchanged.
+[Live application](https://fieldops-rafiferdos.vercel.app) ·
+[Frontend repository](https://github.com/rafiferdos/fieldops) ·
+[Backend repository](https://github.com/rafiferdos/fieldops-api) ·
+[Live API](https://fieldops-api-xu3s.onrender.com/api/v1) ·
+[API reference](https://github.com/rafiferdos/fieldops-api/blob/main/docs/api-guide.md)
 
-## Project guide
+[![Frontend CI](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml/badge.svg)](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml)
 
-- [Implementation status and verification limits](docs/implementation-status.md)
-- [Target route, role and API mapping](docs/route-plan.md)
-- [Screen flows and design handoff](docs/screen-flows.md)
-- [Design refinement and motion verification](docs/design-refinement.md)
-- [Hero motion, frosted navigation and component decisions](docs/optical-design.md)
-- [Original editorial imagery and generation prompts](docs/editorial-assets.md)
-- [Dispatch/execution plan and recovery rules](docs/dispatch-execution-plan.md)
-- [Billing, reporting and catalog boundaries](docs/billing-admin-plan.md)
-- [User access, session revocation and audit boundaries](docs/access-audit-plan.md)
-- [Payment return transport and sandbox verification](docs/payment-return-plan.md)
-- [Skills, support, accessibility and release gates](docs/skills-support-delivery.md)
-- [Manual deployment and protected configuration](docs/deployment-runbook.md)
-- [Actual 6:19 walkthrough recording](docs/walkthrough-recording.md)
-- [Submission pack and delivery status](docs/submission-pack.md)
+## The problem it solves
 
-Twenty-nine route templates exist, including verified support and two payment-return
-pages that read actual owned payment/invoice state. The route plan maps 39 backend
-domain APIs, two health endpoints and the browser-return transport. Hosting and
-submission results are recorded separately; route count alone does not establish
-assignment completion.
+Disconnected requests, technician schedules and payment records make service delivery
+hard to follow. A customer may not know whether a visit is confirmed, an administrator
+may dispatch an unavailable technician, and a changed catalog price can create an invoice
+dispute. FieldOps presents one traceable service workflow backed by explicit API rules.
+
+| Need                          | How FieldOps addresses it                                                      |
+| ----------------------------- | ------------------------------------------------------------------------------ |
+| Clear next steps              | Guided requests, review status, confirmed schedules and work timelines         |
+| Safe coordination             | Skill/window availability, ownership checks and conflict-aware dispatch        |
+| Accountable service delivery  | Technician progress, completion reports and retained history                   |
+| Trustworthy billing           | Frozen invoice amounts, recoverable checkout and server-verified payment state |
+| Useful operational visibility | Role-specific dashboards built from actual accessible records                  |
+| Controlled administration     | Confirmed access changes, safe skill editing and searchable audit history      |
+
+The application demonstrates these capabilities without claiming unmeasured business
+savings, adoption figures or fabricated dashboard trends.
+
+## Explore the product
+
+Public pages explain the workflow and expose the actual service catalog, with search,
+sorting, pagination, service details, FAQ and verified contact channels.
+
+| Workspace         | Main capabilities                                                                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Customer**      | Live request/visit dashboard; create, edit or cancel eligible owned requests; track work; inspect invoices; recover checkout; submit eligible feedback |
+| **Technician**    | Assigned-work dashboard; filtered visit queue; ordered progress; completion report and invoice outcome inspection                                      |
+| **Administrator** | Real workload/revenue reporting; review and dispatch; reschedule; catalog, account and skill management; audit browsing                                |
+
+Signing in opens the appropriate dashboard. The public navigation then shows an account
+avatar menu with dashboard, profile, settings and confirmed sign-out. The backend currently
+provides no profile-photo field, so avatars use the account's initials.
+
+### Demo access and real data
+
+The login page offers configured Customer, Technician and Admin demo buttons. They log in
+to dedicated accounts through the **real backend**; they do not switch to a mock dataset.
+A normal customer sees their own records, a technician sees assigned visits, and an
+administrator sees the permitted global dataset. New accounts legitimately start with
+empty dashboards. Retained sandbox verification records may appear in administrator views.
+
+Do not add sensitive information through shared demo accounts. Demo passwords and tokens
+are read on the server and are never embedded in client code or repository documentation.
+Payments use the real **SSLCommerz sandbox** integration; no live funds are transferred.
+
+## End-to-end workflow
+
+```mermaid
+flowchart LR
+  A[Browse services] --> B[Customer request]
+  B --> C[Administrator review and qualified dispatch]
+  C --> D[Technician visit and progress]
+  D --> E[Completion report and immutable invoice]
+  E --> F[Recoverable checkout and verified payment]
+  F --> G[Customer feedback]
+```
+
+Request/work versions protect eligible mutations. Unknown write outcomes are inspected
+before retrying. Checkout recovery retains its original idempotency key; a success-looking
+browser URL never marks an invoice paid. The backend remains authoritative for ownership,
+access, scheduling, invoice amounts and settlement.
+
+## Technology and engineering
+
+| Responsibility      | Technology and purpose                                                                   |
+| ------------------- | ---------------------------------------------------------------------------------------- |
+| Application         | Next.js 16 App Router, React 19 and strict TypeScript                                    |
+| UI                  | shadcn/ui with Base UI, Tailwind CSS 4, theme tokens and Lucide icons                    |
+| Server-state reads  | TanStack Query 5 for per-account hydrated dashboard caching and explicit refresh         |
+| Browser transport   | Axios for cancellable, validated same-origin dashboard reads                             |
+| Local UI preference | Zustand 5 for the sidebar preference only                                                |
+| Forms and contracts | React Hook Form and Zod boundary validation                                              |
+| Reporting           | Recharts with shadcn chart primitives, exact money formatting and accessible text counts |
+| Motion              | GSAP, responsive scroll choreography and reduced-motion support                          |
+| Sessions            | Server-only authenticated encryption and a dedicated Redis store                         |
+| Quality             | Vitest, Playwright, axe, typed ESLint, Prettier and GitHub Actions                       |
+| Delivery            | Vercel frontend, Render API and Neon PostgreSQL                                          |
+
+The component foundation uses the selected shadcn preset `b2w3Yl9Ygc`. Shared UI primitives
+remain the default for controls, cards, sidebars, menus, selects, dialogs and toast feedback.
+Geist supports operational reading; Outfit establishes the heading hierarchy.
+
+### Architecture
+
+```text
+src/
+  app/                    Route compositions and framework boundaries
+    (public)/             Marketing, support and real service catalog
+    (auth)/               Login and registration
+    (workspace)/          Protected dashboards, queues, details and account
+    api/workspace/        Authenticated same-origin dashboard read boundary
+  features/
+    auth/, account/       Identity, session policy and own profile
+    workspace/            Live metrics, charts, cache hooks and navigation
+    services/, requests/  Catalog and request workflows
+    dispatch/             Review, availability and scheduling
+    work-orders/          Tracking, progress and completion
+    billing/, feedback/   Frozen invoices, checkout recovery and reviews
+    admin/                Access, skills, report filters and audit browsing
+    marketing/, support/  Public content and verified contact channels
+  shared/                 Reusable shadcn UI, presentation and typed helpers
+  infrastructure/         API, query, environment, SEO and server session concerns
+tests/e2e/                Real-browser workflows and accessibility checks
+docs/                     Architecture, design and operational runbooks
+```
+
+Server Components own initial reads and route composition. Client boundaries own forms,
+menus, chart interaction and motion. Feature schemas, hooks and types live beside their
+related behavior; shared/infrastructure code does not depend on features.
+
+The browser calls a narrow, authenticated same-origin dashboard endpoint. Backend Bearer
+credentials stay on the server. Query clients are request/provider-owned, keys include
+account and role, and returned identity is checked before filling the cache. URL filters
+remain shareable; Zustand does not store authentication or backend records. Failed reads
+show an error rather than fake zeros; a failed refresh labels the last successful values.
+
+### Security and reliability
+
+- Backend tokens remain in an encrypted server session behind an opaque HttpOnly cookie.
+- Redis coordinates refresh rotation across instances; an unavailable session store fails closed.
+- Mutations validate their origin and input; backend authorization rechecks current account and ownership.
+- Private reads use no-store responses. Public metadata excludes private route indexing.
+- Financial amounts use integer minor units or exact decimal-string totals.
+- Gateway destinations are restricted; callbacks are inspected through owned backend payment state.
+- Version conflicts, revoked access and lost responses have explicit recovery paths.
+- Supported shadcn confirmation dialogs protect sign-out and consequential administrative actions.
 
 ## Run locally
 
-Use Node **24.21.0 LTS** and npm **11.19.0**. Versions and the lockfile are pinned.
-With the existing mise installation:
+Prerequisites: Node.js **24.21.0**, npm **11.19.0**, Docker with Compose, and Git.
+Use the committed lockfile for reproducible installs.
 
 ```bash
-cd /home/rafiferdos/dev/programming_hero/assignments/assignment7/fieldops
-mise exec node@24.21.0 -- npm ci
+git clone https://github.com/rafiferdos/fieldops.git
+cd fieldops
+nvm use
+npm ci
 cp .env.example .env.local
-docker compose up -d sessions
+docker compose up -d --wait sessions
 ```
 
-Generate the SESSION_ENCRYPTION_KEY once and save its output privately in `.env.local`:
+Generate an encryption key once and save its output privately as `SESSION_ENCRYPTION_KEY`:
 
 ```bash
-mise exec node@24.21.0 -- node -e "console.log(require('node:crypto').randomBytes(32).toString('base64'))"
+node -e "console.log(require('node:crypto').randomBytes(32).toString('base64'))"
 ```
 
-Set API_BASE_URL to the actual backend (`http://localhost:3000/api/v1` by default,
-or `https://fieldops-api-xu3s.onrender.com/api/v1`). APP_ORIGIN must exactly match
-the browser origin, without a trailing slash. Start the frontend:
+Set `API_BASE_URL` to `http://localhost:3000/api/v1` for a local
+[backend](https://github.com/rafiferdos/fieldops-api#run-locally), or to
+`https://fieldops-api-xu3s.onrender.com/api/v1` for the hosted API.
+Set `APP_ORIGIN=http://localhost:3001`, then start:
 
 ```bash
-mise exec node@24.21.0 -- npm run dev
+npm run dev
 ```
 
-Open http://localhost:3001. The frontend uses 3001 so the backend can use 3000.
-The local session store listens only on loopback port 6397 and is independent of
-the backend Redis service. Stop it with `docker compose down`; the volume persists.
-Do not regenerate the encryption key on each restart.
+Open [localhost:3001](http://localhost:3001). The API normally uses port 3000.
+The frontend session store binds to loopback port **6397**, independently of backend Redis.
+`docker compose down` stops it while preserving the volume. Keep the same encryption key
+across restarts and instances.
 
-Google login requires an optional public GOOGLE_CLIENT_ID matching the backend
-Google audience and authorized JavaScript origin. Its button is absent when not
-configured; no fake Google flow is offered. Optional DEMO_CUSTOMER/TECHNICIAN/ADMIN
-email/password variables enable server-side demo buttons. Use dedicated sandbox
-accounts; the backend determines their actual roles. No password/token belongs in
-NEXT_PUBLIC variables, client source, committed docs or screenshots.
+### Environment
 
-Production requires HTTPS APP_ORIGIN and a private authenticated TLS Redis URL.
-All application instances need the same encryption key and session store. A session
-store outage denies access; it does not grant access from a fallback cache.
+Use [.env.example](.env.example) as the complete template.
 
-## Verify
+| Variable                                               | Required behavior                                                                               |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `API_BASE_URL`                                         | Server-only versioned backend URL ending in `/api/v1`                                           |
+| `APP_ORIGIN`                                           | Exact frontend origin, without a path or trailing slash                                         |
+| `SESSION_REDIS_URL`                                    | Dedicated session store; authenticated TLS `rediss://` in production                            |
+| `SESSION_ENCRYPTION_KEY`                               | Private base64 key containing exactly 32 random bytes                                           |
+| `GOOGLE_CLIENT_ID`                                     | Optional public OAuth Web client ID matching the backend audience and authorized browser origin |
+| `DEMO_CUSTOMER_*`, `DEMO_TECHNICIAN_*`, `DEMO_ADMIN_*` | Optional private dedicated demo account email/password pairs                                    |
+
+Google uses the same existing Web client ID as the backend; another OAuth client is not
+required. Configure exact localhost/production JavaScript origins in Google Cloud. The
+provider's supported button handles account selection; the backend verifies its ID token.
+When optional Google/demo settings are absent, their controls are omitted.
+
+Never put session keys, demo passwords, tokens or merchant credentials in `NEXT_PUBLIC_*`.
+Gateway secrets belong exclusively in backend configuration.
+
+## Quality gates
 
 With Node 24 active:
 
@@ -91,214 +208,92 @@ npm run build
 npm run start
 ```
 
-`check` runs Prettier, typed ESLint, generated route types, TypeScript and Vitest.
-The ordinary suite has 164 tests. Enable six additional real-Redis concurrency
-checks using the dedicated local store:
+`check` runs formatting, generated route types, TypeScript, typed linting and Vitest.
+The ordinary suite currently has **179 checks**. Six additional real-Redis coordination
+checks run against a dedicated local store:
 
 ```bash
 SESSION_TEST_REDIS_URL=redis://127.0.0.1:6397 npm test
 ```
 
-CI installs from the lockfile and provisions a pinned Redis image for all 170 tests,
-checks and build. Official GitHub actions use immutable revisions. CI does not
-deploy. Every release revision must pass hosted CI before deployment. The deployed
-frontend and backend revisions have passed their exact-source CI. Inspect
-[Frontend CI](https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml)
-before release.
+CI installs from the lockfile, provisions Redis and runs all checks and the production build.
+Actions are pinned by immutable revisions; CI itself does not deploy.
 
-Both the default `npm run build` (Turbopack) and `npm run build -- --webpack`
-production builds pass locally. Earlier sandbox port restrictions required the
-webpack fallback; the final default build also passes with permitted loopback access.
+### Browser verification
 
-Browser tests require a running frontend and real backend, plus matching Chromium:
+Run the app and real API, then install Chromium and run read-only/validation scenarios:
 
 ```bash
 npx playwright install chromium
 npm run test:e2e
+```
+
+Configured sandbox accounts enable real disposable-record workflows:
+
+```bash
 E2E_DEMO_ACCOUNTS=1 E2E_LIVE_WRITES=1 npm run test:e2e
 ```
 
-The first command runs read-only/validation browser tests. The opt-in flags enable
-configured demo accounts and create a disposable customer/request, verify profile
-update and request edit/cancellation, then verify foreign-record privacy. The test
-eligible unstarted requests are cancelled. Execution checks create a real completed
-work order and an unpaid invoice; completed/rejected records and audit history remain. Catalog
-checks soft-delete only their uniquely named disposable services. Checkout checks initiate
-an actual sandbox session, deliberately lose its response and recover the same attempt.
-Do not run
-these writes against real customer accounts. Tests have no automatic retries and
-record no auth traces/video. Opted-in test files wait for a fresh authentication
-window before running, respecting the backend's ten-logins-per-minute limit. Browser
-output folders and environment files are ignored.
+Tests cover role dashboards, actual API counts, navigation, logout confirmation, request
+ownership, scheduling, progress, completion, frozen invoices, checkout recovery, catalog
+changes, account access, skills, audits, responsive behavior and keyboard accessibility.
+Write tests create only their own disposable records; completed invoices and audit history
+remain. Do not use real customer accounts. Backend authentication limits are respected,
+automatic retries are disabled and auth traces/video are not recorded.
 
-Actual sandbox completion is a separate opt-in test. With a matching updated local
-backend, isolated disposable database/accounts, running frontend and private ignored
-test configuration:
+Real provider settlement is an additional explicit opt-in:
 
 ```bash
-E2E_ENV_FILE=.env.payment-test.local E2E_BASE_URL=http://localhost:3002 E2E_DEMO_ACCOUNTS=1 E2E_LIVE_WRITES=1 E2E_REAL_SANDBOX=1 npm run test:e2e -- tests/e2e/payment-sandbox.spec.ts
+E2E_ENV_FILE=.env.payment-test.local E2E_DEMO_ACCOUNTS=1 E2E_LIVE_WRITES=1 E2E_REAL_SANDBOX=1 npm run test:e2e -- tests/e2e/payment-sandbox.spec.ts
 ```
 
-The test uses only the sandbox checkout and official synthetic card/OTP. It verifies
-cancellation, explicit replacement, server-verified settlement, paid feedback after
-a lost response, reauthentication and old-attempt safety. New local test settings
-do not replace `.env.local`; gateway secrets remain in backend configuration.
-Loopback and hosted HTTPS browser returns are verified. See the hosted release
-record for separate provider IPN evidence.
+Use matching isolated sandbox accounts/API and private test configuration. Automated
+transport mocks verify boundary behavior; they are not proof of real settlement. Actual
+sandbox settlement, IPN, Google login and hosted HTTPS return evidence is recorded
+separately in [release verification](docs/hosted-release.md).
 
-The frontend suite contains 170 checks and the current Chromium source has 34
-scenarios. Hosted baseline testing passed 33 of 34 and exposed a HTTPS cookie
-expiration bug. After its correction, self-revocation and all three role/cookie
-scenarios pass in a focused four-test run. All current scenarios have passing
-results across the baseline and focused checks; no single passing full run is claimed. Actual
-skills, access, scheduling, completion, checkout recovery and sandbox payment flows
-use real disposable backend records. Automated WCAG scans cover both themes, including normal scroll motion.
-Final local Lighthouse lab scores are mobile 92/100/100/100 and desktop
-99/100/100/100; both report CLS 0. These are lab samples, not field guarantees.
-See [current verification](docs/implementation-status.md) for exact results/limits.
+## Deployment
 
-Real Google OAuth passes locally with the existing backend client. The owner also
-verified hosted sign-in after enabling Google's supported FedCM button flow, with
-explicit account selection. Redis coordination tests use
-real Redis with a stubbed HTTP rotation response. Actual Safari/mobile hardware,
-distributed failover remain separate checks.
+The live frontend is hosted on Vercel with Singapore functions and a dedicated Redis
+session store. Configure the environment before building, with
+`APP_ORIGIN=https://fieldops-rafiferdos.vercel.app`. Keep build-time/runtime origin aligned,
+share the session store/key across instances, and configure the matching backend and Google origins.
 
-The live Vercel project is `fieldops-rafiferdos`, with Singapore functions and a
-dedicated Free Upstash session store. `vercel.json` disables automatic Git
-deployments so manual release follows CI and protected configuration. APP_ORIGIN
-must match at build and runtime; rebuild when changing it.
+Deploy only an exact source revision that passed CI, then verify authenticated role flows,
+cookies and payment returns on HTTPS. Automatic Git deployments are disabled in
+[vercel.json](vercel.json), so release is a deliberate step.
+See the [deployment runbook](docs/deployment-runbook.md) for configuration and release checks.
 
-## Architecture and engineering rules
+## Design, accessibility and performance
 
-```text
-src/
-  app/                         # Small route compositions and framework boundaries
-    (public)/                  # Home, process, FAQ and service catalog
-    (auth)/                    # Login and registration
-    (workspace)/               # Protected role entries, account and customer requests
-  features/
-    services/                  # Catalog schemas, server reads, cards and tests
-    marketing/                 # Server-rendered public journey and featured catalog
-    auth/                      # Auth actions, current viewer, return policy and forms
-    account/                   # Own-profile form, schema and action
-    requests/                  # Shared customer/admin requests and customer forms
-    dispatch/                  # Review, qualified availability, assignment and reschedule
-    work-orders/               # Scoped queues, tracking, progress, completion and recovery
-    billing/                   # Frozen invoices, encrypted checkout intents and verified payment state
-    feedback/                  # One-time eligible reviews and explicit outcome inspection
-    admin/                     # Reporting, managed access/skills and read-only audit
-    support/                   # Owner-verified support channels
-  shared/
-    ui/                        # Official shadcn primitives
-    components/                # Reused presentation and layout pieces
-    providers/                 # Theme provider
-    lib/                       # Small typed formatting/query/result helpers
-  infrastructure/
-    api/                       # Server-only fetch, validated envelopes and safe errors
-    env/                       # Lazy, server-only configuration validation
-    seo/                       # Shared public metadata policy
-    session/                   # Redis coordination, authenticated encryption and origin checks
-```
+- Responsive shadcn sidebar workspace and token-based light/dark themes.
+- Clear typography hierarchy, frosted navigation/workflow surfaces and image-based FAQ cards.
+- Early scroll reveals, transform-based choreography and native touch/reduced-motion behavior.
+- Keyboard-operated menus, selects, disclosures and dialogs with visible focus and retained focus.
+- Text status labels and count summaries; color and chart geometry are supplementary.
+- Server-rendered readable content, reserved image geometry and small interactive boundaries.
 
-Colocate schemas/types/tests with their workflow. Add concise English intent comments
-for mini-features, business rules and non-obvious decisions; avoid narrating syntax. Routes compose features; shared
-code and infrastructure never import domain features. Server Components read/render;
-client boundaries handle interactive forms, navigation and dialogs. React Hook Form
-and Zod validate client input again at the explicit server boundary. External data
-is parsed; there is no any, unsafe cast, ignored type error or unrestricted API proxy.
+Automated Chromium/axe checks do not replace testing on actual mobile hardware or Safari.
+Free backend hosting can introduce cold-start latency. Current runtime dependencies passed
+the last audit; development/build-tool advisory paths still need compatible upstream fixes.
+Offline operation, live funds and distributed failover certification are outside the current implementation.
 
-Preserve the preset structure (secondary-text lightness is adjusted for WCAG contrast): Base UI Rhea, zinc/emerald semantic tokens, Outfit headings,
-Geist body and supported light/dark themes. Use installed shadcn controls, including
-Select, Card, Collapsible, NavigationMenu, Empty, Pagination, Separator, Sheet,
-AlertDialog and Toast. Navigation uses shadcn button variants with native link semantics. Do not use browser alert/confirm. Add a
-component with the pinned CLI only when a real screen needs it:
+## Further documentation
 
-```bash
-npx shadcn add dialog
-```
+- [Role, route and API map](docs/route-plan.md)
+- [Session-safe dashboard and technology decisions](docs/workspace-upgrade.md)
+- [Dispatch and execution rules](docs/dispatch-execution-plan.md)
+- [Billing and administrative boundaries](docs/billing-admin-plan.md)
+- [Access and audit policies](docs/access-audit-plan.md)
+- [Payment-return and recovery rules](docs/payment-return-plan.md)
+- [Visual system and editorial assets](docs/editorial-assets.md)
 
-API_BASE_URL stays server-only and is constrained to an HTTPS `/api/v1` base, with
-HTTP allowed on loopback. The transport validates success/error envelopes, confines
-paths to that origin/version, rejects redirects, keeps tokens in headers, uses
-no-store and a 30-second timeout, and supports GET/POST/PUT/PATCH/DELETE. GET/DELETE
-cannot carry bodies through its typed interface. No write is automatically retried.
+## Contributing and ownership
 
-Sessions use opaque HttpOnly cookies, encrypted Redis tokens, same-origin actions,
-per-request backend account checks and coordinated single-use refresh. Request
-mutations carry explicit versions and respect backend ownership/state rules.
-Conflict/uncertain outcomes preserve inputs and require latest-state inspection.
-Prices are BDT minor units; immutable invoice/payment behavior is not reimplemented.
-User access changes require review and confirmation, preserve backend last-admin/work
-rules and revoke sessions. Audit metadata uses an explicit per-action allowlist.
-See implementation status for the precise session lifecycle and its failure limits.
+Keep routes small, feature policies explicit and external data validated. Use supported
+shadcn primitives and meaningful intent comments. Add tests for changed security, money,
+ownership and recovery behavior; keep commits buildable and run the quality gates.
 
-## Versions and dependency limits
-
-Verified against official documentation and registry metadata on October 8, 2026:
-
-- Next.js 16.4.0, React/React DOM 19.3.0, Tailwind 4.3.3 and shadcn 4.21.4.
-- TypeScript 6.0.3 and typed typescript-eslint 8.71.1. Registry TypeScript 7.0.2 is
-  outside the linter's supported range (below 6.1).
-- ESLint 9.39.5 remains within Next's React/accessibility/import plugin peer ranges;
-  registry ESLint 10.12.0 is outside them. ESLint 9's end of support remains a limitation.
-- Zod 4.6.5, React Hook Form 7.89.0, resolvers 5.9.1 and Redis client 6.3.0.
-  Forms support React 19/Zod 4; Node 24 satisfies the client runtime requirement.
-- GSAP 3.15.0 and @gsap/react 2.1.2 were verified on October 9, 2026. Marketing
-  uses scoped word transforms and ScrollTrigger; shared entry effects use native
-  Web Animations. Motion was removed to avoid overlapping animation engines.
-- Recharts 3.10.1 with react-is 19.3.0 was verified against official registry metadata
-  and shadcn Chart documentation on October 9, 2026. The stable version supports
-  React 19 and provides the actual reporting chart. No new résumé claim is implied.
-- Vitest 5.0.3 and Playwright 1.64.0. The pinned official Redis test image reports 8.10.2.
-
-The audit still has nine high-severity development/build-tool findings through braces
-(GHSA-vfj7-8cjw-p6xm); no compatible patched release was available when reviewed.
-Runtime-only audit reports zero vulnerabilities at this checkpoint. Do not force
-incompatible downgrades with `npm audit fix --force`; recheck upstream before release.
-This is not a zero-risk dependency claim.
-
-## Requirements, evidence and remaining work
-
-Read [official README](https://github.com/Apollo-Level2-Web-Dev/B7A7),
-[requirements](https://github.com/Apollo-Level2-Web-Dev/B7A7/blob/main/project-requirements.md),
-[timeline](https://github.com/Apollo-Level2-Web-Dev/B7A7/blob/main/timeline-breakdown.md)
-and the [implemented backend contract](https://app.notion.com/p/3f34ab5df14481afa4acc3e9a092b940).
-Exactly CUSTOMER, TECHNICIAN and ADMIN are supported. The explicit 18-page rule
-takes precedence over the conflicting 15-page heading. Delivery also requires real
-APIs, three demo logins, validated forms, supported test-mode payments, at least 20
-meaningful frontend commits, live URL/demo credentials and a 5–10 minute walkthrough.
-Hosted verification and delivery artifacts are still being completed.
-
-The backend retains JSON/IPN callbacks and adds a no-store 303 browser transport.
-An expired frontend session preserves the attempt through login. Invalid or forged
-return queries cannot establish payment success. See the payment-return plan for
-verification and deployment limits.
-The authorized current-skill read and atomic expected-set comparison prevent silent
-overwrite. Contact uses only owner-approved channels. No public review feed, earnings
-report or unsupported write endpoint has been invented.
-
-The [previously reviewed resume assessment](https://app.notion.com/p/3f14ab5df14481b9bdccd1349fd83a18)
-lists React/Next.js, TypeScript, Docker and CI/CD as existing skills. RHF/Zod,
-TanStack Query and automated testing were not listed; absence does not imply lack of
-ability. The original resume file was not available in this workspace. New project
-evidence now includes validated forms, tested API boundaries, Redis-backed encrypted
-sessions and browser tests; these are potential resume additions, not a claim that
-the full product is finished. TanStack Query and an additional client state store are not installed;
-Recharts is used only for the actual administration chart.
-The previously reviewed [Hyperlink role](https://www.thehyperlink.io/jobs/full-stack-engineer-mid-senior-typescript)
-provides one signal for RHF/Zod, Vitest and Playwright, not a market ranking or verified
-posting date. Contract needs and working evidence take precedence over dependency count.
-
-Official references: [Next.js authentication](https://nextjs.org/docs/app/guides/authentication),
-[Next.js installation](https://nextjs.org/docs/app/getting-started/installation),
-[environment variables](https://nextjs.org/docs/app/guides/environment-variables),
-[shadcn CLI](https://ui.shadcn.com/docs/cli),
-[shadcn Chart](https://ui.shadcn.com/docs/components/base/chart),
-[Recharts installation](https://recharts.github.io/en-US/guide/installation/),
-[SSLCommerz integration](https://developer.sslcommerz.com/doc/v4/),
-[RHF forms](https://ui.shadcn.com/docs/forms/react-hook-form),
-[Zod resolver](https://github.com/react-hook-form/resolvers#zod),
-[Google Identity Services](https://developers.google.com/identity/gsi/web/guides/display-button),
-[node-redis](https://redis.io/docs/latest/develop/clients/nodejs/),
-[Playwright configuration](https://playwright.dev/docs/test-configuration),
-[Node.js releases](https://nodejs.org/en/about/previous-releases).
+Created and maintained by **MD. Rafi Ferdos**. Product support:
+[rafiferdos@gmail.com](mailto:rafiferdos@gmail.com) · [+8801921479294](tel:+8801921479294).
+A source-code reuse license has not been specified in this repository.

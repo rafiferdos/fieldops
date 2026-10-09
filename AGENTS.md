@@ -15,7 +15,7 @@ verified contact channels, Google configuration, QA, Vercel hosting and submissi
 artifacts. Keep backend changes limited to skills/payment delivery; preserve existing
 data and use dedicated disposable verification/evaluation accounts.
 
-Read the README's official Assignment 7 links and implemented backend contract
+Read docs/route-plan.md's official Assignment 7 links and implemented backend contract
 before changing domain behavior. Exactly three roles: CUSTOMER, TECHNICIAN, ADMIN.
 Use Node 24 LTS, strict TypeScript, App Router and the requested shadcn preset.
 Keep the npm lockfile and meaningful, buildable commits. Do not push or deploy
