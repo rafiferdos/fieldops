@@ -2,6 +2,11 @@
 
 Verified October 9, 2026.
 
+This records the initial workspace release. The subsequent
+[dashboard motion release](dashboard-motion.md#published-release-and-hosted-acceptance)
+adds workspace smooth scrolling and chart/activity choreography, with its own exact
+revision, deployment and passing hosted acceptance.
+
 ## Published revisions
 
 | Artifact              | Verified revision and evidence                                                                                                |
