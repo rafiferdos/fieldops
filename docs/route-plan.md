@@ -14,11 +14,15 @@ See [implementation status](implementation-status.md) for completed slices and l
 - [Implemented backend contract](https://app.notion.com/p/3f34ab5df14481afa4acc3e9a092b940)
   defines the actual supported operations. Local backend controllers, schemas,
   services and the Postman collection were inspected read-only to resolve details.
-- The inventory covers **26 core route templates and 2 conditional payment-return
+- The inventory covers **26 core route templates and 2 payment-return
   templates**, and all **38 domain APIs plus 2 health endpoints**. A route template
   counts once regardless of its record count. Planned pages do not count toward
   submission until functional and verified. Informational pages require useful,
   accurate content; no empty pages will be added to inflate the count.
+
+The later [payment-return checkpoint](payment-return-plan.md) adds a dedicated
+provider browser transport while retaining the 38 domain API inventory below.
+It is locally sandbox-verified and awaits a separately authorized hosted update.
 
 See [screen flows](screen-flows.md) for interaction, layout and acceptance rules.
 
@@ -50,36 +54,36 @@ an arbitrary redirect URL. Do not create five roles or an admin impersonation fl
 The API column references the endpoint IDs below. Paths are browser URLs, not
 backend endpoints. All dynamic IDs must be parsed before a backend call.
 
-| ID  | Browser route                           | Access                      | Purpose and primary actions                                                               | API IDs                                 |
-| --- | --------------------------------------- | --------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------- |
-| P01 | `/`                                     | Public                      | Explain request → dispatch → completion → verified payment; show real service preview     | E08                                     |
-| P02 | `/about`                                | Public                      | Explain the three roles and supported service process; link to catalog                    | None; accurate editorial content        |
-| P03 | `/services`                             | Public                      | Search, sort and paginate active services                                                 | E08                                     |
-| P04 | `/services/[serviceId]`                 | Public                      | Read service details and base price; customer request CTA                                 | E09                                     |
-| P05 | `/faq`                                  | Public                      | Explain scheduling, cancellation, invoice and payment rules                               | None; contract-based content            |
-| P06 | `/contact`                              | Public                      | Publish verified support channels and help navigation                                     | None; verified contact content required |
-| A01 | `/login`                                | Public                      | Email/password, verified Google login and three demo account buttons                      | E02, E03                                |
-| A02 | `/register`                             | Public                      | Customer registration; then explicit login                                                | E01                                     |
-| S01 | `/account`                              | All three roles             | Read own account; edit name/phone; sign out                                               | E05, E06, E07                           |
-| C01 | `/customer`                             | CUSTOMER                    | Own request list, URL filters and new-request entry                                       | E14                                     |
-| C02 | `/customer/requests/new`                | CUSTOMER                    | Multistep service, visit details and review form                                          | E08, E09, E13                           |
-| C03 | `/customer/requests/[requestId]`        | CUSTOMER owner              | Request summary; edit pending request; cancel eligible request; link assigned work        | E15, E16, E18                           |
-| C04 | `/customer/work-orders`                 | CUSTOMER                    | Own work list with progress and invoice links                                             | E22                                     |
-| C05 | `/customer/work-orders/[workOrderId]`   | CUSTOMER owner              | Read timeline, completion report, invoice and existing feedback; submit eligible feedback | E23, E34                                |
-| C06 | `/customer/invoices/[invoiceId]`        | CUSTOMER owner              | Immutable invoice; billing validation; create or recover checkout                         | E27, E28                                |
-| T01 | `/technician`                           | TECHNICIAN                  | Assigned queue with scheduled-start sorting and URL filters                               | E22                                     |
-| T02 | `/technician/work-orders/[workOrderId]` | Assigned TECHNICIAN         | Read task; advance progress; complete with report                                         | E23, E25, E26                           |
-| D01 | `/admin`                                | ADMIN                       | Period overview, status distribution and verified revenue                                 | E37                                     |
-| D02 | `/admin/services`                       | ADMIN                       | Active catalog list; create/edit/delete dialogs                                           | E08, E09, E10, E11, E12                 |
-| D03 | `/admin/requests`                       | ADMIN                       | Review queue with URL search/status/service filters                                       | E14                                     |
-| D04 | `/admin/requests/[requestId]`           | ADMIN                       | Review, reject, cancel; find qualified available technician and assign                    | E15, E17, E18, E20, E21                 |
-| D05 | `/admin/work-orders`                    | ADMIN                       | Global work list and dispatch follow-up                                                   | E22                                     |
-| D06 | `/admin/work-orders/[workOrderId]`      | ADMIN                       | Work timeline; eligible reschedule; invoice read and payment link when ID is known        | E23, E24, E27                           |
-| D07 | `/admin/users`                          | ADMIN                       | Filter users; change role/status; conditional complete skill replacement                  | E35, E38, E19                           |
-| D08 | `/admin/audit-logs`                     | ADMIN                       | Paginated audit inspection with supported filters                                         | E36                                     |
-| M01 | `/payments/[paymentId]`                 | CUSTOMER owner or ADMIN     | Read verified attempt state; return to invoice/work context                               | E29, E27                                |
-| M02 | `/payment/success`                      | Conditional CUSTOMER return | Resolve known attempt and show verified/pending/review state                              | E29, E27; return transport unresolved   |
-| M03 | `/payment/cancel`                       | Conditional CUSTOMER return | Show verified cancellation or unresolved attempt; safe recovery                           | E29, E27; return transport unresolved   |
+| ID  | Browser route                           | Access                  | Purpose and primary actions                                                               | API IDs                                  |
+| --- | --------------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------- |
+| P01 | `/`                                     | Public                  | Explain request → dispatch → completion → verified payment; show real service preview     | E08                                      |
+| P02 | `/about`                                | Public                  | Explain the three roles and supported service process; link to catalog                    | None; accurate editorial content         |
+| P03 | `/services`                             | Public                  | Search, sort and paginate active services                                                 | E08                                      |
+| P04 | `/services/[serviceId]`                 | Public                  | Read service details and base price; customer request CTA                                 | E09                                      |
+| P05 | `/faq`                                  | Public                  | Explain scheduling, cancellation, invoice and payment rules                               | None; contract-based content             |
+| P06 | `/contact`                              | Public                  | Publish verified support channels and help navigation                                     | None; verified contact content required  |
+| A01 | `/login`                                | Public                  | Email/password, verified Google login and three demo account buttons                      | E02, E03                                 |
+| A02 | `/register`                             | Public                  | Customer registration; then explicit login                                                | E01                                      |
+| S01 | `/account`                              | All three roles         | Read own account; edit name/phone; sign out                                               | E05, E06, E07                            |
+| C01 | `/customer`                             | CUSTOMER                | Own request list, URL filters and new-request entry                                       | E14                                      |
+| C02 | `/customer/requests/new`                | CUSTOMER                | Multistep service, visit details and review form                                          | E08, E09, E13                            |
+| C03 | `/customer/requests/[requestId]`        | CUSTOMER owner          | Request summary; edit pending request; cancel eligible request; link assigned work        | E15, E16, E18                            |
+| C04 | `/customer/work-orders`                 | CUSTOMER                | Own work list with progress and invoice links                                             | E22                                      |
+| C05 | `/customer/work-orders/[workOrderId]`   | CUSTOMER owner          | Read timeline, completion report, invoice and existing feedback; submit eligible feedback | E23, E34                                 |
+| C06 | `/customer/invoices/[invoiceId]`        | CUSTOMER owner          | Immutable invoice; billing validation; create or recover checkout                         | E27, E28                                 |
+| T01 | `/technician`                           | TECHNICIAN              | Assigned queue with scheduled-start sorting and URL filters                               | E22                                      |
+| T02 | `/technician/work-orders/[workOrderId]` | Assigned TECHNICIAN     | Read task; advance progress; complete with report                                         | E23, E25, E26                            |
+| D01 | `/admin`                                | ADMIN                   | Period overview, status distribution and verified revenue                                 | E37                                      |
+| D02 | `/admin/services`                       | ADMIN                   | Active catalog list; create/edit/delete dialogs                                           | E08, E09, E10, E11, E12                  |
+| D03 | `/admin/requests`                       | ADMIN                   | Review queue with URL search/status/service filters                                       | E14                                      |
+| D04 | `/admin/requests/[requestId]`           | ADMIN                   | Review, reject, cancel; find qualified available technician and assign                    | E15, E17, E18, E20, E21                  |
+| D05 | `/admin/work-orders`                    | ADMIN                   | Global work list and dispatch follow-up                                                   | E22                                      |
+| D06 | `/admin/work-orders/[workOrderId]`      | ADMIN                   | Work timeline; eligible reschedule; invoice read and payment link when ID is known        | E23, E24, E27                            |
+| D07 | `/admin/users`                          | ADMIN                   | Filter users; change role/status; conditional complete skill replacement                  | E35, E38, E19                            |
+| D08 | `/admin/audit-logs`                     | ADMIN                   | Paginated audit inspection with supported filters                                         | E36                                      |
+| M01 | `/payments/[paymentId]`                 | CUSTOMER owner or ADMIN | Read verified attempt state; return to invoice/work context                               | E29, E27                                 |
+| M02 | `/payment/success`                      | CUSTOMER owner or ADMIN | Resolve known attempt and show verified/pending/review state                              | E29, E27; verified 303 browser transport |
+| M03 | `/payment/cancel`                       | CUSTOMER owner or ADMIN | Show verified cancellation or unresolved attempt; safe recovery                           | E29, E27; verified 303 browser transport |
 
 No contact submission endpoint, public review feed, technician earnings endpoint,
 availability editor, password reset, user creation or deleted-service browser is

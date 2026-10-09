@@ -16,7 +16,8 @@ import {
 
 // Live checks create only owned disposable records; never mutate existing work fixtures.
 export async function createDispatchFixture() {
-  process.loadEnvFile(".env.local")
+  // A dedicated local payment fixture may select its own ignored configuration.
+  process.loadEnvFile(process.env.E2E_ENV_FILE ?? ".env.local")
   const { API_BASE_URL: base } = serverEnvSchema.parse(process.env)
   const local = z
     .object({

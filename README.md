@@ -91,7 +91,7 @@ checks using the dedicated local store:
 SESSION_TEST_REDIS_URL=redis://127.0.0.1:6397 npm test
 ```
 
-CI installs from the lockfile and provisions a pinned Redis image for all 162 tests,
+CI installs from the lockfile and provisions a pinned Redis image for all 167 tests,
 checks and build. Official GitHub actions use immutable revisions. CI does not
 deploy. A hosted CI run has not occurred because this repository has not been pushed.
 
@@ -121,8 +121,23 @@ record no auth traces/video. Opted-in test files wait for a fresh authentication
 window before running, respecting the backend's ten-logins-per-minute limit. Browser
 output folders and environment files are ignored.
 
-The unit/integration suite contains 162 checks. The Chromium suite contains 27 scenarios:
-fifteen real-API workflows, six design scenarios and six presentation/component scenarios. It covers
+Actual sandbox completion is a separate opt-in test. With a matching updated local
+backend, isolated disposable database/accounts, running frontend and private ignored
+test configuration:
+
+```bash
+E2E_ENV_FILE=.env.payment-test.local E2E_BASE_URL=http://localhost:3002 E2E_DEMO_ACCOUNTS=1 E2E_LIVE_WRITES=1 E2E_REAL_SANDBOX=1 npm run test:e2e -- tests/e2e/payment-sandbox.spec.ts
+```
+
+The test uses only the sandbox checkout and official synthetic card/OTP. It verifies
+cancellation, explicit replacement, server-verified settlement, paid feedback after
+a lost response, reauthentication and old-attempt safety. New local test settings
+do not replace `.env.local`; gateway secrets remain in backend configuration.
+Loopback browser returns are verified; provider server IPN and deployed HTTPS
+returns need a separate deployment check.
+
+The unit/integration suite contains 167 checks. The Chromium suite contains 28 scenarios:
+sixteen real-API workflows, six design scenarios and six presentation/component scenarios. It covers
 no-JavaScript public content, reduced motion and cleanup, keyboard disclosures,
 password visibility, 320–1440px layouts, theme contrast, stable animated word geometry,
 CSS frost and styled Select submission. Dispatch coverage includes stale review, competing

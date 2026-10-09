@@ -8,20 +8,21 @@
 4. Period administration overview and exact verified revenue.
 5. Active service catalog management with explicit creation, edit and soft deletion.
 
-User management, audit browsing and technician skills remain later slices. The
-backend repository stays unchanged. All writes enforce current role and same-origin
+User management and audit browsing were delivered later; technician skills remain
+a later slice. This original sequence kept the backend unchanged. The subsequent
+[payment-return checkpoint](payment-return-plan.md) has an explicitly authorized
+payment-only backend exception. All writes enforce current role and same-origin
 access again; reads validate IDs and preserve foreign-record privacy. Use existing
 shadcn primitives, Server Components and small validated client forms. Each slice
 must pass strict checks and production build before its meaningful commit.
 
 ## Payment constraints
 
-The implemented backend fixes SSLCommerz success/fail/cancel URLs to its JSON
-callback handlers. It does not redirect the browser to the frontend or accept a
-frontend return URL. Checkout therefore keeps a separate frontend status page and
-opens the provider in another tab. Automatic success/cancel return remains a backend
-integration gap; conditional frontend pages must read actual payment and invoice
-state, never trust a return query. No callback is forged to claim payment success.
+The backend retains its JSON callbacks and adds a no-store 303 browser transport
+for new checkouts. The provider opens in another tab and returns it to the frontend
+for actual owned payment/invoice reads. Reauthentication preserves the attempt.
+See the payment-return plan for correlation, local sandbox proof and hosted
+deployment limits. No callback is forged to claim payment success.
 
 Retain one immutable billing body and idempotency key per customer/invoice before
 network I/O. An explicit recovery reuses that exact intent. A timeout never creates
@@ -43,9 +44,9 @@ a different key while an attempt is unresolved. There is no attempt-list or look
 by key API, so a lost unresolved intent needs operator investigation, not guessing
 a replacement key. Storage errors fail closed. No billing is written to localStorage.
 
-Sandbox initiation/recovery is implemented through the real API. A successful
-settlement and cancellation require the actual sandbox flow; focused schema/policy
-tests alone do not establish gateway completion or automatic return readiness.
+Sandbox initiation/recovery is implemented through the real API. Actual cancellation, replacement settlement and paid feedback are now verified
+through the sandbox UI in the payment-return checkpoint; focused schema/policy
+tests alone still cannot establish provider completion.
 
 ## Verification scope
 
@@ -58,8 +59,8 @@ test completes newly created disposable work, receives its real unpaid invoice, 
 only the browser response after actual checkout initiation, reloads frozen billing
 and recovers the same payment ID. It opens the real sandbox page, rejects a forged
 success query and confirms a different customer's invoice/payment reads return 404.
-No provider callback is manufactured. Settlement, cancellation and feedback on freshly
-paid work still require provider-flow verification.
+No provider callback is manufactured. The later payment-return checkpoint verifies settlement, cancellation and
+feedback on freshly paid work through the actual provider UI.
 
 The catalog test creates, edits and soft-deletes only its uniquely named service.
 It verifies an already-stale edit stays blocked after closing/reopening the Sheet.

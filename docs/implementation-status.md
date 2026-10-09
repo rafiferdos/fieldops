@@ -2,8 +2,9 @@
 
 Reviewed October 9, 2026. This checkpoint implements roadmap steps 2–6 and five
 billing/administration slices from steps 7–8, followed by user access and audit browsing.
-Automatic gateway return remains open. The backend
-repository is unchanged. No push or deployment was performed. Verification creates
+Automatic browser return and real sandbox cancellation/retry/settlement/paid-feedback
+verification are now implemented under the explicitly authorized payment-only backend
+exception. The hosted API has not been updated. No push or deployment was performed. Verification creates
 only disposable accounts and requests, cancels eligible unstarted requests, and
 retains rejected/completed records and unpaid invoices because no deletion API exists.
 Demo credentials remain local-only and were used with explicit permission.
@@ -23,15 +24,15 @@ Demo credentials remain local-only and were used with explicit permission.
 | Customer work  | `/customer/work-orders`, `/customer/work-orders/[workOrderId]`          | Own confirmed visits, report, timeline, invoice and existing feedback                             |
 | Admin overview | `/admin`                                                                | URL period validation, creation-cohort counts, exact verified revenue and status chart            |
 | Invoices       | `/customer/invoices/[invoiceId]`, `/admin/invoices/[invoiceId]`         | Frozen amount/status, owner checkout entry and role-restricted administrative inspection          |
-| Payments       | `/payments/[paymentId]`, `/payment/success`, `/payment/cancel`          | Verified attempt/invoice inspection and conditional returns; no invented settlement               |
+| Payments       | `/payments/[paymentId]`, `/payment/success`, `/payment/cancel`          | Provider browser returns and verified attempt/invoice inspection; no invented settlement          |
 | Catalog admin  | `/admin/services`                                                       | URL-driven active list, validated create/edit, stale preflight and confirmed soft deletion        |
 | User access    | `/admin/users`                                                          | Safe directory filters, confirmed role/status edits, stale/uncertain blocking and self sign-out   |
 | Audit history  | `/admin/audit-logs`                                                     | Exact filters, paired Dhaka period, newest-first pagination and safe metadata disclosure          |
 
-There are 28 route templates, including two conditional returns, and 33 domain API
+There are 28 route templates, including two authenticated payment returns, and 33 domain API
 operations bound in production code. Route count is not a claim of full assignment
-compliance: automatic gateway return, technician skills, contact
-content and delivery remain incomplete. Google login is
+compliance: technician skills, contact content and delivery remain incomplete.
+Hosted HTTPS payment return/IPN verification remains part of delivery. Google login is
 configuration-dependent. Refresh concurrency tests use real Redis with a stubbed
 HTTP rotation response, not live Google or backend replay validation.
 
@@ -124,8 +125,10 @@ attempts require a verified failed/cancelled payment, unpaid invoice and no revi
 Payment status reads both the actual attempt and invoice. Success requires matching
 identity/money, SUCCEEDED/PAID and settlement evidence. Review flags are independent
 of paid status. Only supported exact HTTPS gateway origins can open checkout. The
-provider opens in another tab because current backend callbacks return JSON.
-Conditional return pages never trust status queries or manufacture success/cancel.
+provider opens in another tab and returns that tab through the new backend 303
+transport. Return pages never trust status queries or manufacture success/cancel.
+Reauthentication preserves the exact attempt. A cancelled/failed attempt whose
+invoice is now paid is identified as an earlier attempt, not a successful charge.
 
 Feedback validates rating and optional comment, checks current owned work and any
 known saved payment hold, and never retries an uncertain submission automatically.
@@ -188,15 +191,15 @@ Public FAQ uses original editorial image cards with accessible in-card disclosur
 ## Verification and remaining limits
 
 - `npm run check`: formatting, typed lint, generated route types, TypeScript and
-  156 ordinary tests. Six real-Redis tests require SESSION_TEST_REDIS_URL.
-- All 162 checks pass with the dedicated frontend Redis. They cover session concurrency/integrity,
+  161 ordinary tests. Six real-Redis tests require SESSION_TEST_REDIS_URL.
+- All 167 checks pass with the dedicated frontend Redis. They cover session concurrency/integrity,
   role return paths, scheduling bounds, strict write schemas, legal transitions,
   timezone conversion, cancellation, encrypted intent reservation, payment evidence,
   feedback eligibility, report periods, exact BDT arithmetic, access schemas and safe audit projection.
 - `npm run build -- --webpack`: production build passes. Default Turbopack was
   previously blocked by this execution environment's port restriction; its default
   command is preserved. Hosted CI has not run because no push occurred.
-- The Chromium suite has fifteen real-API workflows, six design scenarios and six
+- The Chromium suite has sixteen real-API workflows, six design scenarios and six
   presentation/component scenarios. Coverage includes no-JavaScript homepage/process,
   reduced motion and cleanup, keyboard FAQ, password visibility, 320–1440px
   public/auth layouts, theme contrast, stable animated word geometry, CSS frost and
@@ -208,7 +211,9 @@ Public FAQ uses original editorial image cards with accessible in-card disclosur
   access/audit scenarios are verified separately against the expanded production build.
   All three pass: self-change in the initial run, the other two in a focused rerun
   after test-only locator/URL assertion corrections. Application code was unchanged.
-  Retries are disabled; no single 27-scenario run is implied.
+  Retries are disabled; no single 28-scenario run is implied. The new real sandbox
+  scenario and existing checkout-recovery regression each pass in focused runs
+  against the updated local production frontend/backend.
 - Operational coverage against the hosted API and production frontend includes:
   catalog/mobile/auth/customer flows, plus stale review, qualified dispatch,
   competing-slot rejection, price-preserving reschedule, progress, stale technician
@@ -220,9 +225,30 @@ Public FAQ uses original editorial image cards with accessible in-card disclosur
 - A real checkout response is deliberately lost after initiation. Reload restores
   encrypted billing and explicit recovery returns the same payment ID. The real
   sandbox page opens; a fabricated success query cannot change its pending state.
-  Another customer receives 404 for both invoice and payment. Successful settlement,
-  verified cancellation and feedback submission on freshly paid work have not yet
-  been exercised through the provider UI; policy/schema checks do not prove those flows.
+  Another customer receives 404 for both invoice and payment. This regression passes
+  again against the updated local backend. A separate actual provider UI scenario
+  cancels checkout, explicitly creates a different attempt, uses the official dummy
+  card/OTP to settle it, and submits feedback on the freshly paid work. It drops only
+  the real feedback response, blocks replay, discovers the saved review through
+  inspection and verifies reload. Signed-out return preserves payment identity, an
+  injected status cannot alter verified state, old-attempt navigation cannot reopen
+  checkout, and the payment screen fits 320px. Business data/provider I/O are real.
+- These sandbox checks use the production frontend on localhost:3002 and an updated
+  local Nest backend with a separate fieldops_payment_test database, synthetic
+  accounts/billing and real sandbox credentials retained only in backend settings.
+  Stored proof independently confirms two attempts (CANCELLED/SUCCEEDED), one safe
+  receipt, one settlement/invoice-paid event and one feedback/audit, with matching
+  frozen amounts and settlement timestamps. No live charge or existing work mutation.
+- The actual cancellation shape is merchant CANCELLED plus session FAILED without
+  currency. Closing requires stored merchant/session identity, equal gross/original
+  amounts and BDT original currency; a supplied settlement currency must also be BDT.
+  Merchant cancellation alone cannot close an open session. Seven additional adapter
+  checks cover this shape and incomplete/mismatched evidence. Backend strict checks,
+  build, 129 unit tests, 89 payment/feedback database tests and offline API docs pass.
+  Gateway HTTP is replaced only in those database tests, not the browser scenario.
+- The new browser transport was not deployed. Loopback cannot receive server IPN;
+  hosted HTTPS return/IPN, real fail/risk UI and live-mode funds are not claimed
+  verified by this checkpoint. Already-created hosted sessions keep their JSON returns.
 - Catalog verification creates only a unique disposable service, edits its exact
   decimal price, rejects a stale second tab even after reopening its Sheet, and
   confirms soft deletion removes its public detail. It does not mutate existing services.
@@ -248,5 +274,6 @@ Public FAQ uses original editorial image cards with accessible in-card disclosur
   cookies, actual Safari/mobile hardware and a complete accessibility audit remain
   deployment/review verification. No claim of these checks is made.
 
-Automatic payment-return and current-skill read gaps remain as described in the route plan.
+The current-skill read gap remains. Payment return transport is implemented and
+locally sandbox-verified; deployed HTTPS verification waits for deployment authorization.
 No unsupported contact channel, technician earnings or operational report was invented.

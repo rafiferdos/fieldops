@@ -47,3 +47,32 @@ Official references: [SSLCommerz integration and transaction queries](https://de
 Next.js Route Handler/redirect documentation. The linked Notion contract requires
 sign-in in this session; the implemented backend source and API README are available
 and were used to check the actual contract.
+
+## Verified checkpoint
+
+October 9, 2026: the actual sandbox UI completes cancellation → explicit new attempt
+→ safe dummy-card/OTP success → frontend 303 return → paid feedback. Feedback loses
+its real browser response, remains blocked against replay, then inspection/reload
+recovers the one saved review. A signed-out return resumes its exact attempt after
+login; injected status is ignored; the paid screen fits 320px. Navigating the old
+cancelled attempt explains that its invoice is already paid and offers no checkout.
+The prior lost-checkout-response/foreign-owner regression also passes separately.
+
+The test uses the production frontend on localhost:3002, updated local backend on
+3000, isolated fieldops_payment_test database and dedicated frontend Redis. Stored
+proof confirms exactly two attempts, one safe settled receipt, one payment-settled
+and invoice-paid event, and one feedback/audit. Frozen amounts and settlement times
+match. Records are synthetic/disposable; completed records are retained.
+
+The observed merchant query reports CANCELLED while its closed session reports
+FAILED and omits currency, as does the official session response example. Closure
+still requires stored transaction/session identity, matching gross/original amounts
+and BDT original currency; any supplied settlement currency must be BDT. A merchant
+cancellation without a closed verified session cannot release the attempt.
+
+Frontend strict checks and production build pass with 167 checks (including six
+real-Redis checks). Backend strict checks, build, 129 unit tests, 89 database-backed
+payment/feedback checks and offline documentation validation pass. Provider HTTP is
+stubbed only for the database suite; the opt-in browser flow uses the real gateway.
+No single full 28-scenario run, deployed HTTPS/server IPN, real fail/risk UI,
+Safari/mobile hardware or live funds are claimed verified here. No push/deployment.

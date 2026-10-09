@@ -180,12 +180,12 @@ read-only finance context and cannot initiate a customer's checkout.
    with clear non-final wording. Enable feedback only after backend-paid invoice
    and no review hold. Never erase a successful settlement because of a late event.
 
-The four current backend callbacks return JSON and do not redirect to the frontend.
-M02/M03 are therefore **conditional**, not working return routes. Before that slice,
-agree on a real browser-return transport, securely correlate the attempt, and test
-success/failure/cancel/late events end to end. Any required backend change needs
-separate authorization. Manual navigation back to an invoice is not a claimed
-solution to the assignment's real return-flow requirement.
+The original four backend callbacks remain JSON endpoints. Under the subsequent
+explicit payment-only authorization, new sessions use a separate no-store 303
+browser transport. M02/M03 now resolve the stored payment UUID, reauthenticate
+and read actual payment/invoice state. Real local sandbox cancellation, replacement
+settlement and paid feedback pass; hosted HTTPS return/IPN still need an authorized
+deployment check. See [payment returns](payment-return-plan.md).
 
 M01 can show a payment only when its ID is known and the backend authorizes it.
 Display requiresReview/reviewReason safely; a checkoutUrl is resumable only when
