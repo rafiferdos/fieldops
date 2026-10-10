@@ -133,3 +133,11 @@ original section marker, line fade, rounded SVG draw and persistent fold state.
 The elastic track now shares the navbar's single frosted surface and preserves
 keyboard focus across hydration. Process-card content has clearer role and outcome
 hierarchy while the original ScrollStack projection remains.
+
+The original RubberSegment TS/CSS sources were fetched again to correct visible
+duplicate labels. Its opaque clipped thumb is essential: a translucent mask
+cannot hide the idle label. Both navigation layers now fill matching equal-width
+slots, including short labels such as Services and FAQ. Theme colors use primary
+and primary-foreground; the real shadcn navigation links retain URL and keyboard
+semantics. Browser checks compare actual label bounds in both themes rather than
+checking highlight geometry alone.

@@ -40,7 +40,11 @@ state across routes. Active state comes from the URL. A second custom active rai
 and icon transform are removed. Accessibility and reduced-motion behavior remain.
 
 RubberSegment's track is transparent over the navbar's single frosted surface.
-Its elastic thumb uses a subtle theme tint instead of an opaque inner panel.
+Its elastic thumb retains the upstream opaque mask, using `primary` and
+`primary-foreground`. Real links and the clipped, aria-hidden label copies fill
+identical equal-width slots with matching typography. Making the thumb translucent
+exposed the lower text; allowing short links to shrink offset the copied labels.
+The focus outline stays outside the opaque thumb, as in the source component.
 Hover, keyboard focus and nested catalog routes keep the correct active slot;
 hydration and pointer leave cannot erase keyboard focus feedback.
 
@@ -74,6 +78,10 @@ The process is explanatory content, never fabricated live progress or statistics
 - Disposable backend regression checks pass for customer registration, request
   create/edit/cancel, foreign-record privacy, stale review, qualified assignment,
   schedule collisions and rescheduling. Existing customer work is not modified.
+- The navbar correction is checked at 768px, 900px and 1440px in both themes.
+  Actual text bounds align within half a pixel, the thumb is fully opaque, and
+  foreground contrast exceeds 4.5:1. Elastic keyboard navigation and mobile
+  navigation remain covered by browser checks.
 
 ## References
 

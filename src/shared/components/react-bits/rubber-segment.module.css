@@ -16,6 +16,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* Both source layers fill the same equal-width slots, including shorter labels. */
+  width: 100%;
   height: 38px;
   min-width: 44px;
   padding: 0 14px;
@@ -37,21 +39,23 @@
 }
 .item:focus-visible {
   outline: 2px solid var(--ring);
-  outline-offset: -2px;
+  /* Keep the focus ring outside the opaque overlay, as in the original control. */
+  outline-offset: 3px;
 }
 .thumb {
   position: absolute;
   inset: 3px;
   display: grid;
   grid-template-columns: repeat(var(--rs-count), minmax(0, 1fr));
-  background: color-mix(in oklch, var(--foreground) 7%, transparent);
+  /* The original opaque thumb masks the lower label while its edges stretch. */
+  background: var(--primary);
   pointer-events: none;
 }
 .thumb[hidden] {
   display: none;
 }
 .copy {
-  color: var(--brand-ink);
+  color: var(--primary-foreground);
   opacity: 1;
 }
 @media (forced-colors: active) {

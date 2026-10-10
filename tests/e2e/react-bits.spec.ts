@@ -45,6 +45,134 @@ test("desktop elastic navigation follows each real link slot", async ({
   await expect(track).toBeVisible()
 })
 
+test("elastic navigation keeps a single aligned label over an opaque thumb in both themes", async ({
+  page,
+}) => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme })
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.goto("/faq")
+    const navigation = page.getByRole("navigation", {
+      name: "Main navigation",
+      exact: true,
+    })
+    const track = page.locator("[data-rubber-segment]")
+    const thumb = page.locator("[data-rubber-thumb]")
+    await expect(thumb).toBeVisible()
+    for (const width of [1440, 900, 768]) {
+      await page.setViewportSize({ width, height: 900 })
+      for (const name of ["Services", "How it works", "FAQ", "Contact"]) {
+        const link = navigation.getByRole("link", { name, exact: true })
+        await link.hover()
+        const target = await link.evaluate((node) => {
+          const root = node.closest("[data-rubber-segment]")
+          if (!root) throw Error("Missing navigation track")
+          return (
+            node.getBoundingClientRect().left -
+            root.getBoundingClientRect().left -
+            3
+          )
+        })
+        await expect
+          .poll(() =>
+            thumb.evaluate((node, left) => {
+              const clip = getComputedStyle(node).clipPath.match(
+                /inset\(0px [\d.]+px 0px ([\d.]+)px/
+              )
+              return Math.abs(Number(clip?.[1]) - left)
+            }, target)
+          )
+          .toBeLessThan(1)
+        // Compare painted text, not just the highlight: short labels exposed this regression.
+        await expect
+          .poll(() =>
+            track.evaluate((root) => {
+              const links = Array.from(root.querySelectorAll("a"))
+              const copies = Array.from(
+                root.querySelectorAll("[data-rubber-thumb] > span")
+              )
+              return Math.max(
+                ...links.map((link, index) => {
+                  const copy = copies[index]
+                  if (!copy) throw Error("Missing clipped navigation label")
+                  const bounds = (node: Element) => {
+                    const range = document.createRange()
+                    range.selectNodeContents(node)
+                    return range.getBoundingClientRect()
+                  }
+                  const original = bounds(link)
+                  const overlay = bounds(copy)
+                  return Math.max(
+                    Math.abs(original.x - overlay.x),
+                    Math.abs(original.y - overlay.y),
+                    Math.abs(original.width - overlay.width),
+                    Math.abs(original.height - overlay.height)
+                  )
+                })
+              )
+            })
+          )
+          .toBeLessThan(0.5)
+      }
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth
+        )
+      ).toBe(true)
+    }
+    const contrast = await thumb.evaluate((node) => {
+      const canvas = document.createElement("canvas")
+      canvas.width = canvas.height = 1
+      const context = canvas.getContext("2d")
+      const copy = node.firstElementChild
+      if (!context || !copy)
+        throw Error("Navigation color sampling unavailable")
+      const sample = (color: string) => {
+        context.clearRect(0, 0, 1, 1)
+        context.fillStyle = color
+        context.fillRect(0, 0, 1, 1)
+        const [red = 0, green = 0, blue = 0, alpha = 0] = context.getImageData(
+          0,
+          0,
+          1,
+          1
+        ).data
+        const linear = [red, green, blue].map((channel) => {
+          const value = channel / 255
+          return value <= 0.04045
+            ? value / 12.92
+            : ((value + 0.055) / 1.055) ** 2.4
+        })
+        return {
+          alpha,
+          luminance:
+            (linear[0] ?? 0) * 0.2126 +
+            (linear[1] ?? 0) * 0.7152 +
+            (linear[2] ?? 0) * 0.0722,
+        }
+      }
+      const background = sample(getComputedStyle(node).backgroundColor)
+      const text = sample(getComputedStyle(copy).color)
+      return {
+        alpha: background.alpha,
+        ratio:
+          (Math.max(text.luminance, background.luminance) + 0.05) /
+          (Math.min(text.luminance, background.luminance) + 0.05),
+      }
+    })
+    expect(contrast.alpha).toBe(255)
+    expect(contrast.ratio).toBeGreaterThanOrEqual(4.5)
+    await expect(thumb).toHaveAttribute("aria-hidden", "true")
+    await expect(thumb.getByRole("link")).toHaveCount(0)
+    const services = navigation.getByRole("link", {
+      name: "Services",
+      exact: true,
+    })
+    await services.focus()
+    await expect(services).toHaveCSS("outline-offset", "3px")
+  }
+})
+
 test("mobile staggered navigation keeps its modal focus and real route links", async ({
   page,
 }) => {
