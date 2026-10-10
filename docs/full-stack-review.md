@@ -58,28 +58,35 @@ Google production login remains owner-verified. Current effects/release verifica
 is recorded in [React Bits integration](react-bits.md).
 The latest sidebar and generated-image work is recorded in [service care panorama](care-panorama.md).
 
-## Remaining conformance work
+## Closed frontend conformance gaps — October 10 follow-up
 
-1. **Route preflight:** protected pages and every action already enforce current
-   server authentication/role checks, but no `proxy.ts`/`middleware.ts` entry exists.
-   The frontend requirements explicitly request that convention. Add a lightweight
-   Next.js 16 Proxy preflight without trusting an opaque cookie as proof of a role
-   or moving slow backend authorization into Proxy.
-2. **Public catalog loading:** workspaces inherit a shared `loading.tsx`, auth has
-   its own loader and the homepage catalog has a Suspense skeleton. Public catalog
-   list/detail routes currently have no inherited `loading.tsx`; add that boundary.
-3. **All-form consistency:** seven read-only filter forms intentionally use native
-   GET submissions and server Zod parsing. They preserve URL/history behavior, but
-   do not use React Hook Form, and no `useSearchParams` hook is currently used.
-   Convert those small form boundaries while retaining server reads and bookmarkable
-   URLs. Cancellation also collects its reason without a React Hook Form boundary.
-   This is a literal requirement gap, not a claim that all business inputs are unvalidated.
-4. **Walkthrough coverage:** the existing local MP4 is an actual 6:19 captioned UI
+- Added the supported Next.js `src/proxy.ts` convention for protected route preflight.
+  Opaque cookie presence is not role authorization; current server checks remain authoritative.
+- Public service list/detail pages now inherit `services/loading.tsx` skeletons.
+- All six filter components now use React Hook Form/Zod and a small shared
+  `useSearchParams` client boundary. Pagination resets on submission, explicit service
+  scope/page size survive and browser history restores the URL's controls.
+- Request cancellation now validates its reason with RHF and the shared Zod rules,
+  retaining stale/uncertain-outcome protections.
+- The audit response schema now accepts the backend's `MEDIA` upload events and
+  projects only the allowlisted upload purpose. The backend's narrower entity-filter
+  allowlist remains unchanged.
+- Demo role selection now opens an accessible shadcn notice before authentication.
+  It explains shared evaluation activity, real API persistence and personal-account
+  registration without pretending that demo records are mock API responses.
+
+Current verification and release details are recorded in
+[frontend conformance fixes](conformance-fixes.md). The earlier evidence table above
+is historical and is not a fresh full-stack regression claim.
+
+## Remaining delivery work
+
+1. **Walkthrough coverage:** the existing local MP4 is an actual 6:19 captioned UI
    workflow recording. It is older than the current design and does not fully
    demonstrate the mandatory architecture, Network/caching and API-error checklist.
    No separate complete backend Postman/API walkthrough is present. Complete the
    required explanation coverage; a duration match alone is insufficient.
-5. **Submission:** upload an accessible approved video, provide the dedicated demo
+2. **Submission:** upload an accessible approved video, provide the dedicated demo
    administrator credentials privately, and submit the exact official portal
    template. Neither video upload nor portal submission has occurred.
 
