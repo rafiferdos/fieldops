@@ -40,10 +40,12 @@ verification; a redirect is never presented as payment success.
 - Cards compose auth, filters, profile, request/work metadata and operational panels.
   Reused DetailPanel retains real description-list semantics inside its Card.
 - Empty/Pagination, NavigationMenu/Sheet, AlertDialog and Toast use supported shadcn
-  primitives. Navigation uses shadcn button variants on actual links; action controls
-  remain buttons. Semantic HTML defines layout, headings, lists, labels and forms.
-- Field controls and buttons have 44px minimum touch targets. Long select options
-  wrap, and hidden library inputs do not alter the field's vertical alignment.
+  primitives. Public navigation composes NavigationMenu/Sheet with the requested
+  React Bits menus; action links use shadcn button variants. Semantic HTML defines
+  layout, headings, lists, labels and forms.
+- Field controls and buttons have 44px minimum touch targets; the newer compact
+  calendar grid uses 36px days to fit narrow viewports. Long select options wrap,
+  and hidden library inputs do not alter the field's vertical alignment.
 - Preset colors remain unchanged. `brand-ink` maps to primary in light mode and the
   existing chart-2 token in dark mode. Browser checks require 4.5:1 text contrast in
   both themes; operational status is always written explicitly.
@@ -102,3 +104,6 @@ not a universal frame-rate or physical-device claim.
 - [GSAP React cleanup](https://gsap.com/resources/React/)
 - [shadcn Base UI Select](https://ui.shadcn.com/docs/components/base/select)
 - [Animation performance](https://web.dev/articles/animations-guide)
+
+The newer [control and navigation consistency pass](ui-consistency.md) replaces
+all eight native date/time fields and records the original React Bits motion fixes.

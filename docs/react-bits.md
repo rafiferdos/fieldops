@@ -125,3 +125,11 @@ failure now passes. The initial 28-scenario run and later focused results retain
 separate provenance; this is not a claim of one all-passing full 28-scenario run.
 The final hosted public composition capture also passes (1/1, 8.4 seconds), saving
 actual hero, crystal, Strands and mobile-menu images outside Git in `../delivery/`.
+
+## Navigation consistency follow-up
+
+The [control consistency audit](ui-consistency.md) records restoration of the
+original section marker, line fade, rounded SVG draw and persistent fold state.
+The elastic track now shares the navbar's single frosted surface and preserves
+keyboard focus across hydration. Process-card content has clearer role and outcome
+hierarchy while the original ScrollStack projection remains.

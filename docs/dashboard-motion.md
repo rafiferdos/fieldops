@@ -33,10 +33,12 @@ portalled controls remain stationary.
 
 ## Navigation and semantic accents
 
-All workspace and footer links use the supported shadcn `SidebarMenuButton`. Hover and
-keyboard focus animate the icon and label inside an unchanged hit target. Background,
-focus-ring and active-rail transitions share short timings; motion preferences disable
-movement. The selected route retains `aria-current`, weight and a visible rail.
+Workspace navigation uses React Bits' original unboxed BranchedMenu anchors,
+rounded SVG drawing, gliding section marker and fold/fade transitions. Stable group
+identity keeps collapsed state and active-path animation across routes. The role
+feature supplies authorized links and URL-derived `aria-current`; shadcn Sidebar
+and Collapsible retain layout, focus and disclosure semantics. See the newer
+[control consistency audit](ui-consistency.md) for exact source geometry.
 
 Emerald remains the brand/success accent. Theme-aware indigo marks informational metrics,
 active work and navigation; amber marks review/departure waiting states. Cancellation

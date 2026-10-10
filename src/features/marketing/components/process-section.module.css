@@ -1,0 +1,76 @@
+.journey {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.journey::before {
+  content: "";
+  position: absolute;
+  top: 1rem;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: var(--border);
+}
+@media (min-width: 640px) {
+  .journey {
+    display: block;
+  }
+  .journey::before {
+    bottom: 1rem;
+    left: 15px;
+    right: auto;
+    height: auto;
+    width: 1px;
+  }
+}
+.number {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-color: color-mix(in oklch, var(--process-accent) 25%, var(--border));
+  border-radius: 50%;
+  background: var(--background);
+  color: var(--process-accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+.card {
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklch, var(--process-accent) 4%, var(--card)),
+    var(--card) 60%
+  );
+  border-color: color-mix(in oklch, var(--process-accent) 18%, var(--border));
+}
+.phase {
+  gap: 6px;
+  height: 26px;
+  background: color-mix(in oklch, var(--process-accent) 7%, var(--card));
+  color: var(--process-accent);
+  border-color: color-mix(in oklch, var(--process-accent) 20%, var(--border));
+}
+.icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: var(--radius-xl);
+  background: color-mix(in oklch, var(--process-accent) 7%, var(--card));
+  border-color: color-mix(in oklch, var(--process-accent) 15%, var(--border));
+  color: var(--process-accent);
+}
+@media (forced-colors: active) {
+  .number,
+  .phase,
+  .icon {
+    color: CanvasText;
+    background: Canvas;
+    border-color: CanvasText;
+  }
+  .card {
+    background: Canvas;
+    border-color: CanvasText;
+  }
+}

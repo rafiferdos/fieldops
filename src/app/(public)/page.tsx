@@ -12,19 +12,15 @@ import {
 } from "lucide-react"
 import { ServiceScene } from "@/features/marketing/components/service-scene"
 import { MarketingMotion } from "@/features/marketing/components/marketing-motion"
-import { SpotlightCard } from "@/features/marketing/components/spotlight-card"
+import { ProcessSection } from "@/features/marketing/components/process-section"
 import { AnimatedArtwork } from "@/shared/components/react-bits/animated-artwork"
 import { BorderGlow } from "@/shared/components/react-bits/border-glow"
-import {
-  ScrollStack,
-  ScrollStackItem,
-} from "@/shared/components/react-bits/scroll-stack"
 import { ScrollWords } from "@/features/marketing/components/scroll-words"
 import { TechText } from "@/shared/components/react-bits/tech-text"
 import { FaqCards } from "@/features/marketing/components/faq-cards"
 import { Reveal } from "@/shared/components/reveal"
 import { buttonVariants } from "@/shared/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
+import { Card } from "@/shared/ui/card"
 import { Separator } from "@/shared/ui/separator"
 
 export const metadata = publicMetadata(
@@ -178,74 +174,7 @@ export default function HomePage() {
           </Suspense>
         </section>
 
-        <section
-          aria-labelledby="process-title"
-          className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20"
-        >
-          <Reveal className="self-start">
-            <p className="eyebrow">From request to resolution</p>
-            <h2
-              id="process-title"
-              className="mt-4 font-heading text-4xl font-medium tracking-[-0.04em] sm:text-5xl"
-            >
-              <ScrollWords>A little structure.</ScrollWords>
-              <br />
-              <ScrollWords>A lot less guesswork.</ScrollWords>
-            </h2>
-            <p className="mt-6 max-w-md leading-relaxed text-muted-foreground">
-              Every visit has a next step. FieldOps keeps the details connected,
-              so you can spend less time following up.
-            </p>
-            <Link href="/about" className="text-link mt-7">
-              Get to know the process
-              <ArrowRight aria-hidden="true" className="size-4" />
-            </Link>
-          </Reveal>
-          <ScrollStack>
-            {[
-              {
-                number: "01",
-                title: "Start with what you need.",
-                text: "Choose a service, describe the issue and share your preferred time. The guided request keeps the important details together.",
-                icon: ClipboardList,
-              },
-              {
-                number: "02",
-                title: "Leave room for a real plan.",
-                text: "An administrator reviews your request and assigns a qualified, available technician. Your work order shows the confirmed schedule.",
-                icon: CalendarCheck2,
-              },
-              {
-                number: "03",
-                title: "See the work through.",
-                text: "Follow the visit as it progresses. When work is completed, the technician's report and your invoice stay with the work order.",
-                icon: FileCheck2,
-              },
-            ].map(({ number, title, text, icon: Icon }) => (
-              <ScrollStackItem key={number}>
-                <SpotlightCard className="process-card border bg-card shadow-none sm:p-2">
-                  <CardHeader>
-                    <div className="mb-5 flex items-center justify-between">
-                      <span className="font-heading text-5xl font-light tracking-tighter text-muted-foreground">
-                        {number}
-                      </span>
-                      <Icon
-                        aria-hidden="true"
-                        className="size-5 text-brand-ink"
-                      />
-                    </div>
-                    <CardTitle className="text-2xl tracking-tight">
-                      {title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="max-w-lg leading-relaxed text-muted-foreground">
-                    {text}
-                  </CardContent>
-                </SpotlightCard>
-              </ScrollStackItem>
-            ))}
-          </ScrollStack>
-        </section>
+        <ProcessSection />
 
         <Reveal>
           <BorderGlow>
