@@ -2,6 +2,7 @@ import { confirmDemoLogin } from "./helpers/demo-login"
 import { expect, test } from "@playwright/test"
 import { z } from "zod"
 import { dashboardSchema } from "../../src/features/workspace/schemas"
+import { formatRevenue } from "../../src/features/admin/schemas"
 import { respectAuthWindow } from "./helpers/auth-window"
 import { confirmSignOut } from "./helpers/sign-out"
 import {
@@ -31,6 +32,12 @@ test.describe("live dashboard and account navigation", () => {
       await expect(
         page.getByRole("button", { name: "Refresh dashboard" })
       ).toBeVisible({ timeout: 45000 })
+      await expect(
+        page.getByText("Shared evaluation account", { exact: true })
+      ).toBeVisible()
+      await expect(
+        page.getByText(/not evidence of real customer usage/)
+      ).toBeVisible()
       // Read the authenticated transport and compare whole-dataset totals with displayed metrics.
       const response = await page.request.get("/api/workspace/overview")
       expect(response.status()).toBe(200)
@@ -51,6 +58,26 @@ test.describe("live dashboard and account navigation", () => {
       await expect(
         page.locator(`[data-metric="${label}"] [data-metric-value]`)
       ).toHaveText(String(expected))
+      if (envelope.data.role === "ADMIN") {
+        const { overview, requests } = envelope.data
+        // Compare each visible aggregate with an authenticated live read, not fixture constants.
+        const expectedMetrics = {
+          "Verified revenue": formatRevenue(
+            overview.invoices.verifiedRevenueMinor
+          ),
+          "Paid invoices": String(overview.invoices.paidCount),
+          "Period requests": String(overview.requests.total),
+          "Period completions": String(overview.workOrders.completed),
+          "Completion rate": `${overview.workOrders.completionRate}%`,
+          "Active technicians": String(overview.technicians.active),
+          "Awaiting review": String(requests.byStatus.PENDING),
+        }
+        for (const [metric, value] of Object.entries(expectedMetrics)) {
+          await expect(
+            page.locator(`[data-metric="${metric}"] [data-metric-value]`)
+          ).toHaveText(value)
+        }
+      }
       const refreshed = page.waitForResponse(
         (reply) =>
           reply.url().includes("/api/workspace/overview") &&

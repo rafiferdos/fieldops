@@ -81,3 +81,20 @@ and explicit continue button provide both next actions.
 
 These checks do not replace an exhaustive browser/device audit. Required walkthrough
 coverage, accessible video upload and official submission remain delivery work.
+
+## Evaluation data provenance
+
+The dedicated demo administrator is a real ADMIN account with normal authorized
+backend operations. Its dashboard reads database aggregates across all accounts,
+including shared evaluation and integration-test activity. Persisted test records
+are not evidence of organic customer adoption. Customer and technician reads retain
+their account/assignment ownership restrictions.
+
+The server identifies configured shared evaluation accounts and renders an explicit
+notice on their dashboards, including when signing in manually by email/password.
+Only this notice is sent to the browser; demo credentials remain server-only.
+No counts or fake growth figures were introduced. The reporting period and current
+queue/account scopes remain explicit. An authenticated production-browser check
+compares every administrator metric with live API output, then verifies refresh,
+record navigation and confirmed logout. The pending process-section design also
+passes its scroll-stack/reduced-motion regression.
