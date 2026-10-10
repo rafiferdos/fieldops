@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import { apiRequest } from "@/infrastructure/api/server"
 import { ApiError } from "@/infrastructure/api/error"
 import { getAuthEnv } from "@/infrastructure/env/auth"
+import { SessionStorageUnavailableError } from "@/infrastructure/session/error"
 import {
   createStoredSession,
   deleteStoredSession,
@@ -105,6 +106,21 @@ export const getViewer = cache(async () => {
     throw error
   }
 })
+
+type ViewerAvailability =
+  | { available: true; viewer: Awaited<ReturnType<typeof getViewer>> }
+  | { available: false }
+
+// Layouts render a recoverable outage; protected reads still require authoritative authentication.
+export async function getViewerAvailability(): Promise<ViewerAvailability> {
+  try {
+    return { available: true, viewer: await getViewer() }
+  } catch (error) {
+    if (error instanceof SessionStorageUnavailableError)
+      return { available: false }
+    throw error
+  }
+}
 
 export async function requireViewer(role?: Role, returnTo?: string) {
   const viewer = await getViewer()

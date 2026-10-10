@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto"
 import { setTimeout } from "node:timers/promises"
 import { getAuthEnv } from "../env/auth"
 import { sessionRedis } from "./redis"
+import { SessionStorageUnavailableError } from "./error"
 import {
   newSessionId,
   openTokens,
@@ -34,7 +35,13 @@ export async function deleteStoredSession(id: string) {
 
 export async function readStoredSession(id: string) {
   const key = sessionKey(id)
-  const payload = await (await sessionRedis()).get(key)
+  let payload: string | null
+  try {
+    payload = await (await sessionRedis()).get(key)
+  } catch {
+    // A disconnected command is an outage, not proof that the account signed out.
+    throw new SessionStorageUnavailableError()
+  }
   return payload ? openTokens(payload, encryptionKey(), key) : null
 }
 

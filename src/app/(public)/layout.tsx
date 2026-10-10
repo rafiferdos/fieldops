@@ -1,6 +1,7 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
-import { getViewer } from "@/features/auth/session"
+import { getViewerAvailability } from "@/features/auth/session"
+import { SessionUnavailable } from "@/features/auth/components/session-unavailable"
 import { PublicMotion } from "@/features/marketing/components/public-motion"
 import { AccountMenu } from "@/features/auth/components/account-menu"
 import { SiteHeader } from "@/shared/components/site-header"
@@ -13,7 +14,9 @@ export default async function PublicLayout({
 }: {
   children: ReactNode
 }) {
-  const viewer = await getViewer()
+  const availability = await getViewerAvailability()
+  if (!availability.available) return <SessionUnavailable />
+  const { viewer } = availability
   return (
     <>
       <SiteHeader

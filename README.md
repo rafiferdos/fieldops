@@ -187,6 +187,25 @@ The frontend session store binds to loopback port **6397**, independently of bac
 `docker compose down` stops it while preserving the volume. Keep the same encryption key
 across restarts and instances.
 
+### Local session-store troubleshooting
+
+The frontend needs its session container as well as the Next.js process. If an existing
+login cookie cannot be checked, FieldOps shows a session-unavailable screen and keeps
+private data inaccessible. Reload after restoring the store; deleting the cookie is
+not a dependency fix.
+
+```bash
+docker compose ps
+docker compose up -d --wait sessions
+```
+
+If Docker itself cannot start, inspect the daemon before changing application settings.
+On systemd Linux, use `systemctl status docker.service` and
+`journalctl -u docker.service -n 50`. After a kernel upgrade, compare `uname -r` with
+`/usr/lib/modules`: missing modules for the running kernel require booting the updated
+kernel. Save ongoing work and restart the machine, then start Docker and the session
+container. Retain the existing volume and encryption key.
+
 ### Environment
 
 Use [.env.example](.env.example) as the complete template.
@@ -219,7 +238,7 @@ npm run start
 ```
 
 `check` runs formatting, generated route types, TypeScript, typed linting and Vitest.
-The ordinary suite currently has **179 checks**. Six additional real-Redis coordination
+The ordinary suite currently has **190 checks**. Six additional real-Redis coordination
 checks run against a dedicated local store:
 
 ```bash

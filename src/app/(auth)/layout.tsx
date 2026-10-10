@@ -5,10 +5,18 @@ import { ThemeToggle } from "@/shared/components/theme-toggle"
 import { Brand } from "@/shared/components/brand"
 import { Reveal } from "@/shared/components/reveal"
 import { ServiceJourney } from "@/features/marketing/components/service-journey"
+import { getViewerAvailability } from "@/features/auth/session"
+import { SessionUnavailable } from "@/features/auth/components/session-unavailable"
 
 export const metadata = { robots: { index: false, follow: false } }
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
+export default async function AuthLayout({
+  children,
+}: {
+  children: ReactNode
+}) {
+  const availability = await getViewerAvailability()
+  if (!availability.available) return <SessionUnavailable />
   return (
     <div className="min-h-svh bg-muted/20">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-6 sm:px-8">
