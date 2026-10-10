@@ -298,6 +298,7 @@ Offline operation, live funds and distributed failover certification are outside
 - [Dashboard scrolling, animation lifecycle and current release](docs/dashboard-motion.md)
 - [Home materials, React Bits adaptations and animation limits](docs/home-materials.md)
 - [Requested components, placements, original appearance and verification](docs/react-bits.md)
+- [Service care panorama, generated images and accessible controls](docs/care-panorama.md)
 - [Full-stack delivery review and remaining work](docs/full-stack-review.md)
 - [Role, route and API map](docs/route-plan.md)
 - [Session-safe dashboard and technology decisions](docs/workspace-upgrade.md)

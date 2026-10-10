@@ -78,7 +78,9 @@ export function PublicMotion({ children }: { children: ReactNode }) {
   return (
     <div ref={wrapper} data-public-scroll="">
       <div ref={content} className="public-scroll-content">
-        <SurfaceMotion>{children}</SurfaceMotion>
+        <SurfaceMotion className="public-scroll-surface">
+          {children}
+        </SurfaceMotion>
       </div>
     </div>
   )

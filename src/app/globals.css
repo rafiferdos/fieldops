@@ -292,6 +292,11 @@
     width: 100%;
     overflow: visible;
   }
+  .public-scroll-surface {
+    /* Ambient card halos may extend locally without widening the page or adding a scroller. */
+    overflow-x: clip;
+    overflow-y: visible;
+  }
 }
 
 @layer utilities {

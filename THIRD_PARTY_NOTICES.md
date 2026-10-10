@@ -24,7 +24,7 @@ replaced by the requested Strands WebGL effect.
 
 The application also includes source-reviewed **TechText, CrystalizedBall,
 BranchedMenu, HoldButton, PeekRating, RubberSegment, StrokeText, Strands,
-BorderGlow, StaggeredMenu, GradualBlur and ScrollStack** at the same revision.
+BorderGlow, StaggeredMenu, GradualBlur, ScrollStack and CircularCarousel** at the same revision.
 
 Visuals retain the upstream geometry, wave fill, shaders, glow masks and stagger
 patterns where applicable. Colors match FieldOps. Integration fixes preserve native
@@ -45,6 +45,7 @@ Lucide supplies existing icons instead of installing another icon library.
 - [StaggeredMenu source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Components/StaggeredMenu)
 - [GradualBlur source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Animations/GradualBlur)
 - [ScrollStack source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Components/ScrollStack)
+- [CircularCarousel source](https://github.com/DavidHDev/react-bits/tree/d86fccbd477786f94ca7eb891fbe0ec039d3cd3b/src/ts-default/Components/CircularCarousel)
 
 CodeSlots was reviewed for applicability but is not distributed: FieldOps has no
 email-code verification endpoint or form. The gateway's hosted OTP screen belongs

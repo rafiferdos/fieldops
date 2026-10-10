@@ -13,6 +13,7 @@ import {
 import { ServiceScene } from "@/features/marketing/components/service-scene"
 import { MarketingMotion } from "@/features/marketing/components/marketing-motion"
 import { ProcessSection } from "@/features/marketing/components/process-section"
+import { CarePanorama } from "@/features/marketing/components/care-panorama"
 import { AnimatedArtwork } from "@/shared/components/react-bits/animated-artwork"
 import { BorderGlow } from "@/shared/components/react-bits/border-glow"
 import { ScrollWords } from "@/features/marketing/components/scroll-words"
@@ -173,6 +174,8 @@ export default function HomePage() {
             <FeaturedServices />
           </Suspense>
         </section>
+
+        <CarePanorama />
 
         <ProcessSection />
 
