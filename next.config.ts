@@ -3,6 +3,8 @@ import type { NextConfig } from "next"
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   typedRoutes: true,
+  // Authentication actions contain credentials; development logs must not print arguments.
+  logging: { serverFunctions: false },
   images: {
     // Fill the default gaps for 392px editorial cards and the 1216px hero scene.
     imageSizes: [32, 48, 64, 96, 128, 256, 384, 480],
