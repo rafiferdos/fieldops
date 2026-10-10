@@ -333,14 +333,14 @@ export function useCircularCarouselEngine(
               : ` translateY(${mod.lift}px)`
         card.style.transform = transform
 
-const world = wrap(base + angle)
-const facing = Math.cos(world * TO_RAD)
+        const world = wrap(base + angle)
+        const facing = Math.cos(world * TO_RAD)
 
-// Let individual 3D tiles leave the viewport naturally.
-// Do not hide the entire card at a fixed rotation angle.
+        // Let individual 3D tiles leave the viewport naturally.
+        // Do not hide the entire card at a fixed rotation angle.
 
-const fade = s.depthFade * Math.pow((1 - facing) / 2, 1.25)
-card.style.setProperty("--cc-depth", fade.toFixed(3))
+        const fade = s.depthFade * Math.pow((1 - facing) / 2, 1.25)
+        card.style.setProperty("--cc-depth", fade.toFixed(3))
       }
 
       const index =

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useEffect, useState, type ReactNode } from "react"
@@ -20,11 +19,7 @@ const links = [
   { href: "/contact", label: "Contact" },
 ] as const
 
-export function SiteHeader({
-  accountControl,
-}: {
-  accountControl?: ReactNode
-}) {
+export function SiteHeader({ accountControl }: { accountControl?: ReactNode }) {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
 
@@ -71,8 +66,7 @@ export function SiteHeader({
             <ul className="flex items-center gap-0 lg:gap-1">
               {links.map((link) => {
                 const active =
-                  pathname === link.href ||
-                  pathname.startsWith(`${link.href}/`)
+                  pathname === link.href || pathname.startsWith(`${link.href}/`)
 
                 return (
                   <li key={link.href}>
@@ -90,7 +84,7 @@ export function SiteHeader({
                       <span
                         aria-hidden="true"
                         className={cn(
-                          "absolute bottom-1 left-2.5 right-2.5 h-0.5 origin-center scale-x-0 rounded-full bg-primary transition-transform duration-300 group-hover:scale-x-100 group-focus-visible:scale-x-100",
+                          "absolute right-2.5 bottom-1 left-2.5 h-0.5 origin-center scale-x-0 rounded-full bg-primary transition-transform duration-300 group-hover:scale-x-100 group-focus-visible:scale-x-100",
                           active && "scale-x-100"
                         )}
                       />

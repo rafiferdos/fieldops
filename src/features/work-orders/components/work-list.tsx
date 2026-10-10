@@ -1,4 +1,4 @@
-import { ButtonLink } from "@/shared/components/button-link"
+import { WorkFilters } from "./work-filters"
 import Link from "next/link"
 import { ArrowUpRight, CalendarDays } from "lucide-react"
 import { Reveal } from "@/shared/components/reveal"
@@ -8,10 +8,6 @@ import { PageHeading } from "@/shared/components/page-heading"
 import { Pagination } from "@/shared/components/pagination"
 import { EmptyState } from "@/shared/components/empty-state"
 import { formatDate } from "@/shared/lib/format"
-import { Input } from "@/shared/ui/input"
-import { Label } from "@/shared/ui/label"
-import { ChoiceSelect } from "@/shared/components/choice-select"
-import { Button } from "@/shared/ui/button"
 import { Badge } from "@/shared/ui/badge"
 import {
   Card,
@@ -21,7 +17,6 @@ import {
   CardFooter,
 } from "@/shared/ui/card"
 import { parseWorkQuery } from "../schemas"
-import { workStatusSchema } from "../status"
 import { listWorkOrders } from "../server"
 import { workListPath, workDetailPath } from "../routes"
 
@@ -52,63 +47,7 @@ export async function WorkList({
         }
         description="Follow confirmed visits, service progress and completion records."
       />
-      {/* GET filters reset pagination while preserving an explicit service scope. */}
-      <Card className="mb-8 border p-5 shadow-none">
-        {/* Keep GET submission semantics while sharing the shadcn filter surface. */}
-        <form
-          action={pathname}
-          className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto_auto]"
-        >
-          <div className="space-y-2">
-            <Label htmlFor="work-search">Search work orders</Label>
-            <Input
-              key={query.q}
-              id="work-search"
-              name="q"
-              defaultValue={query.q}
-              maxLength={100}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="work-status">Work status</Label>
-            <ChoiceSelect
-              key={query.status ?? "all"}
-              id="work-status"
-              name="status"
-              defaultValue={query.status ?? ""}
-              options={[
-                { value: "", label: "All statuses" },
-                ...workStatusSchema.options.map((status) => ({
-                  value: status,
-                  label: status,
-                })),
-              ]}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="work-sort">Sort by</Label>
-            <ChoiceSelect
-              key={query.sort}
-              id="work-sort"
-              name="sort"
-              defaultValue={query.sort}
-              options={[
-                { value: "newest", label: "Newest first" },
-                { value: "oldest", label: "Oldest first" },
-                { value: "scheduled_start_asc", label: "Scheduled visit" },
-              ]}
-            />
-          </div>
-          {query.serviceId && (
-            <input type="hidden" name="serviceId" value={query.serviceId} />
-          )}
-          <input type="hidden" name="limit" value={query.limit} />
-          <Button type="submit">Apply filters</Button>
-          <ButtonLink variant="ghost" href={pathname}>
-            Clear
-          </ButtonLink>
-        </form>
-      </Card>
+      <WorkFilters query={query} pathname={pathname} />
       {query.serviceId && (
         <p className="mb-5 text-sm text-muted-foreground">
           Filtered by service.{" "}

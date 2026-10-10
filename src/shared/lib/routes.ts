@@ -1,5 +1,16 @@
 import type { Route } from "next"
 
+export type ListRoute =
+  | "/services"
+  | "/admin/services"
+  | "/admin/users"
+  | "/admin/audit-logs"
+  | "/customer/requests"
+  | "/admin/requests"
+  | "/admin/work-orders"
+  | "/customer/work-orders"
+  | "/technician/work-orders"
+
 // Limit action destinations to implemented record families while preserving Next route checks.
 export type RecordRoute = Route<
   | `/customer/requests/${string}`

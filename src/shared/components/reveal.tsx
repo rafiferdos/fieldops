@@ -12,7 +12,7 @@ export function Reveal({
   as: Element = "div",
 }: {
   children: ReactNode
-  className?: string
+  className?: string | undefined
   stagger?: boolean
   as?: "div" | "ul" | "ol"
 }) {

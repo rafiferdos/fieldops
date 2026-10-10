@@ -1,4 +1,4 @@
-import { ButtonLink } from "@/shared/components/button-link"
+import { RequestFilters } from "./request-filters"
 import Link from "next/link"
 import { ArrowUpRight, CalendarDays } from "lucide-react"
 import { Reveal } from "@/shared/components/reveal"
@@ -9,9 +9,7 @@ import { PageHeading } from "@/shared/components/page-heading"
 import { EmptyState } from "@/shared/components/empty-state"
 import { Pagination } from "@/shared/components/pagination"
 import { formatDate } from "@/shared/lib/format"
-import { Button, buttonVariants } from "@/shared/ui/button"
-import { Input } from "@/shared/ui/input"
-import { Label } from "@/shared/ui/label"
+import { buttonVariants } from "@/shared/ui/button"
 import { Badge } from "@/shared/ui/badge"
 import {
   Card,
@@ -20,7 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card"
-import { ChoiceSelect } from "@/shared/components/choice-select"
 
 // Customer and admin queues share presentation; the server read enforces each scope.
 export async function RequestList({
@@ -51,61 +48,7 @@ export async function RequestList({
           ) : undefined
         }
       />
-      <Card className="mb-8 border p-5 shadow-none">
-        {/* Keep GET submission semantics while sharing the shadcn filter surface. */}
-        <form
-          action={pathname}
-          className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto_auto]"
-        >
-          <div className="space-y-2">
-            <Label htmlFor="request-search">Search requests</Label>
-            <Input
-              key={query.q}
-              id="request-search"
-              name="q"
-              maxLength={100}
-              defaultValue={query.q}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="request-status">Status</Label>
-            <ChoiceSelect
-              key={query.status ?? "all"}
-              id="request-status"
-              name="status"
-              defaultValue={query.status ?? ""}
-              options={[
-                { value: "", label: "All statuses" },
-                ...["PENDING", "APPROVED", "REJECTED", "CANCELLED"].map(
-                  (status) => ({ value: status, label: status })
-                ),
-              ]}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="request-sort">Sort by</Label>
-            <ChoiceSelect
-              key={query.sort}
-              id="request-sort"
-              name="sort"
-              defaultValue={query.sort}
-              options={[
-                { value: "newest", label: "Newest first" },
-                { value: "oldest", label: "Oldest first" },
-                { value: "preferred_start_asc", label: "Preferred visit" },
-              ]}
-            />
-          </div>
-          {query.serviceId && (
-            <input type="hidden" name="serviceId" value={query.serviceId} />
-          )}
-          <input type="hidden" name="limit" value={query.limit} />
-          <Button type="submit">Apply filters</Button>
-          <ButtonLink variant="ghost" href={pathname}>
-            Clear
-          </ButtonLink>
-        </form>
-      </Card>
+      <RequestFilters query={query} pathname={pathname} />
       {query.serviceId && (
         <p className="mb-5 text-sm text-muted-foreground">
           Filtered by service.{" "}

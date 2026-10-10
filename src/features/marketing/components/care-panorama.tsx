@@ -72,7 +72,7 @@ export function CarePanorama() {
           Keep a clear record of the result.
         </p>
       </Reveal>
-      <div className="relative h-90 w-7/8 mx-auto sm:h-140">
+      <div className="relative mx-auto h-90 w-7/8 sm:h-140">
         <CircularCarousel
           items={items}
           preset="panorama"

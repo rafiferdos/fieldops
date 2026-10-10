@@ -6,14 +6,21 @@ const count = z.number().int().nonnegative()
 const day = z.union([z.literal(""), z.iso.date()])
 export const overviewFilterSchema = z
   .strictObject({ from: day, to: day })
-  .refine((value) => {
-    if (!value.from && !value.to) return true
-    const from = Date.parse(value.from),
-      to = Date.parse(value.to)
-    return (
-      !!value.from && !!value.to && to > from && to - from <= 366 * 86400000
-    )
-  }, "Provide both dates, with an increasing range of at most 366 days.")
+  .refine(
+    (value) => {
+      if (!value.from && !value.to) return true
+      const from = Date.parse(value.from),
+        to = Date.parse(value.to)
+      return (
+        !!value.from && !!value.to && to > from && to - from <= 366 * 86400000
+      )
+    },
+    {
+      message:
+        "Provide both dates, with an increasing range of at most 366 days.",
+      path: ["to"],
+    }
+  )
 
 export function parseOverviewFilters(values: SearchValues) {
   return overviewFilterSchema.safeParse({

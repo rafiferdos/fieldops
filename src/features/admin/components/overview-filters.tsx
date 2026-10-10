@@ -1,11 +1,10 @@
-import { Card } from "@/shared/ui/card"
-import { DatePicker } from "@/shared/components/date-picker"
-import { Label } from "@/shared/ui/label"
-import { Button } from "@/shared/ui/button"
-import { ButtonLink } from "@/shared/components/button-link"
-import { FormMessage } from "@/shared/components/form-message"
+"use client"
 
-// GET filters remain bookmarkable and are validated before any report read.
+import { UrlFilterForm } from "@/shared/components/url-filter-form"
+import { FormMessage } from "@/shared/components/form-message"
+import { overviewFilterSchema } from "../schemas"
+
+// Period controls use the same paired-date policy as the authoritative server read.
 export function OverviewFilters({
   from,
   to,
@@ -16,34 +15,19 @@ export function OverviewFilters({
   error: string | undefined
 }) {
   return (
-    <Card className="mb-8 border p-5 shadow-none">
-      <form action="/admin" className="flex flex-wrap items-end gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="overview-from">From (Dhaka)</Label>
-          <DatePicker
-            key={from}
-            id="overview-from"
-            label="From (Dhaka)"
-            name="from"
-            defaultValue={from}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="overview-to">To (exclusive, Dhaka)</Label>
-          <DatePicker
-            key={to}
-            id="overview-to"
-            label="To (exclusive, Dhaka)"
-            name="to"
-            defaultValue={to}
-          />
-        </div>
-        <Button type="submit">Apply period</Button>
-        <ButtonLink href="/admin" variant="ghost">
-          Last 30 days
-        </ButtonLink>
-      </form>
+    <>
+      <UrlFilterForm
+        pathname="/admin"
+        values={{ from, to }}
+        schema={overviewFilterSchema}
+        submitLabel="Apply period"
+        clearLabel="Last 30 days"
+        fields={[
+          { name: "from", label: "From (Dhaka)", kind: "date" },
+          { name: "to", label: "To (exclusive, Dhaka)", kind: "date" },
+        ]}
+      />
       <FormMessage message={error} />
-    </Card>
+    </>
   )
 }

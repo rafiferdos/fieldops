@@ -483,10 +483,8 @@
   }
 }
 
-
 @media (min-width: 768px) {
-  @supports (backdrop-filter: blur(1px)) or
-    (-webkit-backdrop-filter: blur(1px)) {
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     .site-header .frosted-nav {
       --navigation-surface: color-mix(
         in oklch,
