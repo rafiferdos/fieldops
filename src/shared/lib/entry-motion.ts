@@ -10,12 +10,32 @@ export function observeEntryMotion(root: HTMLElement, mode: EntryMode) {
     "(prefers-reduced-motion: no-preference)",
     (context) => {
       const observed = new WeakSet<Element>()
+      const animations = new Set<Animation>()
       const observer = new IntersectionObserver(
         (entries) => {
           let visibleIndex = 0
           for (const entry of entries) {
             if (!entry.isIntersecting) continue
             observer.unobserve(entry.target)
+            if (mode === "surfaces") {
+              // Streamed cards may not be hydrated yet. Compositor effects leave React's attributes intact.
+              if (typeof entry.target.animate === "function") {
+                const animation = entry.target.animate(
+                  [
+                    { transform: "translateY(32px) scale(0.99)" },
+                    { transform: "none" },
+                  ],
+                  {
+                    duration: 750,
+                    easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+                    composite: "add",
+                  }
+                )
+                animations.add(animation)
+                animation.onfinish = () => animations.delete(animation)
+              }
+              continue
+            }
             context.add(() => {
               // Preserve full reading contrast; transforms finish without residual inline styles.
               gsap.from(entry.target, {
@@ -72,6 +92,7 @@ export function observeEntryMotion(root: HTMLElement, mode: EntryMode) {
       return () => {
         observer.disconnect()
         updates.disconnect()
+        for (const animation of animations) animation.cancel()
       }
     },
     root
