@@ -3,6 +3,7 @@ import { createDispatchFixture } from "./helpers/dispatch-fixtures"
 import { respectAuthWindow } from "./helpers/auth-window"
 import { writeFile } from "node:fs/promises"
 import AxeBuilder from "@axe-core/playwright"
+import { reachWorkspaceControl } from "./helpers/workspace-motion"
 
 test.skip(
   process.env.E2E_REAL_SANDBOX !== "1" || process.env.E2E_LIVE_WRITES !== "1",
@@ -229,9 +230,12 @@ test("sandbox cancellation, explicit retry, settlement and immutable paid feedba
       bank.getByLabel("Comment (optional)", { exact: true })
     ).toHaveValue(comment)
     await bank.unroute(actionUrl)
-    await bank
-      .getByRole("button", { name: "Inspect latest feedback", exact: true })
-      .click()
+    const inspect = bank.getByRole("button", {
+      name: "Inspect latest feedback",
+      exact: true,
+    })
+    await reachWorkspaceControl(bank, inspect)
+    await inspect.click()
     await expect(bank.getByText(comment, { exact: true })).toBeVisible()
     await bank.reload()
     await expect(bank.getByText(comment, { exact: true })).toBeVisible()

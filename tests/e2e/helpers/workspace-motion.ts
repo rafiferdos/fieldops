@@ -1,4 +1,31 @@
-import { expect, type Page } from "@playwright/test"
+import { expect, type Locator, type Page } from "@playwright/test"
+
+// Native wheel input settles the transformed surface before targeting a newly added control.
+export async function reachWorkspaceControl(page: Page, control: Locator) {
+  const bounds = await control.boundingBox()
+  if (!bounds) throw Error("Missing workspace control geometry")
+  const height = await page.evaluate(() => innerHeight)
+  await page.mouse.wheel(0, bounds.y - height * 0.6)
+  await expect(control).toBeInViewport()
+  if (
+    (await page
+      .locator("[data-workspace-scroll]")
+      .getAttribute("data-scroll-mode")) === "smooth"
+  ) {
+    await expect
+      .poll(() =>
+        page
+          .locator(".workspace-scroll-content")
+          .evaluate((node) =>
+            Math.abs(
+              new DOMMatrixReadOnly(getComputedStyle(node).transform).m42 +
+                window.scrollY
+            )
+          )
+      )
+      .toBeLessThan(2)
+  }
+}
 
 // Verify native scrolling and transformed content, rather than a configuration flag alone.
 export async function verifyWorkspaceMotion(page: Page, responsive: boolean) {

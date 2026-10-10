@@ -9,9 +9,15 @@ export async function confirmSignOut(page: Page) {
   await expect(
     page.getByRole("dialog", { name: "Sign out of FieldOps?" })
   ).toBeVisible()
+  // Let the modal's safe initial focus settle before starting a continuous gesture.
+  await expect(
+    page.getByRole("button", { name: "Cancel sign out", exact: true })
+  ).toBeFocused()
   const hold = page.getByRole("button", { name: "Hold to logout", exact: true })
   await hold.focus()
+  await expect(hold).toBeFocused()
   await page.keyboard.down("Space")
+  await expect(hold).toHaveAttribute("data-phase", "holding")
   // Observe the resulting navigation while the real continuous key gesture completes.
   await expect(page).toHaveURL(/\/login$/)
   await page.keyboard.up("Space")

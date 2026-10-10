@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useId, useRef, type ReactNode } from "react"
+import { useEffect, useEffectEvent, useId, useRef, type ReactNode } from "react"
 import { cn } from "@/shared/lib/utils"
 import "./hold-button.css"
 
@@ -24,6 +24,8 @@ export function HoldButton({
 }: HoldButtonProps) {
   const ref = useRef<HTMLButtonElement>(null)
   const hint = useId()
+  // A new parent callback must not restart an already established continuous hold.
+  const complete = useEffectEvent(onHold)
   useEffect(() => {
     const button = ref.current
     if (!button || disabled) return
@@ -63,7 +65,7 @@ export function HoldButton({
         completed = true
         input = undefined
         button.dataset.phase = "done"
-        onHold()
+        complete()
       }
     }
     const begin = (kind: "pointer" | "key") => {
@@ -151,7 +153,7 @@ export function HoldButton({
       window.removeEventListener("blur", cancel)
       document.removeEventListener("visibilitychange", visibility)
     }
-  }, [disabled, holdTime, onHold])
+  }, [disabled, holdTime])
   const labels = (
     <>
       <span className="hold-button__idle">{children}</span>
