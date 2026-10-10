@@ -4,6 +4,19 @@ import { auditApiQuery, auditEventSchema, parseAuditQuery } from "./schemas"
 import { safeAuditMetadata } from "./metadata"
 
 describe("audit filters and safe event projection", () => {
+  it("accepts upload events without leaking provider fields or extending API filters", () => {
+    const event = auditEventSchema.parse({
+      id: "11111111-1111-4111-8111-111111111111",
+      actorId: null,
+      entityType: "MEDIA",
+      entityId: "22222222-2222-4222-8222-222222222222",
+      action: "IMAGE_UPLOADED",
+      createdAt: "2026-10-10T00:00:00Z",
+      metadata: { purpose: "AVATAR", providerSecret: "private" },
+    })
+    expect(event.metadata).toEqual({ purpose: "AVATAR" })
+    expect(parseAuditQuery({ entityType: "MEDIA" }).success).toBe(false)
+  })
   it("converts a paired Dhaka period and forwards only supported filters", () => {
     const parsed = parseAuditQuery({
       entityType: "USER",

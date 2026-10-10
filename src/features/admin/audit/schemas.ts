@@ -64,7 +64,8 @@ export const auditEventSchema = z
     id: z.uuid(),
     actorId: z.uuid().nullable(),
     action: actionSchema,
-    entityType: entityTypeSchema,
+    // Uploads emit MEDIA events; the backend's filter allowlist remains separate.
+    entityType: z.enum([...entityTypeSchema.options, "MEDIA"]),
     entityId: z.uuid(),
     createdAt: z.iso.datetime(),
     metadata: z.unknown(),

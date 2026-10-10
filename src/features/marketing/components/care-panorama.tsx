@@ -72,7 +72,7 @@ export function CarePanorama() {
           Keep a clear record of the result.
         </p>
       </Reveal>
-      <div className="relative h-90 w-full sm:h-140">
+      <div className="relative h-90 w-7/8 mx-auto sm:h-140">
         <CircularCarousel
           items={items}
           preset="panorama"
@@ -83,22 +83,22 @@ export function CarePanorama() {
           captions={false}
           gap={19}
           tilt={0}
-          curve={1}
+          curve={0.2}
           perspective={1800}
           autoplay={paused ? "off" : "drift"}
           interval={3}
           direction="left"
-          momentum={0.6}
+          momentum={0.1}
           snap
           pauseOnHover
           focusOnClick
           draggable
-          parallax={0.3}
+          parallax={0.6}
           stretch={0.41}
           fadeColor="var(--background)"
           depthFade={0.55}
           innerShade={0.53}
-          cornerRadius={21}
+          cornerRadius={30}
           label="Service care panorama"
         />
       </div>
