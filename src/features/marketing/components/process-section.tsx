@@ -145,7 +145,7 @@ export function ProcessSection() {
                   <div className="flex items-start gap-4">
                     <Badge
                       variant="outline"
-                      className={`${styles.icon} [&_svg]:size-5!`}
+                      className={`${styles.icon} [&>svg]:size-5!`}
                     >
                       <Icon aria-hidden="true" />
                     </Badge>
