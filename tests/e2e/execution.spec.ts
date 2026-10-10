@@ -1,3 +1,4 @@
+import { confirmDemoLogin } from "./helpers/demo-login"
 import { confirmSignOut } from "./helpers/sign-out"
 import { expect, test, type Page } from "@playwright/test"
 import { createDispatchFixture } from "./helpers/dispatch-fixtures"
@@ -18,7 +19,7 @@ async function demoLogin(
   role: "Technician" | "Admin" | "Customer"
 ) {
   await page.goto("/login")
-  await page.getByRole("button", { name: `${role} demo`, exact: true }).click()
+  await confirmDemoLogin(page, role)
   await expect(page).toHaveURL(new RegExp(`/${role.toLowerCase()}$`))
 }
 async function logout(page: Page) {

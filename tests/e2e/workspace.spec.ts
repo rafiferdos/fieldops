@@ -1,3 +1,4 @@
+import { confirmDemoLogin } from "./helpers/demo-login"
 import { expect, test } from "@playwright/test"
 import { z } from "zod"
 import { dashboardSchema } from "../../src/features/workspace/schemas"
@@ -26,9 +27,7 @@ test.describe("live dashboard and account navigation", () => {
       const errors: string[] = []
       page.on("pageerror", (error) => errors.push(error.message))
       await page.goto("/login")
-      await page
-        .getByRole("button", { name: `${role} demo`, exact: true })
-        .click()
+      await confirmDemoLogin(page, role)
       await expect(
         page.getByRole("button", { name: "Refresh dashboard" })
       ).toBeVisible({ timeout: 45000 })

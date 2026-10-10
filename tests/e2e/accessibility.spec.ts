@@ -1,3 +1,4 @@
+import { confirmDemoLogin } from "./helpers/demo-login"
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
 import { respectAuthWindow } from "./helpers/auth-window"
@@ -119,9 +120,7 @@ test.describe("authenticated accessibility", () => {
       try {
         const page = await context.newPage()
         await page.goto("/login")
-        await page
-          .getByRole("button", { name: `${role} demo`, exact: true })
-          .click()
+        await confirmDemoLogin(page, role)
         await expect(page).not.toHaveURL(/\/login/)
         for (const colorScheme of ["light", "dark"] as const) {
           await page.emulateMedia({ colorScheme, reducedMotion: "reduce" })

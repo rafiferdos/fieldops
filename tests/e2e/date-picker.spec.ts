@@ -1,3 +1,4 @@
+import { confirmDemoLogin } from "./helpers/demo-login"
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 import { dhakaLocal } from "../../src/features/requests/schemas"
@@ -22,10 +23,7 @@ test("shadcn report calendars retain dates, keyboard focus and mobile accessibil
 }) => {
   test.setTimeout(120000)
   await page.goto("/login")
-  await clickWorkspaceControl(
-    page,
-    page.getByRole("button", { name: "Admin demo", exact: true })
-  )
+  await confirmDemoLogin(page, "Admin")
   await expect(page).toHaveURL(/\/admin$/)
   await chooseDate(page, "From (Dhaka)", "2099-01-01")
   await chooseDate(page, "To (exclusive, Dhaka)", "2099-02-01")
@@ -68,7 +66,7 @@ test("shadcn report calendars retain dates, keyboard focus and mobile accessibil
     page.getByRole("button", { name: "Apply filters", exact: true })
   )
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
-    "both valid dates"
+    "both dates"
   )
   await chooseDate(page, "To (exclusive, Dhaka)", "2099-02-01")
   await clickWorkspaceControl(
@@ -85,10 +83,7 @@ test("calendar and minute selects preserve request details and reject an incompl
 }) => {
   test.setTimeout(120000)
   await page.goto("/login")
-  await clickWorkspaceControl(
-    page,
-    page.getByRole("button", { name: "Customer demo", exact: true })
-  )
+  await confirmDemoLogin(page, "Customer")
   await expect(page).toHaveURL(/\/customer$/)
   await page.goto("/customer/requests/new")
   await page.getByRole("combobox", { name: "Service", exact: true }).click()

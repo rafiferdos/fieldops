@@ -1,3 +1,4 @@
+import { confirmDemoLogin } from "./helpers/demo-login"
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 import { respectAuthWindow } from "./helpers/auth-window"
@@ -17,7 +18,7 @@ test("original branch drawing and section marker survive real route changes", as
   test.setTimeout(120000)
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto("/login")
-  await page.getByRole("button", { name: "Admin demo", exact: true }).click()
+  await confirmDemoLogin(page, "Admin")
   await expect(page).toHaveURL(/\/admin$/)
   const nav = page.getByRole("navigation", {
     name: "Workspace navigation",

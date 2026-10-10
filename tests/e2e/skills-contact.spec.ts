@@ -1,3 +1,4 @@
+import { confirmDemoLogin } from "./helpers/demo-login"
 import { expect, test } from "@playwright/test"
 import { createManagedUserFixture } from "./helpers/managed-user-fixture"
 import { respectAuthWindow } from "./helpers/auth-window"
@@ -62,9 +63,7 @@ test.describe("real technician skill replacement", () => {
       await fixture.setAccess({ role: "TECHNICIAN" })
       const service = await fixture.firstService()
       await page.goto("/login")
-      await page
-        .getByRole("button", { name: "Admin demo", exact: true })
-        .click()
+      await confirmDemoLogin(page, "Admin")
       await expect(page).toHaveURL(/\/admin$/)
       await page.goto(`/admin/users?q=${encodeURIComponent(fixture.email)}`)
       await page

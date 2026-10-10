@@ -15,6 +15,7 @@ import { toast } from "@/shared/ui/toast"
 import { signIn, register as registerAccount, signInDemo } from "../actions"
 import { loginSchema, registerSchema, type Role } from "../schemas"
 import { GoogleSignIn } from "./google-sign-in"
+import { DemoLoginDialog } from "./demo-login-dialog"
 
 type Fields = z.infer<typeof registerSchema>
 
@@ -44,6 +45,7 @@ export function AuthForm({
   })
   const [message, setMessage] = useState<string>()
   const [demoPending, setDemoPending] = useState(false)
+  const [demoRole, setDemoRole] = useState<Role | null>(null)
   const [passwordVisible, setPasswordVisible] = useState(false)
   const busy = !isReady || isSubmitting || demoPending
 
@@ -75,6 +77,7 @@ export function AuthForm({
     try {
       const result = await signInDemo(role, returnTo)
       if (result.ok && result.destination) {
+        setDemoRole(null)
         router.push(result.destination)
         router.refresh()
       } else if (!result.ok) setMessage(result.message)
@@ -192,7 +195,8 @@ export function AuthForm({
                 variant="outline"
                 disabled={busy}
                 onClick={() => {
-                  void demo(role)
+                  setMessage(undefined)
+                  setDemoRole(role)
                 }}
               >
                 {role === "CUSTOMER"
@@ -206,6 +210,18 @@ export function AuthForm({
           </div>
         </section>
       )}
+      <DemoLoginDialog
+        role={demoRole}
+        pending={demoPending}
+        message={message}
+        onClose={() => {
+          setDemoRole(null)
+          setMessage(undefined)
+        }}
+        onConfirm={() => {
+          if (demoRole && !demoPending) void demo(demoRole)
+        }}
+      />
       <p className="text-sm text-muted-foreground">
         {registering ? "Already have an account? " : "New to FieldOps? "}
         <Link

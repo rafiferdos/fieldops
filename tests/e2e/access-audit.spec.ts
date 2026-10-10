@@ -1,3 +1,4 @@
+import { confirmDemoLogin } from "./helpers/demo-login"
 import { chooseDate } from "./helpers/date-picker"
 import { confirmSignOut } from "./helpers/sign-out"
 import { randomUUID } from "node:crypto"
@@ -20,7 +21,7 @@ async function demoLogin(
   role: "Admin" | "Customer" | "Technician"
 ) {
   await page.goto("/login")
-  await page.getByRole("button", { name: `${role} demo`, exact: true }).click()
+  await confirmDemoLogin(page, role)
   await expect(page).toHaveURL(new RegExp(`/${role.toLowerCase()}$`), {
     timeout: 45000,
   })
@@ -221,9 +222,10 @@ test("administrative filters, history pagination, responsive navigation and wron
   await chooseDate(page, "From (Dhaka)", "2099-01-01")
   await page.getByRole("button", { name: "Apply filters", exact: true }).click()
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
-    "both valid dates"
+    "both dates"
   )
-  await expect(page.locator("[data-audit-id]")).toHaveCount(0)
+  // Client validation preserves the last valid results and avoids an invalid API read.
+  await expect(page.locator("[data-audit-id]")).toHaveCount(1)
   await expect(page.getByLabel("From (Dhaka)", { exact: true })).toContainText(
     "1 Jan 2099"
   )

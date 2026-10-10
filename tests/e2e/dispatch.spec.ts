@@ -1,3 +1,4 @@
+import { confirmDemoLogin } from "./helpers/demo-login"
 import { clickWorkspaceControl } from "./helpers/workspace-motion"
 import { chooseDate } from "./helpers/date-picker"
 import { confirmSignOut } from "./helpers/sign-out"
@@ -39,10 +40,7 @@ test("admin review, stale decision, qualified assignment, collision and reschedu
       collision = await fixture.createRequest(true),
       rejection = await fixture.createRequest()
     await page.goto("/login")
-    await clickWorkspaceControl(
-      page,
-      page.getByRole("button", { name: "Admin demo", exact: true })
-    )
+    await confirmDemoLogin(page, "Admin")
     await expect(page).toHaveURL(/\/admin$/)
     await page.goto(`/admin/requests/${request.id}`)
     const stale = await page.context().newPage()

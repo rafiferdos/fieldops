@@ -1,3 +1,4 @@
+import { confirmDemoLogin } from "./helpers/demo-login"
 import { clickWorkspaceControl } from "./helpers/workspace-motion"
 import { chooseDate } from "./helpers/date-picker"
 import { confirmSignOut } from "./helpers/sign-out"
@@ -107,9 +108,7 @@ test.describe("configured demo accounts", () => {
       baseURL,
     }) => {
       await page.goto("/login")
-      await page
-        .getByRole("button", { name: `${role} demo`, exact: true })
-        .click()
+      await confirmDemoLogin(page, role)
       await expect(page).toHaveURL(
         new RegExp(`/${role.toLowerCase()}(?:\\?|$)`)
       )
@@ -321,9 +320,7 @@ test("real disposable customer registration, request create/edit/cancel and fore
     foreign = await other.newPage()
   try {
     await foreign.goto("/login")
-    await foreign
-      .getByRole("button", { name: "Customer demo", exact: true })
-      .click()
+    await confirmDemoLogin(foreign, "Customer")
     await expect(foreign).toHaveURL(/\/customer$/)
     await foreign.goto(requestUrl)
     await expect(

@@ -1,3 +1,4 @@
+import { confirmDemoLogin } from "./helpers/demo-login"
 import { chooseDate } from "./helpers/date-picker"
 import { randomUUID } from "node:crypto"
 import { expect, test, type Page } from "@playwright/test"
@@ -14,7 +15,7 @@ test.skip(
 )
 async function demoLogin(page: Page, role: "Admin" | "Customer") {
   await page.goto("/login")
-  await page.getByRole("button", { name: `${role} demo`, exact: true }).click()
+  await confirmDemoLogin(page, role)
   await expect(page).toHaveURL(new RegExp(`/${role.toLowerCase()}$`), {
     timeout: 45000,
   })
