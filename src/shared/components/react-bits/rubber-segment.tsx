@@ -24,6 +24,10 @@ interface RubberSegmentProps {
   speed?: number
 }
 
+function isActive(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
+
 // React Bits' edge dilation is adapted to real navigation, without radio/drag-to-route semantics.
 export function RubberSegment({
   items,
@@ -42,8 +46,8 @@ export function RubberSegment({
     const media = window.matchMedia("(prefers-reduced-motion: reduce)")
     const edges = { left: 0, right: 0 }
     let animation: gsap.core.Timeline | undefined
-    let active = links.findIndex(
-      (link) => link.getAttribute("href") === pathname
+    let active = links.findIndex((link) =>
+      isActive(pathname, link.getAttribute("href") ?? "")
     )
     let current = active
     let alive = true
@@ -92,7 +96,13 @@ export function RubberSegment({
       if (!(event.currentTarget instanceof HTMLAnchorElement)) return
       travel(links.indexOf(event.currentTarget))
     }
-    const reset = () => travel(active)
+    const focusedIndex = () =>
+      links.findIndex((link) => link === document.activeElement)
+    // Pointer leave and hydration must not erase the keyboard user's focused segment.
+    const reset = () => {
+      const focus = focusedIndex()
+      travel(focus >= 0 ? focus : active)
+    }
     const focusOut = (event: FocusEvent) => {
       if (
         !(event.relatedTarget instanceof Node) ||
@@ -109,7 +119,8 @@ export function RubberSegment({
     root.addEventListener("pointerleave", reset)
     root.addEventListener("focusout", focusOut)
     media.addEventListener("change", reset)
-    travel(active, true)
+    const focus = focusedIndex()
+    travel(focus >= 0 ? focus : active, true)
     void document.fonts.ready.then(() => {
       if (alive) travel(current, true)
     })
@@ -143,8 +154,10 @@ export function RubberSegment({
             <NavigationMenuItem key={item.href}>
               <NavigationMenuLink
                 render={<Link href={item.href} />}
-                active={pathname === item.href}
-                aria-current={pathname === item.href ? "page" : undefined}
+                active={isActive(pathname, item.href)}
+                aria-current={
+                  isActive(pathname, item.href) ? "page" : undefined
+                }
                 className={styles.item}
               >
                 {item.label}

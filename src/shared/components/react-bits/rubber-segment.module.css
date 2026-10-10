@@ -3,7 +3,8 @@
   isolation: isolate;
   padding: 3px;
   border-radius: 10px;
-  background: var(--muted);
+  /* A single frost surface avoids a second opaque rectangle inside the navbar. */
+  background: transparent;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -43,7 +44,7 @@
   inset: 3px;
   display: grid;
   grid-template-columns: repeat(var(--rs-count), minmax(0, 1fr));
-  background: var(--card);
+  background: color-mix(in oklch, var(--foreground) 7%, transparent);
   pointer-events: none;
 }
 .thumb[hidden] {

@@ -2,20 +2,26 @@ import { expect, type Locator, type Page } from "@playwright/test"
 
 // Native wheel input settles the transformed surface before targeting a newly added control.
 export async function reachWorkspaceControl(page: Page, control: Locator) {
-  const bounds = await control.boundingBox()
-  if (!bounds) throw Error("Missing workspace control geometry")
-  const height = await page.evaluate(() => innerHeight)
-  await page.mouse.wheel(0, bounds.y - height * 0.6)
-  await expect(control).toBeInViewport()
+  await expect(control).toBeVisible()
+  const wrapper = page.locator("[data-workspace-scroll], [data-public-scroll]")
+  const insideContent = await control.evaluate(
+    (node) =>
+      node.closest(".workspace-scroll-content, .public-scroll-content") !== null
+  )
   if (
-    (await page
-      .locator("[data-workspace-scroll]")
-      .getAttribute("data-scroll-mode")) === "smooth"
+    insideContent &&
+    (await wrapper.count()) > 0 &&
+    (await wrapper.getAttribute("data-scroll-mode")) === "smooth"
   ) {
+    const bounds = await control.boundingBox()
+    if (!bounds) throw Error("Missing scroll control geometry")
+    const height = await page.evaluate(() => innerHeight)
+    await page.mouse.wheel(0, bounds.y - height * 0.6)
+    await expect(control).toBeInViewport()
     await expect
       .poll(() =>
         page
-          .locator(".workspace-scroll-content")
+          .locator(".workspace-scroll-content, .public-scroll-content")
           .evaluate((node) =>
             Math.abs(
               new DOMMatrixReadOnly(getComputedStyle(node).transform).m42 +
@@ -24,7 +30,16 @@ export async function reachWorkspaceControl(page: Page, control: Locator) {
           )
       )
       .toBeLessThan(2)
+  } else {
+    await control.scrollIntoViewIfNeeded()
+    await expect(control).toBeInViewport()
   }
+}
+
+// Move the authoritative window scroller; hidden-wrapper auto-scroll cannot position a hit target.
+export async function clickWorkspaceControl(page: Page, control: Locator) {
+  await reachWorkspaceControl(page, control)
+  await control.click()
 }
 
 // Verify native scrolling and transformed content, rather than a configuration flag alone.
@@ -54,10 +69,11 @@ export async function verifyWorkspaceMotion(page: Page, responsive: boolean) {
     .toBeGreaterThan(100)
   const initial = await header.boundingBox()
   if (!initial) throw new Error("The workspace header must be visible")
-  // Hover and keyboard feedback animate inside a stable, accessible link target.
+  // Original unboxed link feedback preserves its stable, accessible hit target.
   const linkBounds = await dashboardLink.boundingBox()
   await dashboardLink.hover()
-  await expect(dashboardIcon).not.toHaveCSS("transform", "none")
+  await expect(dashboardIcon).toHaveCSS("transform", "none")
+  await expect(dashboardLink).toHaveCSS("background-color", "rgba(0, 0, 0, 0)")
   expect(await dashboardLink.boundingBox()).toEqual(linkBounds)
   await dashboardLink.focus()
   await expect(dashboardLink).toBeFocused()

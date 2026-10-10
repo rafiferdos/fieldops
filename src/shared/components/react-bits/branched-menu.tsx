@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, type ReactNode } from "react"
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react"
 import {
   Collapsible,
   CollapsibleContent,
@@ -21,34 +21,38 @@ export interface BranchGroup {
 
 function Branch({
   group,
+  open,
+  onOpenChange,
   onNavigate,
 }: {
   group: BranchGroup
+  open: boolean
+  onOpenChange: (open: boolean) => void
   onNavigate: () => void
 }) {
-  const [open, setOpen] = useState(true)
   const row = 36,
     pad = 6,
-    trunk = 12,
-    radius = 8,
+    trunk = 14,
+    radius = 10,
     end = 32
   const y = (index: number) => pad + index * row + row / 2
   return (
     <Collapsible
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={onOpenChange}
       className={styles.section}
       data-open={open || undefined}
+      data-branch-active={group.items.some((link) => link.active) || undefined}
     >
-      <CollapsibleTrigger className={styles.head}>
+      <CollapsibleTrigger className={styles.head} data-branch-heading="">
         {group.label}
       </CollapsibleTrigger>
-      <CollapsibleContent className={styles.fold}>
+      <CollapsibleContent className={styles.fold} keepMounted>
         <div className={styles.tree}>
           {/* Original rounded SVG branches draw only the URL's active path. */}
           <svg
             className={styles.lines}
-            width="34"
+            width="40"
             height={pad * 2 + group.items.length * row}
             aria-hidden="true"
           >
@@ -85,12 +89,14 @@ function Branch({
             <Link
               key={link.href}
               href={link.href}
-              className={`${styles.link} workspace-link`}
+              className={styles.link}
               data-active={link.active || undefined}
               aria-current={link.active ? "page" : undefined}
               onClick={onNavigate}
             >
-              <span className={styles.icon}>{link.icon}</span>
+              <span className={styles.icon} aria-hidden="true">
+                {link.icon}
+              </span>
               <span>{link.label}</span>
             </Link>
           ))}
@@ -112,15 +118,59 @@ export function BranchedMenu({
   pathname: string
   onNavigate: () => void
 }) {
+  const nav = useRef<HTMLElement>(null)
+  const marker = useRef<HTMLSpanElement>(null)
+  const [openGroups, setOpenGroups] = useState(
+    () => new Set(groups.map((group) => group.label))
+  )
+
+  useLayoutEffect(() => {
+    const root = nav.current
+    const indicator = marker.current
+    if (!root || !indicator) return
+    const place = (glide: boolean) => {
+      const heading = root.querySelector<HTMLElement>(
+        '[data-branch-active="true"][data-open] [data-branch-heading]'
+      )
+      if (!glide) indicator.style.transition = "none"
+      if (heading)
+        indicator.style.top = `${heading.getBoundingClientRect().top - root.getBoundingClientRect().top + (heading.offsetHeight - 16) / 2}px`
+      indicator.toggleAttribute("data-on", !!heading)
+      if (!glide) {
+        void indicator.offsetHeight
+        indicator.style.removeProperty("transition")
+      }
+    }
+    place(true)
+    let first = true
+    const observer = new ResizeObserver(() => {
+      if (first) {
+        first = false
+        return
+      }
+      place(false)
+    })
+    observer.observe(root)
+    return () => observer.disconnect()
+  }, [groups, openGroups, pathname])
+
   return (
     <nav
+      ref={nav}
       aria-label="Workspace navigation"
       className={styles.menu}
       data-branched-menu=""
     >
+      {/* Restore the original gliding section marker without changing route authorization. */}
+      <span
+        ref={marker}
+        className={styles.marker}
+        data-branch-marker=""
+        aria-hidden="true"
+      />
       <Link
         href={home.href}
-        className={`${styles.home} workspace-link`}
+        className={styles.home}
         data-active={home.active || undefined}
         aria-current={home.active ? "page" : undefined}
         onClick={onNavigate}
@@ -130,8 +180,18 @@ export function BranchedMenu({
       </Link>
       {groups.map((group) => (
         <Branch
-          key={`${pathname}:${group.label}`}
+          // Stable identity lets the original SVG transition run across route changes.
+          key={group.label}
           group={group}
+          open={openGroups.has(group.label)}
+          onOpenChange={(next) =>
+            setOpenGroups((previous) => {
+              const updated = new Set(previous)
+              if (next) updated.add(group.label)
+              else updated.delete(group.label)
+              return updated
+            })
+          }
           onNavigate={onNavigate}
         />
       ))}

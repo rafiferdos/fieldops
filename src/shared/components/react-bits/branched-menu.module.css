@@ -38,6 +38,23 @@
   cursor: pointer;
   transition: color 200ms ease;
 }
+.marker {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  z-index: 1;
+  width: 2px;
+  height: 16px;
+  border-radius: 1px;
+  background: var(--brand-ink);
+  opacity: 0;
+  transition:
+    top 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 150ms ease;
+}
+.marker[data-on] {
+  opacity: 1;
+}
 .section[data-open] .head {
   color: var(--sidebar-foreground);
 }
@@ -51,6 +68,12 @@
   top: 0;
   pointer-events: none;
   overflow: visible;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.section[data-open] .lines {
+  opacity: 1;
+  transition: opacity 250ms ease 100ms;
 }
 .base,
 .reach {
@@ -126,6 +149,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .reach,
+  .marker,
+  .lines,
   .fold {
     transition: none;
   }

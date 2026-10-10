@@ -13,6 +13,7 @@ test("desktop elastic navigation follows each real link slot", async ({
   })
   const thumb = page.locator("[data-rubber-thumb]")
   const track = page.locator("[data-rubber-segment]")
+  await expect(track).toHaveCSS("background-color", "rgba(0, 0, 0, 0)")
   for (const name of ["Services", "How it works", "FAQ", "Contact"]) {
     const link = navigation.getByRole("link", { name, exact: true })
     await link.focus()
