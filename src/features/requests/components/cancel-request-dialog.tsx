@@ -1,5 +1,8 @@
 "use client"
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { cancelRequestSchema } from "../schemas"
 import { useRouter } from "next/navigation"
 import { cancelRequest } from "../actions"
 import { Button } from "@/shared/ui/button"
@@ -27,11 +30,19 @@ export function CancelRequestDialog({
 }) {
   const router = useRouter()
   const [open, setOpen] = useState(false),
-    [reason, setReason] = useState(""),
     [message, setMessage] = useState<string>(),
     [pending, setPending] = useState(false),
     [blocked, setBlocked] = useState(false)
-  async function submit() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<{ reason: string }>({
+    resolver: zodResolver(cancelRequestSchema.omit({ version: true })),
+    defaultValues: { reason: "" },
+  })
+  // The destructive action shares the server's reason constraints and never retries uncertain writes.
+  async function submit({ reason }: { reason: string }) {
     if (pending || blocked) return
     setPending(true)
     try {
@@ -71,35 +82,57 @@ export function CancelRequestDialog({
             action.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="space-y-3">
-          <Label htmlFor="cancel-reason">Reason for cancellation</Label>
-          <Textarea
-            id="cancel-reason"
-            minLength={3}
-            maxLength={500}
-            value={reason}
-            disabled={pending || blocked}
-            onChange={(event) => setReason(event.target.value)}
-          />
-          <FormMessage message={message} />
-          {blocked && (
-            <Button variant="outline" onClick={() => window.location.reload()}>
-              Reload latest request
+        <form
+          onSubmit={(event) => {
+            handleSubmit(submit)(event).catch(() =>
+              setMessage(
+                "Cancellation could not be confirmed. Reload before trying again."
+              )
+            )
+          }}
+          noValidate
+          className="space-y-6"
+        >
+          <div className="space-y-3">
+            <Label htmlFor="cancel-reason">Reason for cancellation</Label>
+            <Textarea
+              id="cancel-reason"
+              minLength={3}
+              maxLength={500}
+              disabled={pending || blocked}
+              aria-invalid={!!errors.reason}
+              aria-describedby={
+                errors.reason ? "cancel-reason-error" : undefined
+              }
+              {...register("reason")}
+            />
+            <FormMessage
+              id="cancel-reason-error"
+              message={errors.reason?.message}
+            />
+            <FormMessage message={message} />
+            {blocked && (
+              <Button
+                variant="outline"
+                onClick={() => window.location.reload()}
+              >
+                Reload latest request
+              </Button>
+            )}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={pending}>
+              Keep request
+            </AlertDialogCancel>
+            <Button
+              type="submit"
+              variant="destructive"
+              disabled={pending || blocked}
+            >
+              {pending ? "Cancelling…" : "Confirm cancellation"}
             </Button>
-          )}
-        </div>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>Keep request</AlertDialogCancel>
-          <Button
-            variant="destructive"
-            disabled={pending || blocked || reason.trim().length < 3}
-            onClick={() => {
-              void submit()
-            }}
-          >
-            {pending ? "Cancelling…" : "Confirm cancellation"}
-          </Button>
-        </AlertDialogFooter>
+          </AlertDialogFooter>
+        </form>
       </AlertDialogContent>
     </AlertDialog>
   )
