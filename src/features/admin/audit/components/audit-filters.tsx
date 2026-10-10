@@ -4,6 +4,7 @@ import { Label } from "@/shared/ui/label"
 import { Button } from "@/shared/ui/button"
 import { ButtonLink } from "@/shared/components/button-link"
 import { ChoiceSelect } from "@/shared/components/choice-select"
+import { DatePicker } from "@/shared/components/date-picker"
 import { firstValue, type SearchValues } from "@/shared/lib/list-query"
 
 // Filters are bookmarkable; an exact action or identity never becomes a guessed API parameter.
@@ -85,21 +86,21 @@ export function AuditFilters({
         ))}
         <div className="min-w-0 space-y-2">
           <Label htmlFor="audit-from">From (Dhaka)</Label>
-          <Input
+          <DatePicker
             key={query.from}
             id="audit-from"
             name="from"
-            type="date"
+            label="From (Dhaka)"
             defaultValue={query.from}
           />
         </div>
         <div className="min-w-0 space-y-2">
           <Label htmlFor="audit-to">To (exclusive, Dhaka)</Label>
-          <Input
+          <DatePicker
             key={query.to}
             id="audit-to"
             name="to"
-            type="date"
+            label="To (exclusive, Dhaka)"
             defaultValue={query.to}
           />
         </div>

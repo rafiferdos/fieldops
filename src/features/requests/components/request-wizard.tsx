@@ -11,7 +11,7 @@ import type { z } from "zod"
 import type { Service } from "@/features/services/schemas"
 import { formatMoney, formatDate } from "@/shared/lib/format"
 import { Button } from "@/shared/ui/button"
-import { Input } from "@/shared/ui/input"
+import { DatePicker } from "@/shared/components/date-picker"
 import { Label } from "@/shared/ui/label"
 import { Textarea } from "@/shared/ui/textarea"
 import { ChoiceSelect } from "@/shared/components/choice-select"
@@ -232,15 +232,28 @@ export function RequestWizard({
                 <Label htmlFor="preferredLocal">
                   Preferred visit time (Dhaka, UTC+06:00)
                 </Label>
-                <Input
-                  id="preferredLocal"
-                  type="datetime-local"
-                  step={60}
-                  aria-invalid={!!errors.preferredLocal}
-                  aria-describedby={
-                    errors.preferredLocal ? "preferredLocal-error" : undefined
-                  }
-                  {...register("preferredLocal")}
+                {/* Keep the user's civil time unchanged when moving between wizard steps. */}
+                <Controller
+                  name="preferredLocal"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      id="preferredLocal"
+                      label="Preferred visit time (Dhaka, UTC+06:00)"
+                      withTime
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      disabled={!isReady || isSubmitting}
+                      invalid={!!errors.preferredLocal}
+                      describedBy={
+                        errors.preferredLocal
+                          ? "preferredLocal-error"
+                          : undefined
+                      }
+                    />
+                  )}
                 />
                 <p className="text-xs text-muted-foreground">
                   An administrator confirms the assigned visit schedule after

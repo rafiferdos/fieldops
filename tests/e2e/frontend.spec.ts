@@ -1,3 +1,5 @@
+import { clickWorkspaceControl } from "./helpers/workspace-motion"
+import { chooseDate } from "./helpers/date-picker"
 import { confirmSignOut } from "./helpers/sign-out"
 import { chooseOption } from "./helpers/choice-select"
 import { randomUUID } from "node:crypto"
@@ -183,17 +185,26 @@ test("real disposable customer registration, request create/edit/cancel and fore
   await page.getByLabel("Full name").fill("Frontend Verification")
   await page.getByLabel("Email address").fill(`frontend-${marker}@example.com`)
   await page.getByLabel("Password", { exact: true }).fill(password)
-  await page.getByRole("button", { name: "Create customer account" }).click()
+  await clickWorkspaceControl(
+    page,
+    page.getByRole("button", { name: "Create customer account" })
+  )
   await expect(page).toHaveURL(/\/login\?registered=1$/)
   await page.getByLabel("Email address").fill(`frontend-${marker}@example.com`)
   await page.getByLabel("Password", { exact: true }).fill(password)
-  await page.getByRole("button", { name: "Sign in", exact: true }).click()
+  await clickWorkspaceControl(
+    page,
+    page.getByRole("button", { name: "Sign in", exact: true })
+  )
   await expect(page).toHaveURL(/\/customer$/)
   await page.goto("/account")
   await page
     .getByLabel("Name", { exact: true })
     .fill("Frontend Verification Updated")
-  await page.getByRole("button", { name: "Save profile" }).click()
+  await clickWorkspaceControl(
+    page,
+    page.getByRole("button", { name: "Save profile" })
+  )
   await expect(
     page.getByText("Profile updated.", { exact: true })
   ).toBeVisible()
@@ -208,7 +219,10 @@ test("real disposable customer registration, request create/edit/cancel and fore
     .click()
   await page.getByRole("combobox", { name: "Service", exact: true }).click()
   await page.getByRole("option").first().click()
-  await page.getByRole("button", { name: "Continue", exact: true }).click()
+  await clickWorkspaceControl(
+    page,
+    page.getByRole("button", { name: "Continue", exact: true })
+  )
   const description = `Frontend verification ${marker}`
   await page.getByLabel("What needs attention?").fill(description)
   await page
@@ -217,8 +231,11 @@ test("real disposable customer registration, request create/edit/cancel and fore
   const local = new Date(Date.now() + 2 * 86400000 + 6 * 3600000)
     .toISOString()
     .slice(0, 16)
-  await page.getByLabel("Preferred visit time").fill(local)
-  await page.getByRole("button", { name: "Continue", exact: true }).click()
+  await chooseDate(page, "Preferred visit time", local)
+  await clickWorkspaceControl(
+    page,
+    page.getByRole("button", { name: "Continue", exact: true })
+  )
   await expect(
     page.getByRole("heading", { name: "Review request" })
   ).toBeVisible()
@@ -226,20 +243,27 @@ test("real disposable customer registration, request create/edit/cancel and fore
   await expect(
     page.getByRole("heading", { name: "Review request" })
   ).toBeFocused()
-  await page.getByRole("button", { name: "Back", exact: true }).click()
+  await clickWorkspaceControl(
+    page,
+    page.getByRole("button", { name: "Back", exact: true })
+  )
   await expect(
     page.getByRole("heading", { name: "Visit details" })
   ).toBeFocused()
   await expect(page.getByLabel("What needs attention?")).toHaveValue(
     description
   )
-  await page.getByRole("button", { name: "Continue", exact: true }).click()
+  await clickWorkspaceControl(
+    page,
+    page.getByRole("button", { name: "Continue", exact: true })
+  )
   await expect(
     page.getByRole("button", { name: "Submit request", exact: true })
   ).toBeEnabled()
-  await page
-    .getByRole("button", { name: "Submit request", exact: true })
-    .click()
+  await clickWorkspaceControl(
+    page,
+    page.getByRole("button", { name: "Submit request", exact: true })
+  )
   await expect(page).toHaveURL(/\/customer\/requests\/[a-f0-9-]{36}$/)
   const requestUrl = page.url()
   const stale = await page.context().newPage()
@@ -248,14 +272,20 @@ test("real disposable customer registration, request create/edit/cancel and fore
     await page
       .getByLabel("Description", { exact: true })
       .fill(description + " updated")
-    await page.getByRole("button", { name: "Save request" }).click()
+    await clickWorkspaceControl(
+      page,
+      page.getByRole("button", { name: "Save request" })
+    )
     await expect(
       page.locator("dd").filter({ hasText: description + " updated" })
     ).toBeVisible()
     await stale
       .getByLabel("Description", { exact: true })
       .fill(description + " stale change")
-    await stale.getByRole("button", { name: "Save request" }).click()
+    await clickWorkspaceControl(
+      stale,
+      stale.getByRole("button", { name: "Save request" })
+    )
     await expect(
       stale.getByRole("alert").filter({ hasText: "This record has changed" })
     ).toBeVisible()
@@ -267,14 +297,18 @@ test("real disposable customer registration, request create/edit/cancel and fore
     ).toBeVisible()
   } finally {
     await stale.close()
-    await page
-      .getByRole("button", { name: "Cancel request", exact: true })
-      .click()
+    await clickWorkspaceControl(
+      page,
+      page.getByRole("button", { name: "Cancel request", exact: true })
+    )
     await expect(page.getByRole("alertdialog")).toBeVisible()
     await page
       .getByLabel("Reason for cancellation")
       .fill("Disposable frontend verification completed")
-    await page.getByRole("button", { name: "Confirm cancellation" }).click()
+    await clickWorkspaceControl(
+      page,
+      page.getByRole("button", { name: "Confirm cancellation" })
+    )
     await expect(page.getByText("CANCELLED", { exact: true })).toBeVisible()
     await expect(
       page.getByRole("button", { name: "Cancel request", exact: true })

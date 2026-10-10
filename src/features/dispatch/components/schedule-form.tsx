@@ -3,7 +3,7 @@ import { Card } from "@/shared/ui/card"
 import Link from "next/link"
 import { useRef, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { z } from "zod"
 import type { RecordRoute } from "@/shared/lib/routes"
@@ -16,7 +16,7 @@ import {
   type VisitWindow,
   type AvailabilityPage,
 } from "../schemas"
-import { Input } from "@/shared/ui/input"
+import { DatePicker } from "@/shared/components/date-picker"
 import { Label } from "@/shared/ui/label"
 import { ChoiceSelect } from "@/shared/components/choice-select"
 import { Button } from "@/shared/ui/button"
@@ -48,7 +48,7 @@ export function ScheduleForm({
     [blocked, setBlocked] = useState(false),
     [message, setMessage] = useState<string>()
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors, isReady },
   } = useForm<z.infer<typeof scheduleFormSchema>>({
@@ -149,22 +149,49 @@ export function ScheduleForm({
         >
           <div className="space-y-2">
             <Label htmlFor="visit-start">Visit start (Dhaka)</Label>
-            <Input
-              id="visit-start"
-              type="datetime-local"
-              step={60}
-              {...register("startLocal", { onChange: changed })}
+            {/* Every calendar/time edit discards a previously checked availability result. */}
+            <Controller
+              name="startLocal"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  id="visit-start"
+                  label="Visit start (Dhaka)"
+                  withTime
+                  value={field.value}
+                  onValueChange={(next) => {
+                    field.onChange(next)
+                    changed()
+                  }}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                  disabled={!isReady || pending || searchPending}
+                />
+              )}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="visit-end">Visit end (Dhaka)</Label>
-            <Input
-              id="visit-end"
-              type="datetime-local"
-              step={60}
-              aria-invalid={!!errors.endLocal}
-              aria-describedby={errors.endLocal ? "window-error" : undefined}
-              {...register("endLocal", { onChange: changed })}
+            <Controller
+              name="endLocal"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  id="visit-end"
+                  label="Visit end (Dhaka)"
+                  withTime
+                  value={field.value}
+                  onValueChange={(next) => {
+                    field.onChange(next)
+                    changed()
+                  }}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                  disabled={!isReady || pending || searchPending}
+                  invalid={!!errors.endLocal}
+                  describedBy={errors.endLocal ? "window-error" : undefined}
+                />
+              )}
             />
           </div>
           <Button type="submit" variant="outline">

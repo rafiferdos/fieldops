@@ -1,3 +1,4 @@
+import { chooseDate } from "./helpers/date-picker"
 import { confirmSignOut } from "./helpers/sign-out"
 import { randomUUID } from "node:crypto"
 import { expect, test, type Page } from "@playwright/test"
@@ -217,18 +218,16 @@ test("administrative filters, history pagination, responsive navigation and wron
   await expect(page.locator("[data-user-id]")).toHaveCount(0)
   await page.goto("/admin/audit-logs?limit=1")
   await expect(page.locator("[data-audit-id]")).toHaveCount(1)
-  await page.getByLabel("From (Dhaka)", { exact: true }).fill("2099-01-01")
+  await chooseDate(page, "From (Dhaka)", "2099-01-01")
   await page.getByRole("button", { name: "Apply filters", exact: true }).click()
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
     "both valid dates"
   )
   await expect(page.locator("[data-audit-id]")).toHaveCount(0)
-  await expect(page.getByLabel("From (Dhaka)", { exact: true })).toHaveValue(
-    "2099-01-01"
+  await expect(page.getByLabel("From (Dhaka)", { exact: true })).toContainText(
+    "1 Jan 2099"
   )
-  await page
-    .getByLabel("To (exclusive, Dhaka)", { exact: true })
-    .fill("2099-02-01")
+  await chooseDate(page, "To (exclusive, Dhaka)", "2099-02-01")
   await page.getByRole("button", { name: "Apply filters", exact: true }).click()
   await expect(
     page.getByRole("heading", { name: "No matching audit events" })

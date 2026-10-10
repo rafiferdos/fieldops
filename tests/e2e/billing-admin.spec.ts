@@ -1,3 +1,4 @@
+import { chooseDate } from "./helpers/date-picker"
 import { randomUUID } from "node:crypto"
 import { expect, test, type Page } from "@playwright/test"
 import { respectAuthWindow } from "./helpers/auth-window"
@@ -32,7 +33,7 @@ test("admin overview uses real bounded aggregates and rejects incomplete periods
   await expect(
     page.getByRole("term").filter({ hasText: /^pending$/ })
   ).toBeVisible()
-  await page.getByLabel("From (Dhaka)", { exact: true }).fill("2099-01-01")
+  await chooseDate(page, "From (Dhaka)", "2099-01-01")
   await page.getByRole("button", { name: "Apply period" }).click()
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
     "Provide both valid dates"
@@ -40,9 +41,7 @@ test("admin overview uses real bounded aggregates and rejects incomplete periods
   await expect(
     page.getByRole("heading", { name: "Verified revenue" })
   ).not.toBeVisible()
-  await page
-    .getByLabel("To (exclusive, Dhaka)", { exact: true })
-    .fill("2099-02-01")
+  await chooseDate(page, "To (exclusive, Dhaka)", "2099-02-01")
   await page.getByRole("button", { name: "Apply period" }).click()
   await expect(page).toHaveURL(/from=2099-01-01&to=2099-02-01/)
   await expect(page.getByText("BDT 0.00", { exact: true })).toBeVisible()

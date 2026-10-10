@@ -2,7 +2,7 @@
 import { Card } from "@/shared/ui/card"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { z } from "zod"
 import {
@@ -13,7 +13,7 @@ import {
 } from "../schemas"
 import { editRequest } from "../actions"
 import { Label } from "@/shared/ui/label"
-import { Input } from "@/shared/ui/input"
+import { DatePicker } from "@/shared/components/date-picker"
 import { Textarea } from "@/shared/ui/textarea"
 import { Button } from "@/shared/ui/button"
 import { toast } from "@/shared/ui/toast"
@@ -24,6 +24,7 @@ export function RequestEditForm({ request }: { request: ServiceRequest }) {
     [message, setMessage] = useState<string>(),
     [blocked, setBlocked] = useState(false)
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isReady },
@@ -113,15 +114,26 @@ export function RequestEditForm({ request }: { request: ServiceRequest }) {
             <Label htmlFor="edit-time">
               Preferred visit (Dhaka, UTC+06:00)
             </Label>
-            <Input
-              id="edit-time"
-              type="datetime-local"
-              step={60}
-              aria-invalid={!!errors.preferredLocal}
-              aria-describedby={
-                errors.preferredLocal ? "edit-time-error" : undefined
-              }
-              {...register("preferredLocal")}
+            {/* Preserve minute precision and RHF validation focus through the calendar trigger. */}
+            <Controller
+              name="preferredLocal"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  id="edit-time"
+                  label="Preferred visit (Dhaka, UTC+06:00)"
+                  withTime
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                  disabled={!isReady || isSubmitting || blocked}
+                  invalid={!!errors.preferredLocal}
+                  describedBy={
+                    errors.preferredLocal ? "edit-time-error" : undefined
+                  }
+                />
+              )}
             />
             <FormMessage
               id="edit-time-error"

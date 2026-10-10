@@ -1,3 +1,4 @@
+import { chooseDate } from "../../tests/e2e/helpers/date-picker"
 import { confirmSignOut } from "../../tests/e2e/helpers/sign-out"
 import { writeFile } from "node:fs/promises"
 import { expect, test } from "@playwright/test"
@@ -105,9 +106,11 @@ test("record an actual request-to-paid-feedback walkthrough", async ({
     await page
       .getByLabel("Service address")
       .fill("Disposable demonstration address, Dhaka")
-    await page
-      .getByLabel("Preferred visit time")
-      .fill(dhakaLocal(fixture.window.start))
+    await chooseDate(
+      page,
+      "Preferred visit time",
+      dhakaLocal(fixture.window.start)
+    )
     await scene(
       "Describe the visit",
       "Dates are explicit Dhaka time. The customer cannot choose a role, owner or price."
@@ -146,12 +149,12 @@ test("record an actual request-to-paid-feedback walkthrough", async ({
       "Approve the request",
       "Review uses the latest request version. Stale decisions cannot replace a newer outcome."
     )
-    await page
-      .getByLabel("Visit start (Dhaka)")
-      .fill(dhakaLocal(fixture.window.start))
-    await page
-      .getByLabel("Visit end (Dhaka)")
-      .fill(dhakaLocal(fixture.window.end))
+    await chooseDate(
+      page,
+      "Visit start (Dhaka)",
+      dhakaLocal(fixture.window.start)
+    )
+    await chooseDate(page, "Visit end (Dhaka)", dhakaLocal(fixture.window.end))
     await page
       .getByRole("button", { name: "Find technicians", exact: true })
       .click()

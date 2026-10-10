@@ -1,5 +1,5 @@
 import { Card } from "@/shared/ui/card"
-import { Input } from "@/shared/ui/input"
+import { DatePicker } from "@/shared/components/date-picker"
 import { Label } from "@/shared/ui/label"
 import { Button } from "@/shared/ui/button"
 import { ButtonLink } from "@/shared/components/button-link"
@@ -20,16 +20,23 @@ export function OverviewFilters({
       <form action="/admin" className="flex flex-wrap items-end gap-4">
         <div className="space-y-2">
           <Label htmlFor="overview-from">From (Dhaka)</Label>
-          <Input
+          <DatePicker
+            key={from}
             id="overview-from"
-            type="date"
+            label="From (Dhaka)"
             name="from"
             defaultValue={from}
           />
         </div>
         <div className="space-y-2">
           <Label htmlFor="overview-to">To (exclusive, Dhaka)</Label>
-          <Input id="overview-to" type="date" name="to" defaultValue={to} />
+          <DatePicker
+            key={to}
+            id="overview-to"
+            label="To (exclusive, Dhaka)"
+            name="to"
+            defaultValue={to}
+          />
         </div>
         <Button type="submit">Apply period</Button>
         <ButtonLink href="/admin" variant="ghost">
