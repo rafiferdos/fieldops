@@ -41,7 +41,8 @@ Necessary application integration is deliberately limited:
 - shadcn Dialog and Sheet own focus trapping, Escape, scroll locking and return focus.
 - Continuous pointer/keyboard holds complete once; release, capture loss, blur or
   backgrounding cancels confirmation. A click alone cannot sign out. The visual
-  hidden hint has an explicit accessible button label.
+  hidden hint has an explicit accessible button label. React's Effect Event keeps
+  the latest completion callback without restarting a hold on parent renders.
 - Feedback remains a controlled, keyboard-operable 1–5 rating. Disabled and uncertain
   submission states cannot replay the immutable feedback write.
 - Real hero text reserves identical word spacing before, during and after animation.
@@ -88,3 +89,39 @@ actual WebGL context loss. These counts exclude the provider settlement regressi
 The initial localhost provider run timed out with its disposable payment still
 PENDING. Inspection confirmed no settlement; it is not recorded as a payment pass.
 Hosted settlement/rating acceptance is a separate release gate.
+
+## Hosted release checkpoint
+
+All requested applicable effects are deployed. CodeSlots remains conditional on a
+real email-code API; the current contract provides no such flow. The source keeps
+the original HoldButton appearance and unboxed BranchedMenu navigation anchors.
+
+The first hosted run on `2dc125b` passed 26 of 28 scenarios in 7.6 minutes. One
+failure involved the automated pointer target moving while GSAP settled after a
+native scroll; the driver now uses native wheel input and waits for the transformed
+surface. Its complete real sandbox/rating scenario subsequently passed in 41.3
+seconds, including cancellation, replacement, verified settlement, arrow/pointer
+rating, automated accessibility and immutable feedback recovery. No callback was
+forged or live funds used. The other failure involved the Customer's continuous
+hold after cancel/reopen; it was not recorded as a pass.
+
+A separate real-browser component comparison reproduced a callback-rerender bug:
+the old source reset the held button to idle with zero completions; the correction
+completed exactly once using the latest callback. A focused actual Customer demo
+navigation/cancel/reopen probe also passed without business-record changes.
+
+The final runtime revision is `cd2068c34bb8ceb807d618f95085fa060123481e`.
+[CI 38024046107](https://github.com/rafiferdos/fieldops/actions/runs/38024046107)
+passes all 185 tests, formatting, strict types, lint and the default production
+build. Vercel production deployment `dpl_FfFqAN3R8dQV55sC1FUxpjKJJued` is READY.
+Local strict checks pass with 179 tests and six Redis skips; the supported webpack
+build also passes. This resumed execution environment blocks the Turbopack worker's
+local port, so its local default-build failure is not represented as a pass.
+
+On the final canonical hosted revision, all six focused real-role scenarios pass
+in 3.2 minutes with retries disabled: three role/cookie/protection checks and three
+live-count/navigation/cancel/reopen/continuous-hold checks. The Customer's previous
+failure now passes. The initial 28-scenario run and later focused results retain
+separate provenance; this is not a claim of one all-passing full 28-scenario run.
+The final hosted public composition capture also passes (1/1, 8.4 seconds), saving
+actual hero, crystal, Strands and mobile-menu images outside Git in `../delivery/`.

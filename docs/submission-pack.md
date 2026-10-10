@@ -1,25 +1,28 @@
 # Assignment 7 submission pack
 
-Reviewed October 9, 2026. Both applications are live. Exact release and acceptance
-proof is in [hosted release evidence](hosted-release.md). External video upload and
-portal submission remain separate delivery actions.
+Reviewed October 10, 2026. Both applications are live. Current component release
+proof is in [React Bits integration](react-bits.md); the earlier acceptance record
+is [hosted release evidence](hosted-release.md). The renewed
+[full-stack requirements review](full-stack-review.md) identifies remaining
+conformance and video work. This prepared pack is not a completion or submission claim.
 
 ## Project links
 
-| Artifact         | Actual reference                                                                | State                                                                               |
-| ---------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Frontend source  | https://github.com/rafiferdos/fieldops                                          | Current source release; inspect the selected SHA in Frontend CI                     |
-| Frontend CI      | https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml                 | Exact selected revision must pass before deployment                                 |
-| Backend source   | https://github.com/rafiferdos/fieldops-api                                      | Skills/payment release 7bf1e41 deployed                                             |
-| Backend CI       | https://github.com/rafiferdos/fieldops-api/actions/runs/37908940023             | Passed for deployed 7bf1e41                                                         |
-| Backend API      | https://fieldops-api-xu3s.onrender.com/api/v1                                   | Live; health/readiness and actual current-skills routing verified                   |
-| Frontend domain  | https://fieldops-rafiferdos.vercel.app                                          | Live; deployed b03d4c4 passed CI run 37908860373                                    |
-| Requirements     | https://github.com/Apollo-Level2-Web-Dev/B7A7/blob/main/project-requirements.md | Authoritative                                                                       |
-| Backend contract | https://app.notion.com/p/3f34ab5df14481afa4acc3e9a092b940                       | Historical contract; authorized skills/browser extension documented in repositories |
+| Artifact          | Actual reference                                                                           | State                                                                               |
+| ----------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| Frontend source   | https://github.com/rafiferdos/fieldops                                                     | Current source release; inspect the selected SHA in Frontend CI                     |
+| Frontend CI       | https://github.com/rafiferdos/fieldops/actions/workflows/ci.yml                            | Exact selected revision must pass before deployment                                 |
+| Backend source    | https://github.com/rafiferdos/fieldops-api                                                 | Skills/payment release 7bf1e41 deployed                                             |
+| Backend CI        | https://github.com/rafiferdos/fieldops-api/actions/runs/37940326850                        | Passed for current 1faf01a; runtime remains the deployed skills/payment release     |
+| Backend API       | https://fieldops-api-xu3s.onrender.com/api/v1                                              | Live; health/readiness and actual current-skills routing verified                   |
+| Frontend domain   | https://fieldops-rafiferdos.vercel.app                                                     | Live cd2068c; default build and all 185 checks pass CI 38024046107                  |
+| API documentation | https://github.com/rafiferdos/fieldops-api/blob/main/docs/fieldops.postman_collection.json | Complete importable collection, with a linked endpoint/workflow guide               |
+| Requirements      | https://github.com/Apollo-Level2-Web-Dev/B7A7/blob/main/project-requirements.md            | Authoritative                                                                       |
+| Backend contract  | https://app.notion.com/p/3f34ab5df14481afa4acc3e9a092b940                                  | Historical contract; authorized skills/browser extension documented in repositories |
 
 ## Requirement evidence
 
-- 29 functional route templates covering public content, catalog, authentication,
+- 31 functional route templates covering public content, catalog, authentication,
   account, owned requests/work/invoices/payments and role-scoped administration.
   Utilities and record multiplicity do not inflate the page count.
 - Three fixed roles and demo-entry buttons. New dedicated production evaluation
@@ -39,9 +42,11 @@ portal submission remain separate delivery actions.
   additionally verified hosted Google login after the supported consent update.
 - Meaningful source checkpoints are in Git history. Count actual frontend commits
   after final publishing; do not manufacture commits to meet a number.
-- A completed 6:19 actual UI walkthrough has 23 English-captioned scenes and uses
+- An existing 6:19 actual UI walkthrough has 23 English-captioned scenes and uses
   disposable local data. See [recording and reproduction](walkthrough-recording.md).
-  The artifact identifies loopback verification; external upload is pending.
+  It predates the current design and still needs the required architecture,
+  Network/caching and error-explanation coverage. A separate backend API walkthrough,
+  external upload and portal submission remain pending.
 
 ## Private evaluation information
 

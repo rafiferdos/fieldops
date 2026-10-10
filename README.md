@@ -285,7 +285,7 @@ See the [deployment runbook](docs/deployment-runbook.md) for configuration and r
 - Text status labels and count summaries; color and chart geometry are supplementary.
 - Server-rendered readable content, reserved image geometry and small interactive boundaries.
 
-![FieldOps closing action with a readable ambient wave backdrop](docs/images/home-coordination.png)
+![FieldOps closing action with the theme-matched Strands effect](docs/images/home-coordination.png)
 
 Automated Chromium/axe checks do not replace testing on actual mobile hardware or Safari.
 Free backend hosting can introduce cold-start latency. Current runtime dependencies passed
@@ -298,6 +298,7 @@ Offline operation, live funds and distributed failover certification are outside
 - [Dashboard scrolling, animation lifecycle and current release](docs/dashboard-motion.md)
 - [Home materials, React Bits adaptations and animation limits](docs/home-materials.md)
 - [Requested components, placements, original appearance and verification](docs/react-bits.md)
+- [Full-stack delivery review and remaining work](docs/full-stack-review.md)
 - [Role, route and API map](docs/route-plan.md)
 - [Session-safe dashboard and technology decisions](docs/workspace-upgrade.md)
 - [Dispatch and execution rules](docs/dispatch-execution-plan.md)
