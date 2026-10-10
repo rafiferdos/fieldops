@@ -482,3 +482,34 @@
     animation: panel-enter 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 }
+
+
+@media (min-width: 768px) {
+  @supports (backdrop-filter: blur(1px)) or
+    (-webkit-backdrop-filter: blur(1px)) {
+    .site-header .frosted-nav {
+      --navigation-surface: color-mix(
+        in oklch,
+        var(--background) 58%,
+        transparent
+      );
+    }
+
+    .site-header[data-condensed] .frosted-nav {
+      --navigation-surface: color-mix(
+        in oklch,
+        var(--background) 94%,
+        transparent
+      );
+    }
+  }
+}
+
+@media (prefers-reduced-transparency: reduce),
+  (prefers-contrast: more),
+  (forced-colors: active) {
+  .site-header .frosted-nav,
+  .site-header[data-condensed] .frosted-nav {
+    --navigation-surface: var(--background);
+  }
+}

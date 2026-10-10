@@ -173,74 +173,48 @@ test("elastic navigation keeps a single aligned label over an opaque thumb in bo
   }
 })
 
-test("mobile staggered navigation keeps its modal focus and real route links", async ({
-  page,
-}) => {
-  for (const width of [320, 390, 768]) {
+test("editorial desktop navigation preserves route links", async ({ page }) => {
+  for (const width of [768, 900, 1440]) {
     await page.setViewportSize({ width, height: 900 })
     await page.goto("/faq")
-    const trigger = page.getByRole("button", {
-      name: "Open navigation",
+
+    const navigation = page.getByRole("navigation", {
+      name: "Main navigation",
       exact: true,
     })
-    if (width === 768) {
-      await expect(trigger).not.toBeVisible()
-      continue
-    }
-    await trigger.click()
-    const menu = page.getByRole("navigation", {
-      name: "Mobile navigation",
-      exact: true,
-    })
-    await expect(menu).toBeVisible()
-    expect(
-      await menu.evaluate((node) => node.scrollWidth <= node.clientWidth)
-    ).toBe(true)
-    for (const [name, href] of [
-      ["Services", "/services"],
-      ["How it works", "/about"],
-      ["FAQ", "/faq"],
-      ["Contact", "/contact"],
-    ]) {
-      if (!name || !href) throw Error("Missing navigation expectation")
+
+    await expect(navigation).toBeVisible()
+
+    for (const name of ["Services", "How it works", "FAQ", "Contact"]) {
       await expect(
-        menu.getByRole("link", { name, exact: true })
-      ).toHaveAttribute("href", href)
+        navigation.getByRole("link", { name, exact: true })
+      ).toBeVisible()
     }
-    await expect
-      .poll(() =>
-        menu
-          .locator("[data-menu-label]")
-          .evaluateAll((nodes) =>
-            nodes.every((node) => getComputedStyle(node).transform === "none")
-          )
-      )
-      .toBe(true)
-    // Original numbering scales with the narrow-screen text rather than overlapping it.
+
+    await expect(
+      navigation.getByRole("link", { name: "FAQ", exact: true })
+    ).toHaveAttribute("aria-current", "page")
+
     expect(
-      await menu.locator("a").evaluateAll((nodes) =>
-        nodes.every((node) => {
-          const label = node.querySelector("[data-menu-label]")
-          const number = node.querySelector("[aria-hidden=true]")
-          if (!label || !number) throw Error("Missing menu label or number")
-          const range = document.createRange()
-          range.selectNodeContents(label)
-          const line = range.getClientRects()[0]
-          return (
-            line !== undefined &&
-            line.right + 2 <= number.getBoundingClientRect().left
-          )
-        })
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth
       )
     ).toBe(true)
-    await page.keyboard.press("Escape")
-    await expect(menu).not.toBeVisible()
-    await expect(trigger).toBeFocused()
-    await trigger.click()
-    await menu.getByRole("link", { name: "Contact", exact: true }).click()
-    await expect(page).toHaveURL(/\/contact$/)
-    await expect(menu).not.toBeVisible()
   }
+})
+
+test("desktop navigation compacts on scroll", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto("/")
+
+  const header = page.locator("[data-site-header]")
+
+  await expect(header).not.toHaveAttribute("data-condensed")
+  await page.evaluate(() => window.scrollTo(0, 400))
+  await expect(header).toHaveAttribute("data-condensed", "")
+
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await expect(header).not.toHaveAttribute("data-condensed")
 })
 
 test("public viewport blur yields to keyboard focus and the complete footer", async ({
