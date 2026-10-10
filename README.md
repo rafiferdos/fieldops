@@ -51,8 +51,11 @@ sorting, pagination, service details, FAQ and verified contact channels.
 | **Administrator** | Real workload/revenue reporting; review and dispatch; reschedule; catalog, account and skill management; audit browsing                                |
 
 Signing in opens the appropriate dashboard. The public navigation then shows an account
-avatar menu with dashboard, profile, settings and confirmed sign-out. The backend currently
-provides no profile-photo field, so avatars use the account's initials.
+avatar menu with dashboard, profile, settings and confirmed sign-out. Users can upload,
+preview, save and remove their own profile photo; missing or failed images fall back to initials.
+Administrators can upload service photos for catalog cards, service details and catalog management.
+Uploads use the real backend and Cloudinary, with progress and owned-purpose validation.
+See [image setup and verification](docs/media-images.md).
 
 ### Demo access and real data
 
@@ -217,6 +220,7 @@ Use [.env.example](.env.example) as the complete template.
 | `SESSION_REDIS_URL`                                    | Dedicated session store; authenticated TLS `rediss://` in production                            |
 | `SESSION_ENCRYPTION_KEY`                               | Private base64 key containing exactly 32 random bytes                                           |
 | `GOOGLE_CLIENT_ID`                                     | Optional public OAuth Web client ID matching the backend audience and authorized browser origin |
+| `IMAGE_CLOUD_NAME`                                     | Public Cloudinary cloud name matching the backend; scopes optimized image delivery              |
 | `DEMO_CUSTOMER_*`, `DEMO_TECHNICIAN_*`, `DEMO_ADMIN_*` | Optional private dedicated demo account email/password pairs                                    |
 
 Google uses the same existing Web client ID as the backend; another OAuth client is not
@@ -225,7 +229,8 @@ provider's supported button handles account selection; the backend verifies its 
 When optional Google/demo settings are absent, their controls are omitted.
 
 Never put session keys, demo passwords, tokens or merchant credentials in `NEXT_PUBLIC_*`.
-Gateway secrets belong exclusively in backend configuration.
+Gateway and Cloudinary API credentials belong exclusively in backend configuration.
+Development Server Function argument logging is disabled because authentication arguments contain credentials.
 
 ## Quality gates
 
@@ -238,7 +243,7 @@ npm run start
 ```
 
 `check` runs formatting, generated route types, TypeScript, typed linting and Vitest.
-The ordinary suite currently has **190 checks**. Six additional real-Redis coordination
+The ordinary suite currently has **206 checks**. Six additional real-Redis coordination
 checks run against a dedicated local store:
 
 ```bash

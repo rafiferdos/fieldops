@@ -2,7 +2,7 @@
 import { Card } from "@/shared/ui/card"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { z } from "zod"
 import { updateProfileSchema } from "../schemas"
@@ -12,27 +12,37 @@ import { Input } from "@/shared/ui/input"
 import { Label } from "@/shared/ui/label"
 import { toast } from "@/shared/ui/toast"
 import { FormMessage } from "@/shared/components/form-message"
+import { ImageUpload } from "@/shared/components/image-upload"
 
 export function ProfileForm({
   name,
   phone,
+  avatarUrl,
 }: {
   name: string
   phone: string | null
+  avatarUrl: string | null
 }) {
   const router = useRouter(),
-    [message, setMessage] = useState<string>()
+    [message, setMessage] = useState<string>(),
+    [uploading, setUploading] = useState(false)
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting, isReady },
   } = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
-    defaultValues: { name, phone: phone ?? "" },
+    defaultValues: { name, phone: phone ?? "", avatarUrl },
   })
   async function submit(values: z.infer<typeof updateProfileSchema>) {
     try {
-      const result = await updateProfile(values)
+      // Contact updates do not overwrite an unchanged image reference.
+      const { avatarUrl: nextAvatar, ...contact } = values
+      const result = await updateProfile({
+        ...contact,
+        ...(nextAvatar !== avatarUrl ? { avatarUrl: nextAvatar } : {}),
+      })
       if (result.ok) {
         setMessage(undefined)
         toast.add({ type: "success", title: result.message })
@@ -55,7 +65,23 @@ export function ProfileForm({
         className="space-y-5"
         noValidate
       >
-        <fieldset disabled={!isReady || isSubmitting} className="space-y-5">
+        <fieldset
+          disabled={!isReady || isSubmitting || uploading}
+          className="space-y-5"
+        >
+          <Controller
+            name="avatarUrl"
+            control={control}
+            render={({ field }) => (
+              <ImageUpload
+                label="Profile photo"
+                purpose="AVATAR"
+                value={field.value ?? null}
+                onChange={field.onChange}
+                onBusy={setUploading}
+              />
+            )}
+          />
           <div className="space-y-2">
             <Label htmlFor="profile-name">Name</Label>
             <Input

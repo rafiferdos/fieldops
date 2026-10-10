@@ -1,10 +1,12 @@
 import { z } from "zod"
+import { imageUrlSchema } from "@/shared/lib/image-policy"
 
 export const roleSchema = z.enum(["CUSTOMER", "TECHNICIAN", "ADMIN"])
 export type Role = z.infer<typeof roleSchema>
 export const userSchema = z.object({
   id: z.uuid(),
   name: z.string(),
+  avatarUrl: imageUrlSchema.nullable().optional().default(null),
   email: z.email(),
   role: roleSchema,
   createdAt: z.iso.datetime(),

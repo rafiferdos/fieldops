@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useRef, useState } from "react"
 import { LayoutDashboard, UserRound, Settings2, LogOut } from "lucide-react"
-import { Avatar, AvatarFallback } from "@/shared/ui/avatar"
+import { ProfileAvatar } from "@/shared/components/profile-avatar"
 import { Button } from "@/shared/ui/button"
 import {
   DropdownMenu,
@@ -21,13 +21,6 @@ import { SignOutDialog } from "./sign-out-button"
 export function AccountMenu({ profile }: { profile: Profile }) {
   const [signingOut, setSigningOut] = useState(false)
   const trigger = useRef<HTMLButtonElement>(null)
-  const initials = profile.name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase()
   return (
     <>
       <DropdownMenu>
@@ -42,12 +35,7 @@ export function AccountMenu({ profile }: { profile: Profile }) {
             />
           }
         >
-          {/* The contract has no profile photo; use real initials rather than a fabricated portrait. */}
-          <Avatar size="lg">
-            <AvatarFallback className="bg-primary/15 font-medium text-brand-ink">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <ProfileAvatar name={profile.name} avatarUrl={profile.avatarUrl} />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" sideOffset={10} className="w-64">
           <DropdownMenuGroup>

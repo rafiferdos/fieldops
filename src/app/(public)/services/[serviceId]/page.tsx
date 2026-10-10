@@ -1,18 +1,13 @@
 import { publicMetadata } from "@/infrastructure/seo/metadata"
 import Link from "next/link"
-import {
-  ArrowLeft,
-  ArrowRight,
-  CalendarCheck2,
-  FileCheck2,
-  Wrench,
-} from "lucide-react"
+import { ArrowLeft, ArrowRight, CalendarCheck2, FileCheck2 } from "lucide-react"
 import { Reveal } from "@/shared/components/reveal"
 import { getService } from "@/features/services/server"
 import { PageHeading } from "@/shared/components/page-heading"
 import { formatMoney } from "@/shared/lib/format"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { buttonVariants } from "@/shared/ui/button"
+import { ContentImage } from "@/shared/components/content-image"
 
 type ServicePageProps = { params: Promise<{ serviceId: string }> }
 
@@ -41,12 +36,12 @@ export default async function ServicePage({ params }: ServicePageProps) {
       />
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_22rem]">
         <Card className="border p-6 shadow-none sm:p-8">
-          <div
-            aria-hidden="true"
-            className="flex h-44 items-center justify-center rounded-2xl bg-primary/5"
-          >
-            <Wrench className="size-14 text-brand-ink/70" />
-          </div>
+          <ContentImage
+            src={service.imageUrl}
+            alt={service.name}
+            className="aspect-video"
+            sizes="(max-width: 1024px) 90vw, 720px"
+          />
           <h2 className="font-heading text-xl font-medium">
             About this service
           </h2>

@@ -1,6 +1,8 @@
 import { z } from "zod"
+import { imageUrlSchema } from "@/shared/lib/image-policy"
 export const updateProfileSchema = z.strictObject({
   name: z.string().trim().min(2).max(100),
+  avatarUrl: imageUrlSchema.nullable().optional(),
   phone: z.union([
     z.literal(""),
     z

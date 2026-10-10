@@ -22,7 +22,12 @@ export default async function AccountPage() {
         </div>
       </DetailPanel>
       <section id="account-settings" aria-label="Account settings">
-        <ProfileForm name={profile.name} phone={profile.phone} />
+        <ProfileForm
+          key={profile.avatarUrl ?? "no-avatar"}
+          name={profile.name}
+          phone={profile.phone}
+          avatarUrl={profile.avatarUrl}
+        />
       </section>
     </>
   )

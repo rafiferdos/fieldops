@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { imageUrlSchema } from "@/shared/lib/image-policy"
 
 // Parse decimal BDT as integer paisa without rounding a floating-point product.
 export function priceToMinor(value: string) {
@@ -12,6 +13,7 @@ export function priceFromMinor(minor: number) {
   return `${Math.floor(minor / 100)}.${String(minor % 100).padStart(2, "0")}`
 }
 const fields = {
+  imageUrl: imageUrlSchema.nullable().optional(),
   name: z.string().trim().min(2, "Use at least 2 characters.").max(100),
   description: z
     .string()

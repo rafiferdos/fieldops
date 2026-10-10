@@ -44,7 +44,7 @@ export async function apiRequest<T>(
     headers.set("Authorization", `Bearer ${options.accessToken}`)
   if (options.idempotencyKey)
     headers.set("Idempotency-Key", options.idempotencyKey)
-  if (options.body !== undefined)
+  if (options.body !== undefined && !(options.body instanceof FormData))
     headers.set("Content-Type", "application/json")
 
   const timeout = AbortSignal.timeout(30_000)
@@ -59,7 +59,12 @@ export async function apiRequest<T>(
     credentials: "omit",
     redirect: "error",
   }
-  if (options.body !== undefined) init.body = JSON.stringify(options.body)
+  // Multipart sets its own boundary; credentials and retries follow the same transport policy.
+  if (options.body !== undefined)
+    init.body =
+      options.body instanceof FormData
+        ? options.body
+        : JSON.stringify(options.body)
 
   let response: Response
   try {

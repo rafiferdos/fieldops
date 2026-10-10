@@ -19,6 +19,31 @@ afterEach(() => {
 })
 
 describe("server API boundary", () => {
+  it("preserves multipart boundaries and keeps upload authorization server-side", async () => {
+    const body = new FormData()
+    body.set("purpose", "AVATAR")
+    body.set(
+      "file",
+      new Blob(["image bytes"], { type: "image/png" }),
+      "avatar.png"
+    )
+    fetchMock.mockResolvedValue(Response.json(success))
+
+    await apiRequest("/media/images", dataSchema, {
+      method: "POST",
+      body,
+      accessToken: "private-token",
+    })
+
+    const [, init] = fetchMock.mock.calls[0] ?? []
+    expect(init?.body).toBe(body)
+    expect(new Headers(init?.headers).has("Content-Type")).toBe(false)
+    expect(new Headers(init?.headers).get("Authorization")).toBe(
+      "Bearer private-token"
+    )
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
   it("validates the envelope and data and keeps tokens in headers", async () => {
     fetchMock.mockResolvedValue(Response.json(success))
     const result = await apiRequest("/records?page=2", dataSchema, {

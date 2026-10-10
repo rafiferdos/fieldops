@@ -11,6 +11,7 @@ import { ButtonLink } from "@/shared/components/button-link"
 import { EmptyState } from "@/shared/components/empty-state"
 import { Pagination } from "@/shared/components/pagination"
 import { Card } from "@/shared/ui/card"
+import { ContentImage } from "@/shared/components/content-image"
 
 export const metadata = { title: "Manage service catalog" }
 export default async function ManageServicesPage({
@@ -34,6 +35,12 @@ export default async function ManageServicesPage({
         <div className="grid gap-5 lg:grid-cols-2">
           {result.items.map((service) => (
             <Card key={service.id} className="min-w-0 border p-6 shadow-none">
+              <ContentImage
+                src={service.imageUrl}
+                alt={service.name}
+                className="h-36"
+                sizes="(max-width: 1024px) 90vw, 480px"
+              />
               <h2 className="font-heading text-xl font-medium break-words">
                 {service.name}
               </h2>

@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { z } from "zod"
 import type { Service } from "../schemas"
@@ -25,6 +25,7 @@ import { Textarea } from "@/shared/ui/textarea"
 import { Label } from "@/shared/ui/label"
 import { toast } from "@/shared/ui/toast"
 import { FormMessage } from "@/shared/components/form-message"
+import { ImageUpload } from "@/shared/components/image-upload"
 
 export function ServiceEditor({ service }: { service?: Service }) {
   const [open, setOpen] = useState(false),
@@ -77,10 +78,12 @@ function ServiceForm({
   onBlocked: (value: boolean) => void
 }) {
   const router = useRouter(),
-    [message, setMessage] = useState<string>()
+    [message, setMessage] = useState<string>(),
+    [uploading, setUploading] = useState(false)
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isReady, isSubmitting },
   } = useForm<z.infer<typeof serviceFormSchema>>({
     resolver: zodResolver(serviceFormSchema),
@@ -88,6 +91,7 @@ function ServiceForm({
       name: service?.name ?? "",
       description: service?.description ?? "",
       price: service ? priceFromMinor(service.basePriceMinor) : "",
+      imageUrl: service?.imageUrl ?? null,
     },
   })
   function report(message: string) {
@@ -113,11 +117,15 @@ function ServiceForm({
             ...(basePriceMinor !== service.basePriceMinor
               ? { basePriceMinor }
               : {}),
+            ...(values.imageUrl !== service.imageUrl
+              ? { imageUrl: values.imageUrl }
+              : {}),
           })
         : await createService({
             name: values.name,
             description: values.description,
             basePriceMinor,
+            imageUrl: values.imageUrl,
           })
       if (result.ok) {
         toast.add({ type: "success", title: result.message })
@@ -147,9 +155,25 @@ function ServiceForm({
       }}
     >
       <fieldset
-        disabled={!isReady || isSubmitting || blocked}
+        disabled={!isReady || isSubmitting || blocked || uploading}
         className="space-y-5"
       >
+        <Controller
+          name="imageUrl"
+          control={control}
+          render={({ field }) => (
+            <ImageUpload
+              label="Service image"
+              purpose="SERVICE"
+              value={field.value ?? null}
+              onChange={field.onChange}
+              onBusy={(busy) => {
+                setUploading(busy)
+                onBusy(busy)
+              }}
+            />
+          )}
+        />
         <div className="space-y-2">
           <Label htmlFor="catalog-name">Service name</Label>
           <Input

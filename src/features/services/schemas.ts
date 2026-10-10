@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { imageUrlSchema } from "@/shared/lib/image-policy"
 import {
   firstValue,
   limitSchema,
@@ -12,6 +13,7 @@ export const serviceSchema = z.object({
   id: z.uuid(),
   name: z.string(),
   description: z.string(),
+  imageUrl: imageUrlSchema.nullable().optional().default(null),
   basePriceMinor: z.number().int().min(0).max(1000000000),
   currency: z.literal("BDT"),
   createdAt: z.iso.datetime(),

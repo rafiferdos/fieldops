@@ -1,5 +1,6 @@
 import { ButtonLink } from "@/shared/components/button-link"
-import { ArrowUpRight, Wrench } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
+import { ContentImage } from "@/shared/components/content-image"
 import {
   Card,
   CardContent,
@@ -15,16 +16,12 @@ export function ServiceCard({ service }: { service: Service }) {
   return (
     <Card className="interactive-card group h-full border shadow-none">
       <CardHeader>
-        <div
-          aria-hidden="true"
-          className="relative mb-7 flex h-36 items-center justify-center overflow-hidden rounded-2xl border border-primary/10 bg-primary/5"
-        >
-          <span className="absolute size-36 rounded-full border border-primary/10" />
-          <span className="absolute size-24 rounded-full border border-primary/15" />
-          <span className="relative flex size-14 items-center justify-center rounded-2xl border border-primary/10 bg-card text-brand-ink shadow-sm">
-            <Wrench className="size-6" />
-          </span>
-        </div>
+        <ContentImage
+          src={service.imageUrl}
+          alt={service.name}
+          className="mb-7 h-44 border"
+          sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 384px"
+        />
         <CardTitle className="font-heading text-2xl tracking-tight">
           {service.name}
         </CardTitle>

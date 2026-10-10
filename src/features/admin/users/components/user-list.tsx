@@ -5,6 +5,7 @@ import type { ManagedUser, ManagedUsersQuery } from "../schemas"
 import { AccessEditor } from "./access-editor"
 import { ButtonLink } from "@/shared/components/button-link"
 import { SkillsEditor } from "../../skills/components/skills-editor"
+import { ProfileAvatar } from "@/shared/components/profile-avatar"
 
 export function UserList({
   users,
@@ -30,9 +31,12 @@ export function UserList({
               <Badge variant="secondary">Your account</Badge>
             )}
           </div>
-          <h2 className="font-heading text-xl font-medium break-words">
-            {user.name}
-          </h2>
+          <div className="flex items-center gap-3">
+            <ProfileAvatar name={user.name} avatarUrl={user.avatarUrl} />
+            <h2 className="font-heading text-xl font-medium break-words">
+              {user.name}
+            </h2>
+          </div>
           <p className="text-sm break-all text-muted-foreground">
             {user.email}
           </p>
