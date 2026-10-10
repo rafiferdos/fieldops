@@ -1,23 +1,21 @@
 import Link from "next/link"
+import type { CSSProperties } from "react"
 import {
-  ArrowRight,
+  ArrowUpRight,
   CalendarCheck2,
+  Check,
+  ChevronRight,
   ClipboardList,
   FileCheck2,
+  FileText,
+  Wrench,
 } from "lucide-react"
+
 import { Reveal } from "@/shared/components/reveal"
 import {
   ScrollStack,
   ScrollStackItem,
 } from "@/shared/components/react-bits/scroll-stack"
-import { Badge } from "@/shared/ui/badge"
-import {
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/shared/ui/card"
-import { Separator } from "@/shared/ui/separator"
 import { ScrollWords } from "./scroll-words"
 import { SpotlightCard } from "./spotlight-card"
 import styles from "./process-section.module.css"
@@ -25,6 +23,7 @@ import styles from "./process-section.module.css"
 const stages = [
   {
     number: "01",
+    kind: "request",
     phase: "Request",
     summary: "One clear request",
     title: "Start with what you need.",
@@ -36,6 +35,7 @@ const stages = [
   },
   {
     number: "02",
+    kind: "coordinate",
     phase: "Coordinate",
     summary: "A coordinated visit",
     title: "Leave room for a real plan.",
@@ -47,6 +47,7 @@ const stages = [
   },
   {
     number: "03",
+    kind: "resolve",
     phase: "Resolve",
     summary: "A documented result",
     title: "See the work through.",
@@ -58,119 +59,305 @@ const stages = [
   },
 ] as const
 
-// This is a process guide; no decorative stage is presented as a live job status.
+type StageKind = (typeof stages)[number]["kind"]
+
+const weekdays = ["MON", "TUE", "WED", "THU", "FRI"] as const
+
+function StagePreview({ kind }: { kind: StageKind }) {
+  const chapter =
+    kind === "request" ? "01" : kind === "coordinate" ? "02" : "03"
+
+  return (
+    <div className={styles.preview} aria-hidden="true">
+      <div className={styles.previewTop}>
+        <span className={styles.previewLabel}>
+          <span className={styles.previewDot} />A closer look
+        </span>
+        <span className={styles.previewCaption}>ILLUSTRATIVE / {chapter}</span>
+      </div>
+
+      <div className={styles.previewCanvas}>
+        {kind === "request" && (
+          <div className={`${styles.mockSheet} ${styles.formPreview}`}>
+            <div className={styles.formHeader}>
+              <span className={styles.formIcon}>
+                <Wrench size={17} strokeWidth={1.8} />
+              </span>
+
+              <div className={styles.formHeaderText}>
+                <strong>Service request</strong>
+                <span>Everything in one place</span>
+              </div>
+
+              <ChevronRight
+                size={17}
+                className={styles.mockArrow}
+                strokeWidth={1.7}
+              />
+            </div>
+
+            <div className={styles.formFields}>
+              <div className={styles.mockField}>
+                <span className={styles.fieldLabel}>WHAT NEEDS ATTENTION</span>
+
+                <div className={styles.fieldLines}>
+                  <span />
+                  <span className={styles.shortLine} />
+                </div>
+              </div>
+
+              <div className={styles.mockField}>
+                <span className={styles.fieldLabel}>PREFERRED VISIT</span>
+
+                <div className={styles.timePill}>
+                  <CalendarCheck2 size={13} strokeWidth={1.7} />
+                  Choose a time
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {kind === "coordinate" && (
+          <div className={`${styles.mockSheet} ${styles.calendarPreview}`}>
+            <div className={styles.calendarHeader}>
+              <div className={styles.calendarTitle}>
+                <CalendarCheck2 size={17} strokeWidth={1.8} />
+                <strong>Visit planning</strong>
+              </div>
+
+              <span className={styles.calendarBadge}>SCHEDULE</span>
+            </div>
+
+            <div className={styles.days}>
+              {weekdays.map((day, index) => (
+                <div
+                  key={`${day}-${index}`}
+                  className={`${styles.day} ${
+                    index === 3 ? styles.dayActive : ""
+                  }`}
+                >
+                  <span className={styles.dayName}>{day}</span>
+                  <span className={styles.dayMark}>
+                    {index === 3 ? (
+                      <Check size={14} strokeWidth={2.2} />
+                    ) : (
+                      <span className={styles.dayLine} />
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.matchRow}>
+              <span className={styles.matchIcon}>
+                <Check size={13} strokeWidth={2.2} />
+              </span>
+
+              <div className={styles.matchText}>
+                <strong>Qualified technician</strong>
+                <span>Availability considered</span>
+              </div>
+
+              <span className={styles.matchDetail}>MATCH</span>
+            </div>
+          </div>
+        )}
+
+        {kind === "resolve" && (
+          <div className={`${styles.mockSheet} ${styles.reportPreview}`}>
+            <div className={styles.reportHeader}>
+              <span className={styles.reportIcon}>
+                <FileCheck2 size={18} strokeWidth={1.7} />
+              </span>
+
+              <div className={styles.reportHeaderText}>
+                <strong>Service record</strong>
+                <span>The details stay together</span>
+              </div>
+
+              <span className={styles.reportNumber}>03</span>
+            </div>
+
+            <div className={styles.reportRows}>
+              <div className={styles.reportRow}>
+                <span>Visit notes</span>
+                <span className={styles.reportRowLine} />
+              </div>
+              <div className={styles.reportRow}>
+                <span>Work summary</span>
+                <span className={styles.reportRowLine} />
+              </div>
+            </div>
+
+            <div className={styles.reportFooter}>
+              <div className={styles.reportChip}>
+                <FileCheck2 size={14} strokeWidth={1.8} />
+                Report
+              </div>
+
+              <div className={styles.reportChip}>
+                <FileText size={14} strokeWidth={1.8} />
+                Invoice
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.previewBottom}>
+        <span>ONE CONNECTED JOURNEY</span>
+        <span className={styles.previewBottomRule} />
+        <span>{chapter} / 03</span>
+      </div>
+    </div>
+  )
+}
+
+// Describes the actual service workflow.
+// The small interface drawings are illustrative, not live job records.
 export function ProcessSection() {
   return (
     <section
       aria-labelledby="process-title"
-      className="grid items-start gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20"
       data-process-section=""
+      className={styles.section}
     >
-      <Reveal className="lg:sticky lg:top-32">
-        <p className="eyebrow">From request to resolution</p>
-        <h2
-          id="process-title"
-          className="mt-4 font-heading text-4xl leading-[1.08] font-medium tracking-[-0.04em] sm:text-5xl"
-        >
+      <Reveal className={styles.story}>
+        <div className={styles.overline}>
+          <span className={styles.overlineMark} />
+          <span>From request to resolution</span>
+          <span className={styles.overlineIndex}>/ 01—03</span>
+        </div>
+
+        <h2 id="process-title" className={styles.heading}>
           <ScrollWords>A little structure.</ScrollWords>
           <br />
-          <ScrollWords>A lot less guesswork.</ScrollWords>
+          <span className={styles.headingAccent}>
+            <ScrollWords>A lot less guesswork.</ScrollWords>
+          </span>
         </h2>
-        <p className="mt-6 max-w-md leading-relaxed text-muted-foreground">
+
+        <p className={styles.description}>
           Every visit has a next step. From the first detail to the final
           report, the whole story stays connected.
         </p>
-        <ol
-          aria-label="Service process"
-          className={`${styles.journey} mt-9 sm:space-y-5`}
-        >
-          {stages.map(({ number, summary, phase, accent }) => (
+
+        <div className={styles.storyDivider} aria-hidden="true">
+          <span />
+        </div>
+
+        <p className={styles.journeyLabel}>THREE MOMENTS THAT MATTER</p>
+
+        <ol aria-label="Service process" className={styles.journey}>
+          {stages.map((stage) => (
             <li
-              key={number}
-              className="relative flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-4"
-              style={{ "--process-accent": accent }}
+              key={stage.number}
+              className={styles.milestone}
+              style={
+                {
+                  "--process-accent": stage.accent,
+                } satisfies CSSProperties
+              }
             >
-              <Badge variant="outline" className={styles.number}>
-                {number}
-              </Badge>
-              <div>
-                <p className="hidden font-medium tracking-tight sm:block">
-                  {summary}
-                </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{phase}</p>
+              <span className={styles.milestoneNumber}>{stage.number}</span>
+
+              <div className={styles.milestoneText}>
+                <strong className={styles.milestoneTitle}>
+                  {stage.summary}
+                </strong>
+                <span className={styles.milestoneSubtitle}>{stage.phase}</span>
               </div>
             </li>
           ))}
         </ol>
-        <Separator className="mt-9 mb-6 max-w-md" />
-        <Link href="/about" className="text-link">
-          Get to know the process
-          <ArrowRight aria-hidden="true" className="size-4" />
-        </Link>
+
+        <div className={styles.storyFooter}>
+          <span className={styles.storyFooterLabel}>
+            Clear from the beginning.
+            <br />
+            Connected to the end.
+          </span>
+
+          <Link href="/about" className={styles.storyLink}>
+            Explore the process
+            <span className={styles.storyLinkIcon}>
+              <ArrowUpRight aria-hidden="true" size={18} />
+            </span>
+          </Link>
+        </div>
       </Reveal>
-      <ScrollStack>
-        {stages.map(
-          ({
-            number,
-            phase,
-            title,
-            text,
-            role,
-            outcome,
-            icon: Icon,
-            accent,
-          }) => (
-            <ScrollStackItem key={number}>
-              <SpotlightCard
-                className={`${styles.card} process-card gap-0 overflow-hidden border shadow-none`}
-                style={{ "--process-accent": accent }}
-                data-process-step={number}
-              >
-                <CardHeader className="gap-6 pb-6 sm:px-8 sm:pt-8">
-                  <div className="flex items-center justify-between gap-4">
-                    <Badge variant="outline" className={styles.phase}>
+
+      <div className={styles.deck}>
+        <div className={styles.deckHeading} aria-hidden="true">
+          <span>THE JOURNEY, UP CLOSE</span>
+          <span className={styles.deckRule} />
+          <span>03 CHAPTERS</span>
+        </div>
+
+        <ScrollStack>
+          {stages.map((stage) => {
+            const Icon = stage.icon
+
+            return (
+              <ScrollStackItem key={stage.number}>
+                <SpotlightCard
+                  className={`${styles.card} process-card gap-0 overflow-hidden border p-0 shadow-none ring-0`}
+                  data-process-step={stage.number}
+                  style={
+                    {
+                      "--process-accent": stage.accent,
+                    } satisfies CSSProperties
+                  }
+                >
+                  <div className={styles.cardTop}>
+                    <div className={styles.cardTopline}>
+                      <span className={styles.stagePill}>
+                        <span className={styles.stageDot} />
+                        {stage.phase}
+                      </span>
+
                       <span
-                        aria-hidden="true"
-                        className="size-1.5 rounded-full bg-current"
-                      />
-                      {phase}
-                    </Badge>
-                    <span
-                      aria-label={`Step ${number}`}
-                      className="font-mono text-xs tracking-wider text-muted-foreground"
-                    >
-                      {number} / 03
-                    </span>
+                        className={styles.cardIndex}
+                        aria-label={`Step ${stage.number} of 3`}
+                      >
+                        {stage.number}
+                        <span className={styles.cardIndexTotal}> / 03</span>
+                      </span>
+                    </div>
+
+                    <div className={styles.titleRow}>
+                      <span className={styles.stepIcon}>
+                        <Icon aria-hidden="true" size={25} strokeWidth={1.5} />
+                      </span>
+
+                      <h3 className={styles.cardTitle}>{stage.title}</h3>
+                    </div>
+
+                    <p className={styles.cardDescription}>{stage.text}</p>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <Badge
-                      variant="outline"
-                      className={`${styles.icon} [&>svg]:size-5!`}
-                    >
-                      <Icon aria-hidden="true" />
-                    </Badge>
-                    <CardTitle className="max-w-sm text-2xl leading-snug tracking-tight sm:text-3xl">
-                      {title}
-                    </CardTitle>
+
+                  <StagePreview kind={stage.kind} />
+
+                  <div className={styles.cardFooter}>
+                    <div className={styles.outcomeGroup}>
+                      <span className={styles.footerLabel}>
+                        WHAT STAYS WITH THE JOB
+                      </span>
+
+                      <strong className={styles.footerValue}>
+                        {stage.outcome}
+                      </strong>
+                    </div>
+
+                    <span className={styles.roleBadge}>{stage.role}</span>
                   </div>
-                </CardHeader>
-                <CardContent className="max-w-lg pb-8 leading-relaxed text-muted-foreground sm:px-8">
-                  {text}
-                </CardContent>
-                <CardFooter className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t bg-muted/20 pt-5 sm:px-8">
-                  <div>
-                    <p className="mb-1 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
-                      What stays with the job
-                    </p>
-                    <p className="text-xs font-medium sm:text-sm">{outcome}</p>
-                  </div>
-                  <Badge variant="secondary">{role}</Badge>
-                </CardFooter>
-              </SpotlightCard>
-            </ScrollStackItem>
-          )
-        )}
-      </ScrollStack>
+                </SpotlightCard>
+              </ScrollStackItem>
+            )
+          })}
+        </ScrollStack>
+      </div>
     </section>
   )
 }

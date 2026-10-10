@@ -1,76 +1,1092 @@
+/* ---------------------------------------
+   Editorial journey / overall composition
+---------------------------------------- */
+
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(3rem, 6vw, 5rem);
+  position: relative;
+  min-width: 0;
+}
+
+.story,
+.deck {
+  min-width: 0;
+}
+
+.story {
+  position: relative;
+}
+
+.overline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+
+  color: var(--brand-ink);
+  font-size: 0.67rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.overlineMark {
+  display: block;
+  width: 25px;
+  height: 2px;
+  flex: none;
+  background: currentColor;
+}
+
+.overlineIndex {
+  margin-left: auto;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.61rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+.heading {
+  margin-top: 1.75rem;
+  max-width: 670px;
+
+  color: var(--foreground);
+  font-family: var(--font-heading);
+  font-size: clamp(2.7rem, 5vw, 4.1rem);
+  font-weight: 450;
+  line-height: 1.08;
+  letter-spacing: -0.057em;
+  text-wrap: balance;
+}
+
+.headingAccent {
+  color: var(--brand-ink);
+}
+
+.description {
+  max-width: 415px;
+  margin-top: 1.7rem;
+
+  color: var(--muted-foreground);
+  font-size: 0.99rem;
+  line-height: 1.85;
+}
+
+.storyDivider {
+  width: 100%;
+  max-width: 430px;
+  height: 1px;
+  margin-top: 2.6rem;
+  background: var(--border);
+}
+
+.storyDivider span {
+  display: block;
+  width: 22%;
+  height: 1px;
+  background: var(--brand-ink);
+}
+
+.journeyLabel {
+  margin-top: 2rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.63rem;
+  letter-spacing: 0.13em;
+}
+
 .journey {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 1.45rem;
+  margin-top: 1.4rem;
 }
+
 .journey::before {
   content: "";
   position: absolute;
-  top: 1rem;
-  left: 16px;
-  right: 16px;
+  z-index: 0;
+  top: 19px;
+  bottom: 19px;
+  left: 19px;
+  width: 1px;
+
+  background: linear-gradient(
+    to bottom,
+    var(--brand-ink),
+    var(--border) 58%,
+    var(--border)
+  );
+}
+
+.milestone {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.milestoneNumber {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 39px;
+  height: 39px;
+  flex: none;
+  place-items: center;
+
+  border: 1px solid
+    color-mix(in oklch, var(--process-accent) 38%, var(--border));
+  border-radius: 50%;
+
+  background: var(--background);
+  color: var(--process-accent);
+
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+
+  box-shadow: 0 0 0 5px var(--background);
+}
+
+.milestoneText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.24rem;
+  min-width: 0;
+}
+
+.milestoneTitle {
+  color: var(--foreground);
+  font-size: 0.89rem;
+  font-weight: 580;
+  letter-spacing: -0.02em;
+}
+
+.milestoneSubtitle {
+  color: var(--muted-foreground);
+  font-size: 0.77rem;
+}
+
+.storyFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.4rem;
+
+  width: 100%;
+  max-width: 430px;
+  margin-top: 2.8rem;
+  padding-top: 1.4rem;
+
+  border-top: 1px solid var(--border);
+}
+
+.storyFooterLabel {
+  color: var(--muted-foreground);
+  font-size: 0.79rem;
+  line-height: 1.6;
+}
+
+.storyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+
+  color: var(--foreground);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 220ms ease;
+}
+
+.storyLink:hover {
+  color: var(--brand-ink);
+}
+
+.storyLinkIcon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+
+  transition:
+    border-color 250ms ease,
+    background-color 250ms ease,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.storyLink:hover .storyLinkIcon {
+  transform: translate(2px, -2px);
+  border-color: var(--brand-ink);
+  background: color-mix(in oklch, var(--brand-ink) 8%, var(--card));
+}
+
+/* ---------------------------------------
+   Cards and top editorial details
+---------------------------------------- */
+
+.deckHeading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.deckRule {
+  flex: 1;
+  min-width: 10px;
   height: 1px;
   background: var(--border);
 }
-@media (min-width: 640px) {
-  .journey {
-    display: block;
-  }
-  .journey::before {
-    bottom: 1rem;
-    left: 15px;
-    right: auto;
-    height: auto;
-    width: 1px;
-  }
+
+.card {
+  --process-accent: var(--primary);
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 520px;
+
+  border-radius: 28px;
+  border-color: color-mix(in oklch, var(--process-accent) 17%, var(--border));
+
+  background:
+    radial-gradient(
+      ellipse at 96% 0%,
+      color-mix(in oklch, var(--process-accent) 10%, transparent),
+      transparent 49%
+    ),
+    linear-gradient(
+      145deg,
+      color-mix(in oklch, var(--process-accent) 3%, var(--card)),
+      var(--card) 60%
+    );
+
+  box-shadow:
+    0 22px 65px -52px
+      color-mix(in oklch, var(--process-accent) 36%, transparent),
+    0 8px 28px -24px rgb(0 0 0 / 14%);
+
+  color: var(--card-foreground);
 }
-.number {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border-color: color-mix(in oklch, var(--process-accent) 25%, var(--border));
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%);
+}
+
+.cardTop {
+  position: relative;
+  z-index: 1;
+  padding: 1.65rem 1.65rem 0;
+}
+
+.cardTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stagePill {
+  display: inline-flex;
+  min-height: 29px;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.3rem 0.75rem;
+
+  border: 1px solid
+    color-mix(in oklch, var(--process-accent) 20%, var(--border));
+  border-radius: 999px;
+
+  background: color-mix(in oklch, var(--process-accent) 7%, var(--card));
+
+  color: var(--process-accent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.015em;
+}
+
+.stageDot {
+  display: block;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--background);
+  background: currentColor;
+}
+
+.cardIndex {
   color: var(--process-accent);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
-.card {
-  background: linear-gradient(
-    135deg,
-    color-mix(in oklch, var(--process-accent) 4%, var(--card)),
-    var(--card) 60%
-  );
-  border-color: color-mix(in oklch, var(--process-accent) 18%, var(--border));
+
+.cardIndexTotal {
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+  font-weight: 400;
 }
-.phase {
-  gap: 6px;
-  height: 26px;
-  background: color-mix(in oklch, var(--process-accent) 7%, var(--card));
-  color: var(--process-accent);
-  border-color: color-mix(in oklch, var(--process-accent) 20%, var(--border));
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
 }
-.icon {
+
+.stepIcon {
+  display: grid;
+  width: 51px;
+  height: 51px;
   flex: none;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border-radius: var(--radius-xl);
-  background: color-mix(in oklch, var(--process-accent) 7%, var(--card));
-  border-color: color-mix(in oklch, var(--process-accent) 15%, var(--border));
+  place-items: center;
+
+  border: 1px solid
+    color-mix(in oklch, var(--process-accent) 19%, var(--border));
+  border-radius: 16px;
+
+  background: color-mix(in oklch, var(--process-accent) 9%, var(--card));
+
   color: var(--process-accent);
 }
-@media (forced-colors: active) {
-  .number,
-  .phase,
-  .icon {
-    color: CanvasText;
-    background: Canvas;
-    border-color: CanvasText;
+
+.cardTitle {
+  max-width: 360px;
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 2.5vw, 2.15rem);
+  font-weight: 520;
+  line-height: 1.17;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.cardDescription {
+  max-width: 440px;
+  margin-top: 1.15rem;
+
+  color: var(--muted-foreground);
+  font-size: 0.86rem;
+  line-height: 1.8;
+}
+
+/* ---------------------------------------
+   Shared miniature workflow illustrations
+---------------------------------------- */
+
+.preview {
+  position: relative;
+  z-index: 1;
+  margin: 1.6rem 1.35rem 1.35rem;
+  padding: 0.85rem;
+
+  border: 1px solid
+    color-mix(in oklch, var(--process-accent) 13%, var(--border));
+  border-radius: 20px;
+
+  background: color-mix(in oklch, var(--process-accent) 4%, var(--background));
+}
+
+.previewTop,
+.previewBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.11em;
+}
+
+.previewTop {
+  padding: 0.2rem 0.25rem 0.8rem;
+}
+
+.previewLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--process-accent);
+  font-family: var(--font-sans);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.previewDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.previewCaption {
+  white-space: nowrap;
+}
+
+.previewCanvas {
+  position: relative;
+  display: flex;
+  min-height: 194px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0.8rem;
+
+  border: 1px solid
+    color-mix(in oklch, var(--process-accent) 10%, var(--border));
+  border-radius: 13px;
+
+  background:
+    radial-gradient(
+      ellipse at 50% -15%,
+      color-mix(in oklch, var(--process-accent) 11%, transparent),
+      transparent 65%
+    ),
+    var(--card);
+}
+
+.previewCanvas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  pointer-events: none;
+
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--process-accent) 21%, transparent) 0.6px,
+    transparent 0.6px
+  );
+  background-size: 13px 13px;
+}
+
+.mockSheet {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+
+  box-shadow:
+    0 12px 34px -23px rgb(0 0 0 / 25%),
+    0 2px 7px -5px rgb(0 0 0 / 13%);
+}
+
+.previewBottom {
+  padding: 0.8rem 0.25rem 0.1rem;
+  white-space: nowrap;
+}
+
+.previewBottomRule {
+  height: 1px;
+  flex: 1;
+  background: var(--border);
+}
+
+/* ---------------------------------------
+   Chapter 01: Request
+---------------------------------------- */
+
+.formPreview {
+  padding: 0.95rem;
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.formIcon,
+.reportIcon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  place-items: center;
+
+  border-radius: 10px;
+  background: color-mix(in oklch, var(--process-accent) 11%, var(--card));
+  color: var(--process-accent);
+}
+
+.formHeaderText,
+.reportHeaderText {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.formHeaderText strong,
+.reportHeaderText strong {
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.formHeaderText span,
+.reportHeaderText span {
+  color: var(--muted-foreground);
+  font-size: 0.64rem;
+}
+
+.mockArrow {
+  flex: none;
+  color: var(--muted-foreground);
+}
+
+.formFields {
+  display: grid;
+  grid-template-columns: 1.25fr 0.9fr;
+  gap: 0.65rem;
+  margin-top: 0.9rem;
+}
+
+.mockField {
+  min-width: 0;
+  min-height: 65px;
+  padding: 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+}
+
+.fieldLabel {
+  display: block;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.05em;
+}
+
+.fieldLines {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+}
+
+.fieldLines span {
+  display: block;
+  width: 90%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border);
+}
+
+.fieldLines .shortLine {
+  width: 59%;
+}
+
+.timePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+  color: var(--process-accent);
+  font-size: 0.64rem;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------
+   Chapter 02: Coordinate
+---------------------------------------- */
+
+.calendarPreview {
+  padding: 0.9rem;
+}
+
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.calendarTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--process-accent);
+}
+
+.calendarTitle strong {
+  color: var(--foreground);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.calendarBadge {
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.07em;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-top: 0.85rem;
+}
+
+.day {
+  display: flex;
+  min-height: 56px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+}
+
+.dayName {
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.57rem;
+}
+
+.dayMark {
+  display: grid;
+  height: 16px;
+  place-items: center;
+}
+
+.dayLine {
+  display: block;
+  width: 13px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--border);
+}
+
+.dayActive {
+  border-color: color-mix(in oklch, var(--process-accent) 38%, var(--border));
+  background: color-mix(in oklch, var(--process-accent) 10%, var(--card));
+}
+
+.dayActive .dayName,
+.dayActive .dayMark {
+  color: var(--process-accent);
+}
+
+.matchRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--border);
+}
+
+.matchIcon {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  flex: none;
+  place-items: center;
+
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--process-accent) 12%, var(--card));
+  color: var(--process-accent);
+}
+
+.matchText {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.matchText strong {
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.matchText span {
+  color: var(--muted-foreground);
+  font-size: 0.57rem;
+}
+
+.matchDetail {
+  color: var(--process-accent);
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.04em;
+}
+
+/* ---------------------------------------
+   Chapter 03: Resolve
+---------------------------------------- */
+
+.reportPreview {
+  padding: 0.95rem;
+}
+
+.reportHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.reportNumber {
+  align-self: flex-start;
+  color: var(--process-accent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.reportRows {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 0.95rem;
+}
+
+.reportRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+
+  color: var(--muted-foreground);
+  font-size: 0.65rem;
+}
+
+.reportRowLine {
+  width: 45%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border);
+}
+
+.reportRow:nth-child(2) .reportRowLine {
+  width: 30%;
+  margin-right: 15%;
+}
+
+.reportFooter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.95rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border);
+}
+
+.reportChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.6rem;
+
+  border: 1px solid
+    color-mix(in oklch, var(--process-accent) 19%, var(--border));
+  border-radius: 7px;
+
+  background: color-mix(in oklch, var(--process-accent) 6%, var(--card));
+
+  color: var(--process-accent);
+  font-size: 0.64rem;
+  font-weight: 570;
+}
+
+/* ---------------------------------------
+   Card bottom: outcome and owner
+---------------------------------------- */
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  margin-top: auto;
+  padding: 1rem 1.65rem 1.2rem;
+  border-top: 1px solid
+    color-mix(in oklch, var(--process-accent) 11%, var(--border));
+
+  background: color-mix(in oklch, var(--process-accent) 2%, var(--card));
+}
+
+.outcomeGroup {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.32rem;
+}
+
+.footerLabel {
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+}
+
+.footerValue {
+  color: var(--foreground);
+  font-size: 0.74rem;
+  font-weight: 590;
+  line-height: 1.55;
+}
+
+.roleBadge {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--background);
+
+  color: var(--muted-foreground);
+  font-size: 0.65rem;
+  font-weight: 560;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------
+   Responsive layout
+---------------------------------------- */
+
+@media (min-width: 1024px) {
+  .section {
+    grid-template-columns:
+      minmax(0, 0.85fr)
+      minmax(0, 1.15fr);
+    gap: clamp(2.5rem, 5vw, 5.5rem);
   }
+
+  .story {
+    position: sticky;
+    top: 8rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .heading {
+    font-size: clamp(3.1rem, 3.95vw, 4.1rem);
+  }
+}
+
+@media (min-width: 640px) {
+  .storyFooter {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 639px) {
+  .section {
+    gap: 2.6rem;
+  }
+
+  .heading {
+    margin-top: 1.35rem;
+    font-size: clamp(2.35rem, 9.5vw, 3.2rem);
+  }
+
+  .description {
+    margin-top: 1.2rem;
+    font-size: 0.91rem;
+  }
+
+  .storyDivider {
+    margin-top: 2rem;
+  }
+
+  .journey {
+    gap: 1.15rem;
+  }
+
+  .storyFooter {
+    margin-top: 2rem;
+  }
+
+  .deckHeading {
+    gap: 0.6rem;
+    font-size: 0.54rem;
+  }
+
   .card {
+    min-height: 0;
+    border-radius: 22px;
+  }
+
+  .cardTop {
+    padding: 1.25rem 1.15rem 0;
+  }
+
+  .titleRow {
+    gap: 0.75rem;
+    margin-top: 1.4rem;
+  }
+
+  .stepIcon {
+    width: 43px;
+    height: 43px;
+    border-radius: 12px;
+  }
+
+  .cardTitle {
+    font-size: clamp(1.3rem, 6vw, 1.65rem);
+  }
+
+  .cardDescription {
+    margin-top: 0.9rem;
+    font-size: 0.81rem;
+    line-height: 1.75;
+  }
+
+  .preview {
+    margin: 1.2rem 0.8rem 1rem;
+    padding: 0.55rem;
+    border-radius: 15px;
+  }
+
+  .previewCanvas {
+    min-height: 176px;
+    padding: 0.55rem;
+  }
+
+  .formPreview,
+  .calendarPreview,
+  .reportPreview {
+    padding: 0.7rem;
+  }
+
+  .formFields {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+  }
+
+  .mockField {
+    padding: 0.48rem;
+  }
+
+  .fieldLabel {
+    font-size: 0.46rem;
+  }
+
+  .timePill {
+    font-size: 0.56rem;
+  }
+
+  .day {
+    min-height: 49px;
+  }
+
+  .dayName {
+    font-size: 0.49rem;
+  }
+
+  .matchDetail {
+    display: none;
+  }
+
+  .cardFooter {
+    padding: 0.9rem 1.15rem;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .mockSheet {
+    transition:
+      transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 450ms ease;
+  }
+
+  .card:hover .mockSheet {
+    transform: translateY(-3px);
+    box-shadow:
+      0 20px 38px -24px rgb(0 0 0 / 30%),
+      0 5px 12px -9px rgb(0 0 0 / 15%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mockSheet,
+  .storyLinkIcon {
+    transition: none;
+  }
+
+  .card:hover .mockSheet,
+  .storyLink:hover .storyLinkIcon {
+    transform: none;
+  }
+}
+
+/* Accessible rendering when decorative colors are unavailable */
+@media (forced-colors: active) {
+  .card,
+  .preview,
+  .mockSheet,
+  .mockField,
+  .day,
+  .reportChip,
+  .roleBadge,
+  .milestoneNumber,
+  .stagePill {
     background: Canvas;
     border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  .stagePill,
+  .stepIcon,
+  .milestoneNumber,
+  .headingAccent,
+  .overline,
+  .calendarTitle,
+  .previewLabel {
+    color: CanvasText;
+  }
+
+  .previewCanvas {
+    background: Canvas;
+  }
+
+  .previewCanvas::before {
+    display: none;
   }
 }
