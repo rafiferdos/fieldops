@@ -53,6 +53,7 @@ export function createScrollSmoothing(
   content: HTMLElement,
   { smooth, hashOffset }: { smooth: number; hashOffset: number }
 ) {
+  const originalOverflow = wrapper.style.overflow
   wrapper.dataset.scrollMode = "smooth"
   const smoother = ScrollSmoother.create({
     wrapper,
@@ -67,6 +68,9 @@ export function createScrollSmoothing(
         ? false
         : undefined,
   })
+  // Unlike hidden, clip cannot acquire a second scroll offset on focus or scrollIntoView.
+  // Window scrolling remains authoritative, so pointer targets do not move on focus.
+  if (CSS.supports("overflow", "clip")) wrapper.style.overflow = "clip"
   let active = true
   let frame = 0
   let previousSize = ""
@@ -96,6 +100,7 @@ export function createScrollSmoothing(
       resize.disconnect()
       cancelAnimationFrame(frame)
       window.removeEventListener("hashchange", followHash)
+      wrapper.style.overflow = originalOverflow
       delete wrapper.dataset.scrollMode
     },
   }
