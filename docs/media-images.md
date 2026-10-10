@@ -6,7 +6,7 @@ Profile photos and service photos come from actual API image references. This sl
 
 Deploy the backend's additive media migration and upload API first. Configure its `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET` together, with upload permission. Set only the matching public cloud name as `IMAGE_CLOUD_NAME` in the frontend environment and rebuild. No provider API key/secret belongs in the frontend or `NEXT_PUBLIC_*` variables.
 
-The optimizer permits HTTPS delivery from that cloud's versioned `fieldops` namespace only, with no query string or redirects. [Backend upload, ownership and lifecycle guide](https://github.com/rafiferdos/fieldops-api/blob/main/docs/media-images.md) describes the API contract and provider setup. Local verification does not deploy this slice or configure hosting secrets automatically.
+The optimizer permits HTTPS delivery from that cloud's versioned `fieldops` namespace only, with no query string or redirects. [Backend upload, ownership and lifecycle guide](https://github.com/rafiferdos/fieldops-api/blob/main/docs/media-images.md) describes the API contract and provider setup. Hosting configuration and deployment require their own verified release; the executed result is recorded below.
 
 ## Supported workflows
 
@@ -43,4 +43,28 @@ Real Cloudinary/browser checks must separately establish upload permissions, pro
 | Runtime/hydration diagnostics                | No errors in completed image flows                               |
 | Development action arguments                 | No Server Function argument logs after disabling that logging    |
 
-The browser checks used the real Cloudinary account with dedicated local accounts and isolated PostgreSQL/Redis; backend unit/integration provider mocks were not substituted for this evidence. The verified image slice is not deployed yet. Hosting credentials, migration/release sequencing and hosted upload verification remain required. Existing records with no photo still require an authorized upload; no bulk production demo-data seeding was performed.
+The browser checks used the real Cloudinary account with dedicated local accounts and isolated PostgreSQL/Redis; backend unit/integration provider mocks were not substituted for this evidence.
+
+### Executed hosted release — October 10, 2026
+
+| Application | Deployed revision                          | CI and release                                                                                                                   |
+| ----------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend    | `ee0f4dd541faa8ea09a3f8b993a77b0ae3155c29` | [38050365588](https://github.com/rafiferdos/fieldops/actions/runs/38050365588); Vercel `dpl_5gyHKBxWvsJpwbLnMzfJEy2xLkNc`, Ready |
+| Backend     | `35ed3df4abed29001ff4ae15f17a4c7b323e566a` | [38050362076](https://github.com/rafiferdos/fieldops-api/actions/runs/38050362076); Render `dep-db52jvqd0e5s73dvtuvg`, Live      |
+
+The backend applied its additive migration and passed readiness before the frontend release. Cloudinary upload credentials remain in Render; Vercel has only the public `IMAGE_CLOUD_NAME` configuration. The canonical alias is [fieldops-rafiferdos.vercel.app](https://fieldops-rafiferdos.vercel.app). Existing session encryption, Redis and Google settings were preserved.
+
+| Hosted check                                                | Result                                                                                       |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Fresh disposable CUSTOMER login                             | Passed against the actual API                                                                |
+| Profile upload through frontend proxy                       | Real Cloudinary upload passed                                                                |
+| Profile save, reload, optimized display, remove/save/reload | Passed                                                                                       |
+| Administrator catalog upload/create and public reads        | Passed through the actual backend API                                                        |
+| Frontend catalog and public detail photo                    | Real Next.js optimized image loaded                                                          |
+| Mobile detail at 390px                                      | Photo loaded; no horizontal overflow; screenshot inspected                                   |
+| Role/ownership boundary                                     | CUSTOMER service upload rejected `403`; foreign/purpose-mismatched attachment rejected `400` |
+| Completed browser diagnostics                               | No runtime/hydration errors or console warning/error entries                                 |
+
+The administrator's existing profile was not changed. Cleanup cleared the test service's photo and soft-deleted it (`404` on public detail), suspended the new customer, revoked test sessions and deleted both exact disposable provider assets. Audit/media history remains. Existing customer work and payments were untouched. Safe screenshots are in the parent workspace's `delivery/media-images/` folder, outside public Git.
+
+This focused hosted check did not repeat payment settlement, interactive Google consent, every role's photo UI, a full regression suite or real Safari/mobile hardware tests. All-role image UI checks have the separate local evidence above. No bulk hosted demo seed was run. Existing records with no photo still require an authorized upload; generated editorial scenes do not impersonate actual customers. Documentation-only commits after the released revisions do not change deployed application code.

@@ -70,6 +70,7 @@ measurements. Actual Safari/mobile hardware, field Core Web Vitals, live funds a
 failover are not certified by these checks.
 
 The README dashboard image is an actual dedicated-demo capture using the live API. Its
-counts are a point-in-time record, not seeded marketing numbers. The API does not provide
-profile photos, so account avatars use initials. The older recorded walkthrough predates
+counts are a point-in-time record, not seeded marketing numbers. At this initial workspace
+checkpoint, account avatars used initials. The subsequent [photo release](media-images.md)
+adds actual owned profile and catalog images, retaining initials for missing photos. The older recorded walkthrough predates
 this workspace design and should be refreshed before presenting the current interface.

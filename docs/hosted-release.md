@@ -1,5 +1,10 @@
 # Hosted FieldOps release
 
+The latest coordinated backend/frontend [photo release](media-images.md#executed-hosted-release--october-10-2026)
+was verified October 10, 2026. It adds owned media, profile/catalog photos and an additive
+database migration. The record below describes the earlier payment/authentication baseline
+and its original verification scope; its revisions are not the latest deployed application.
+
 Verified October 9, 2026. The website is live at
 [fieldops-rafiferdos.vercel.app](https://fieldops-rafiferdos.vercel.app), backed by
 the existing [versioned API](https://fieldops-api-xu3s.onrender.com/api/v1).

@@ -298,6 +298,12 @@ cookies and payment returns on HTTPS. Automatic Git deployments are disabled in
 [vercel.json](vercel.json), so release is a deliberate step.
 See the [deployment runbook](docs/deployment-runbook.md) for configuration and release checks.
 
+The coordinated photo release is live as of October 10, 2026: frontend `ee0f4dd`
+and backend `35ed3df` both passed CI. Real hosted upload, profile save/reload/removal,
+catalog/detail optimization, ownership boundaries and mobile delivery passed with
+disposable test records. See [image release evidence](docs/media-images.md#executed-hosted-release--october-10-2026)
+for exact revisions, cleanup and verification limits.
+
 ## Design, accessibility and performance
 
 - Responsive shadcn sidebar workspace and token-based light/dark themes.

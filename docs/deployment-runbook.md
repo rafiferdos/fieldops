@@ -1,7 +1,8 @@
 # FieldOps release runbook
 
-Reviewed October 9, 2026. Both applications are now live; executed proof is in
-[hosted release evidence](hosted-release.md). Do not reset/reseed existing production storage or deploy an
+Reviewed October 10, 2026. Both applications are live; executed proof is in
+[hosted release evidence](hosted-release.md) and the [coordinated photo release](media-images.md).
+Do not reset/reseed existing production storage or deploy an
 unverified revision. Free hosting has resource/cold-start limits.
 
 ## Destinations and isolation
@@ -17,20 +18,22 @@ unverified revision. Free hosting has resource/cold-start limits.
 
 Frontend `vercel.json` disables automatic Git deployments; a push triggers CI,
 not an application release. Production is released manually from an exact CI-passed
-Git SHA through Vercel's deployment API; this avoids uploading ignored local files.
+Git SHA through Vercel's deployment API or its Create Deployment Git-reference form;
+both use the connected repository without uploading ignored local files.
 
 ## Production environment
 
-| Variable                                         | Rule                                                         |
-| ------------------------------------------------ | ------------------------------------------------------------ |
-| API_BASE_URL                                     | Exact hosted `/api/v1` HTTPS URL above                       |
-| APP_ORIGIN                                       | Exact verified Vercel origin, identical at build/runtime     |
-| GOOGLE_CLIENT_ID                                 | Existing public client ID matching backend audience          |
-| SESSION_REDIS_URL                                | Dedicated password-authenticated `rediss://` connection      |
-| SESSION_ENCRYPTION_KEY                           | Fresh base64 32-byte encryption key; shared across instances |
-| DEMO_CUSTOMER_EMAIL / DEMO_CUSTOMER_PASSWORD     | Dedicated evaluation CUSTOMER account                        |
-| DEMO_TECHNICIAN_EMAIL / DEMO_TECHNICIAN_PASSWORD | Dedicated evaluation TECHNICIAN account                      |
-| DEMO_ADMIN_EMAIL / DEMO_ADMIN_PASSWORD           | Dedicated evaluation ADMIN account                           |
+| Variable                                         | Rule                                                            |
+| ------------------------------------------------ | --------------------------------------------------------------- |
+| API_BASE_URL                                     | Exact hosted `/api/v1` HTTPS URL above                          |
+| APP_ORIGIN                                       | Exact verified Vercel origin, identical at build/runtime        |
+| GOOGLE_CLIENT_ID                                 | Existing public client ID matching backend audience             |
+| IMAGE_CLOUD_NAME                                 | Public cloud name matching the backend, with no API credentials |
+| SESSION_REDIS_URL                                | Dedicated password-authenticated `rediss://` connection         |
+| SESSION_ENCRYPTION_KEY                           | Fresh base64 32-byte encryption key; shared across instances    |
+| DEMO_CUSTOMER_EMAIL / DEMO_CUSTOMER_PASSWORD     | Dedicated evaluation CUSTOMER account                           |
+| DEMO_TECHNICIAN_EMAIL / DEMO_TECHNICIAN_PASSWORD | Dedicated evaluation TECHNICIAN account                         |
+| DEMO_ADMIN_EMAIL / DEMO_ADMIN_PASSWORD           | Dedicated evaluation ADMIN account                              |
 
 Store secrets as protected server-only production variables; no NEXT_PUBLIC
 passwords/tokens, client imports, command-line secret arguments or public credential
@@ -56,17 +59,21 @@ was accepted. Do not change billing under this free-hosting authorization.
 1. Run strict checks with dedicated real Redis, production build and relevant browser
    verification. Install from the committed lockfile using Node 24.
 2. Push the reviewable source and wait for successful GitHub CI on that exact SHA.
-3. Configure approved protected production values. Build for the canonical origin;
-   rebuilding is required after changing APP_ORIGIN.
-4. Deploy manually using Vercel's official deployment API with the verified project,
-   production target and Git source SHA. Keep the authentication token out of command
-   arguments and logs. Record the returned deployment identity before another write;
-   inspect readiness and the canonical alias instead of blindly repeating creation.
-
-5. The existing Render FRONTEND_ORIGIN is saved as the exact Vercel origin. Once the
-   frontend is ready, manually deploy the CI-verified backend revision containing
-   skills and browser-return handling. Its normal release runs existing migrations;
-   no new migration is introduced by this checkpoint.
+3. Configure approved protected production values. Keep Render FRONTEND_ORIGIN aligned
+   with the exact canonical Vercel origin. For photos, store CLOUDINARY_CLOUD_NAME,
+   CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET together in Render; put only the matching
+   public IMAGE_CLOUD_NAME in Vercel Production. Never transfer provider upload credentials
+   to the frontend. Rebuild after changing APP_ORIGIN or image delivery configuration.
+4. Deploy the exact CI-passed backend revision before a frontend that depends on new APIs
+   or projections. The normal Render start runs `npm run db:deploy && npm run start:prod`.
+   The October 10 photo release adds nullable image columns and owned media through
+   `20261010123000_owned_media_images`; inspect successful migration and health before
+   proceeding. Keep existing data and migration history intact.
+5. Deploy the verified frontend Git SHA to Production with Vercel's official API or
+   Create Deployment form. Check that the resolved revision and production target match
+   before submitting. Keep API authentication tokens out of arguments and logs. Record
+   the returned deployment identity before another write; inspect readiness and the
+   canonical alias instead of blindly repeating creation.
 6. Check API liveness/readiness, expected source revision, current-skills routing and
    frontend/API reachability. Do not expose secret settings to prove configuration.
 7. Complete the hosted acceptance checks below. Keep a concrete failing stage open;
@@ -88,6 +95,9 @@ was accepted. Do not change billing under this free-hosting authorization.
 - Real paid-work feedback and reload. Inspect lost/stale outcomes explicitly.
 - Mobile/theme checks and lab performance on the deployed build; report actual
   Safari/hardware/field-data limitations separately.
+- Real profile upload/save/reload/removal and catalog/detail optimizer delivery with
+  explicitly disposable records. Inspect missing-image fallbacks and ownership/role
+  rejection; clean only exact test references/assets and retain audit history.
 
 Keep proof limited to synthetic identities, safe record IDs and verification status.
 Never capture tokens, Redis passwords, merchant keys or provider session URLs in
@@ -98,8 +108,12 @@ channel, not this repository.
 
 A failed build/health check stops the release. Inspect logs without printing secrets.
 Frontend rollback must retain the same session encryption/store configuration.
-Backend schema is unchanged, so code rollback does not require destructive storage
-operations. Payment callbacks remain backend-authoritative even during frontend
+The media migration is additive: code rollback can retain the nullable image columns and
+owned-media table. Do not drop media records or reverse migrations as an emergency rollback.
+If rolling back the media backend, first disable frontend upload controls by restoring the
+previous frontend build; then restore the previously verified backend revision. Existing
+nullable fields allow that older code to run without a database reset. Payment callbacks
+remain backend-authoritative even during frontend
 outage; returning to a URL cannot create a settlement. Inspect the actual invoice
 and payment before any replacement attempt.
 
