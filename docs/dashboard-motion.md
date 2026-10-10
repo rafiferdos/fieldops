@@ -31,6 +31,12 @@ Its supported native styling returns automatically on narrow, touch or reduced-m
 layouts. Rounded corners appear at the actual content boundary; the header/sidebar and
 portalled controls remain stationary.
 
+The fixed workspace viewport also paints the theme's sidebar background. The original
+provider leaves the viewport after one screen of scrolling; its background must not
+own the inset gutters. This keeps the sidebar edges and outer reading gutters the
+same color at the top, middle and bottom without moving the shadcn sidebar or its
+BranchedMenu links.
+
 ## Navigation and semantic accents
 
 Workspace navigation uses React Bits' original unboxed BranchedMenu anchors,

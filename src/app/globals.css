@@ -277,6 +277,10 @@
   [data-workspace-scroll][data-scroll-mode="smooth"] .workspace-scroll-surface {
     @apply rounded-2xl bg-background shadow-sm;
   }
+  /* The fixed viewport paints the inset gutters after the provider scrolls out of view. */
+  [data-workspace-scroll][data-scroll-mode="smooth"] {
+    background: var(--sidebar);
+  }
   /* The global smooth viewport reserves the same space as the supported sidebar layout. */
   [data-workspace-scroll][data-scroll-mode="smooth"] .workspace-scroll-content {
     padding-left: var(--workspace-left);

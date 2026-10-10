@@ -98,6 +98,20 @@ export async function verifyWorkspaceMotion(page: Page, responsive: boolean) {
   await expect(
     page.getByRole("link", { name: "All visits", exact: true })
   ).toBeInViewport()
+  // Inset gutters must keep the sidebar's paint after the original provider leaves the viewport.
+  const sidebar = page.locator('[data-slot="sidebar-container"]')
+  const sidebarPaint = await page
+    .locator('[data-slot="sidebar-inner"]')
+    .evaluate((node) => getComputedStyle(node).backgroundColor)
+  await expect(wrapper).toHaveCSS("background-color", sidebarPaint)
+  if (responsive)
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY > window.innerHeight))
+      .toBe(true)
+  await expect.poll(async () => (await sidebar.boundingBox())?.y).toBe(0)
+  await expect
+    .poll(async () => (await sidebar.boundingBox())?.height)
+    .toBe(await page.evaluate(() => window.innerHeight))
   await expect
     .poll(async () => {
       const panel = await surface.boundingBox()
