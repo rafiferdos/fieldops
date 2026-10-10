@@ -114,3 +114,9 @@ disabled. These scenarios use reads and session operations, creating no product 
 The README image is refreshed from this release's actual live administrator demo overview.
 The backend repository remains unchanged. Documentation-only follow-ups do not alter the
 deployed application source. The hardware and performance limits described above still apply.
+
+The October 10 sidebar-gutter correction retains this shadcn composition and fixes
+the paint owner after the provider leaves the viewport. All three real-role workspace
+scenarios pass on the new production release, including the administrator's scroll
+beyond one viewport. Current source, CI and focused hosted evidence are recorded in
+[service care panorama](care-panorama.md).

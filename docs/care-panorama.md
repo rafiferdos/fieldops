@@ -59,6 +59,29 @@ Strict checks passed with 186 unit tests and six Redis checks skipped locally;
 release CI runs those Redis checks. The local webpack production build passed.
 Real Safari/mobile hardware and field performance remain unmeasured.
 
+## Published release and acceptance
+
+Verified on 10 October 2026. The deployed source is
+`22095826b85f40e51ae092cf7dc69505b82c85cd`, including the sidebar checkpoint
+`60f0083`. [CI 38045124091](https://github.com/rafiferdos/fieldops/actions/runs/38045124091)
+passes all 192 tests, strict checks and the default production build. Vercel deployment
+`dpl_BR7vp6GU5tdHKwB9gfqtKmSNtubF` is Ready and serves the canonical
+[FieldOps domain](https://fieldops-rafiferdos.vercel.app).
+
+The canonical application passed **10/10 affected Chromium scenarios in 2.5 minutes**:
+three panorama scenarios, four public presentation/accessibility scenarios and three
+real-role workspace scenarios. These verify the current mobile overflow fix, shared
+process-stack/blur behavior, actual dashboard counts, fixed sidebar geometry and gutter
+paint beyond one viewport, responsive layouts, navigation and confirmed hold-to-logout.
+Retries remain disabled; the role scenarios use reads and session operations, creating
+no product records. This focused acceptance is not a new full-suite browser run.
+
+Actual desktop, mobile and dark-theme panorama screenshots were saved to the workspace's
+`delivery/care-panorama-desktop.png`, `delivery/care-panorama-mobile.png` and
+`delivery/care-panorama-dark.png` for visual inspection. The backend repository remains
+unchanged. The [full-stack review](full-stack-review.md) still records the separate
+conformance, walkthrough and submission work; this UI release does not close those gaps.
+
 ## Asset provenance
 
 Created on 2026-10-10 using the built-in imagegen tool. Final images are saved in

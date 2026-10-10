@@ -5,6 +5,8 @@ proof is in [React Bits integration](react-bits.md); the earlier acceptance reco
 is [hosted release evidence](hosted-release.md). The renewed
 [full-stack requirements review](full-stack-review.md) identifies remaining
 conformance and video work. This prepared pack is not a completion or submission claim.
+The current panorama/sidebar source and 10-scenario focused hosted acceptance are
+recorded in [service care panorama](care-panorama.md).
 
 ## Project links
 
@@ -15,7 +17,7 @@ conformance and video work. This prepared pack is not a completion or submission
 | Backend source    | https://github.com/rafiferdos/fieldops-api                                                 | Skills/payment release 7bf1e41 deployed                                             |
 | Backend CI        | https://github.com/rafiferdos/fieldops-api/actions/runs/37940326850                        | Passed for current 1faf01a; runtime remains the deployed skills/payment release     |
 | Backend API       | https://fieldops-api-xu3s.onrender.com/api/v1                                              | Live; health/readiness and actual current-skills routing verified                   |
-| Frontend domain   | https://fieldops-rafiferdos.vercel.app                                                     | Live cd2068c; default build and all 185 checks pass CI 38024046107                  |
+| Frontend domain   | https://fieldops-rafiferdos.vercel.app                                                     | Live 2209582; default build and all 192 tests pass CI 38045124091                   |
 | API documentation | https://github.com/rafiferdos/fieldops-api/blob/main/docs/fieldops.postman_collection.json | Complete importable collection, with a linked endpoint/workflow guide               |
 | Requirements      | https://github.com/Apollo-Level2-Web-Dev/B7A7/blob/main/project-requirements.md            | Authoritative                                                                       |
 | Backend contract  | https://app.notion.com/p/3f34ab5df14481afa4acc3e9a092b940                                  | Historical contract; authorized skills/browser extension documented in repositories |
@@ -36,9 +38,9 @@ conformance and video work. This prepared pack is not a completion or submission
 - Real sandbox cancellation, explicit replacement, verified payment and eligible
   feedback pass locally and on hosted HTTPS. Actual provider IPN and a single
   immutable settlement are verified independently through safe logs/database reads.
-- Frontend 170 CI checks and passing results for every current Chromium scenario
-  across the hosted baseline and affected focused reruns. Exact run composition
-  is recorded; no all-passing single full 34-scenario run is claimed. The owner
+- Frontend 192 CI tests, the earlier hosted baseline and affected focused Chromium
+  reruns. Exact run composition is recorded in the release guides; a new full-suite
+  browser run is not claimed. The owner
   additionally verified hosted Google login after the supported consent update.
 - Meaningful source checkpoints are in Git history. Count actual frontend commits
   after final publishing; do not manufacture commits to meet a number.

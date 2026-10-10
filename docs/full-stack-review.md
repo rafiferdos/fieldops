@@ -34,7 +34,7 @@ required by the idea hub.
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Functional page count     | 31 actual `page.tsx` route templates, including two payment returns; record multiplicity and utility boundaries do not inflate the count                                                              |
 | Domain APIs               | 39 domain APIs, two health routes and one provider browser-return template; the backend documentation checker matches 46 examples against all 42 routes                                               |
-| Meaningful history        | More than 20 actual commits in each repository; reviewed counts before this document were frontend 73 and backend 94                                                                                  |
+| Meaningful history        | More than 20 actual commits in each repository; reviewed counts at the panorama source release were frontend 82 and backend 94                                                                        |
 | Framework and composition | Next.js App Router, strict TypeScript, Server Components for reads/composition and Client Components for interactions; feature modules and shared infrastructure                                      |
 | UI and responsiveness     | Tailwind, preset shadcn/Base UI, responsive role workspaces, real navigation anchors, supported dialogs/toasts, light/dark and reduced-motion behavior                                                |
 | Authentication            | Email/password and provider-verified Google; opaque HttpOnly/Secure sessions, isolated encrypted Redis tokens, coordinated refresh, server-side current-role/ownership checks for reads and mutations |
@@ -45,16 +45,18 @@ required by the idea hub.
 | Payment reliability       | Real SSLCommerz sandbox cancellation/replacement and provider-verified settlement, immutable invoices/feedback, idempotency and explicit uncertain-outcome inspection                                 |
 | Backend engineering       | NestJS with Express adapter, PostgreSQL/Prisma, role guards, Zod pipes, Argon2, Helmet/CORS, throttling, soft deletion, audit logs, indexes and transactional scheduling/payment constraints          |
 | Documentation and hosting | Professional reciprocal READMEs, public repositories, live Vercel frontend/Render API, complete importable Postman collection and endpoint guide                                                      |
-| Automated verification    | Frontend CI checks all 185 tests including Redis and the default production build; backend current CI passes 129 unit/474 integration tests, compiled HTTP and documentation checks                   |
+| Automated verification    | Frontend CI checks all 192 tests including Redis and the default production build; backend current CI passes 129 unit/474 integration tests, compiled HTTP and documentation checks                   |
 
 This audit reran backend unit tests and documentation coverage successfully. It did
 not rerun all backend database integration tests; their current exact-revision proof
 is [CI 37940326850](https://github.com/rafiferdos/fieldops-api/actions/runs/37940326850).
+The panorama source revision passes [frontend CI 38045124091](https://github.com/rafiferdos/fieldops/actions/runs/38045124091).
 The published liveness and readiness endpoints both return HTTP 200 with a successful
 envelope. Final hosted login/protection/cookie and dashboard/confirmed-logout checks
 pass for all three roles (6/6, 3.2 minutes).
 Google production login remains owner-verified. Current effects/release verification
 is recorded in [React Bits integration](react-bits.md).
+The latest sidebar and generated-image work is recorded in [service care panorama](care-panorama.md).
 
 ## Remaining conformance work
 
